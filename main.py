@@ -375,6 +375,7 @@ class c_sublocs:
             canvas.tag_bind(elem_header, "<Button-1>", self.c_sublocs_event_clic_gauche_header)
             canvas.tag_bind(elem_header, "<B1-Motion>", self.c_sublocs_event_glisser_gauche_header)
             canvas.tag_bind(elem_header, "<Double-Button-1>", self.c_sublocs_event_double_clic_gauche_header)
+            #canvas.tag_bind(elem_header, "<F1>", self.c_sublocs_event_key_F1) ###???
             #canvas.tag_bind(elem_header, "<Delete>", self.c_sublocs_event_delete_header)###"<Delete>" ne fonctionne pas?
         # dessine les i/o et arme les callback
         yi0 = event.y
@@ -458,6 +459,7 @@ class c_sublocs:
     #    """call_back: sur evenement"""
     #    proc_name = "c_sublocs_event_delete_header: "###
     #    del_bloc(self)###
+
 
     def c_sublocs_event_double_clic_gauche_header (self, event):
         """call_back: sur evenement"""
@@ -1130,9 +1132,10 @@ def del_lien(io):
     #elem = find_parent (io)
     #print (proc_name, f"parent (elem.header)={elem.header}")
     #update_bloc(elem)
-def overwritting(io):
+def overwriting(io):
     """Forçage d'une entrée ou d'une sortie"""
     print ("OverWritting: io=<{}>".format(io))
+    messagebox.showinfo("Warnning", "This function is not yet implemented")
 def rename_io(px, py, io):
     """renome une entrée ou une sortie"""
     global bloc
@@ -1550,6 +1553,48 @@ def event_key_space(event):
     print (proc_name," arg=", event)
     print (proc_name," KEY_SPACE ")
     flip_monitoring()
+
+def find_bloc_under_event(event):
+    """touve le bloc qui est sous le curseur lorsqu'un évenement se produit"""
+    global bloc, canvas
+    items = canvas.find_all()
+    for item in items:
+        #print (proc_name, "pour chaque item")
+        tags = canvas.gettags(item)
+        if tags:
+            #print (proc_name, "tags list,  tags=", tags)
+            if 'header' in tags:
+                print (proc_name, "header in tags,  tags=", tags)
+                for elem in bloc.sublocs:
+                    print (proc_name, f"pour chaque subloc: elem.header['name']={elem.header['name']}")
+                    if elem.header['id_cadre'] == item:
+                        print (proc_name, f"elem == item,    elem.header['name']={elem.header['name']}")
+                        bbox = canvas.bbox(item)
+                        if bbox:
+                            x1, y1, x2, y2 = bbox
+                            print (proc_name, f"bbox:  x1={x1}, y1={y1}, x2={x2}, y2={y2}")
+                            if x1 < event.x and event.x < x2:
+                                print (proc_name, f" en x")
+                                if y1 < event.y and event.y < y2:
+                                    print (proc_name, f" en y")
+                                    return elem
+    return None
+def event_key_F1(event):
+    """callback: sur evenement"""
+    global bloc, canvas
+    proc_name = "event_key_F1: "
+    print (proc_name," arg=", event)
+    elem = find_bloc_under_event(event)
+    if elem != None:
+        doc_file = "Documentation/bloc_"+elem.header['name']+".html"
+        if os.path.isfile(doc_file):
+            print (proc_name, f"nom du fichier d'aide={doc_file}")
+            if sys.platform == "linux":
+                subprocess.Popen(['xdg-open', doc_file])
+            else:
+                os.startfile(doc_file)
+        else:
+         messagebox.showinfo("ERROR", "The ducumentaion is not available for this bloc")
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -1580,6 +1625,14 @@ def event_key_F7(event):
     print (proc_name," arg=", event)
     print (proc_name," KEY_F7")
     routage()
+def event_key_delete(event):
+    """callback: sur evenement"""
+    proc_name = "event_key_delete: "
+    print (proc_name," arg=", event)
+    elem = find_bloc_under_event(event)
+    if elem != None:
+        print (proc_name, f"nom du bloc à supprimer={elem.header['name']}")
+        del_bloc(elem)
 def event_key_escape(event):
     """callback: sur evenement"""
     proc_name = "event_exit: "
@@ -1611,8 +1664,6 @@ def zoom(factor_brut, x, y):
             for i in ltxt:
                 new_font = ( PARAM_FONT, int(max(1,  scale_factor * PARAM_FONT_SIZE)))
                 canvas.itemconfigure(i, font= new_font)
-
-
 
 # Création d'une police personnalisée avec une taille plus grande
 def menu_bar():
@@ -1679,7 +1730,7 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Reset draw", command = bloc.c_bloc_erase_draw)
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
-    doc_file = 'Documentation/description010.html'
+    doc_file = 'Documentation/Documentation_générale.html'
     if sys.platform == "linux":
         help_menubar.add_command(label = "Documentation", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
     else:
@@ -1770,6 +1821,13 @@ def menu_header(event, elem):
         if pos_io < nbr_io:
             menu_contextuel.add_command(label = "move down", command = lambda: io_interface_move(elem, "down"))
     menu_contextuel.add_separator()
+    doc_file = "Documentation/bloc_"+elem.header['name']+".html"
+    if os.path.isfile(doc_file):
+        if sys.platform == "linux":
+            menu_contextuel.add_command(label = "Documentation", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
+        else:
+            menu_contextuel.add_command(label = "Documentation", command = lambda: os.startfile(doc_file))
+        menu_contextuel.add_separator()
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_header(event.x_root, event.y_root, elem, modification=0))#0
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
@@ -1831,7 +1889,7 @@ def menu_io(event, io):
 
 
     menu_contextuel.add_separator()
-    menu_contextuel.add_command(label = "OverWritting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwritting(io))
+    menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io))
     menu_contextuel.add_separator()
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io))
     #menu_contextuel.add_command(label = "del defaut value", command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
@@ -2684,10 +2742,13 @@ else:
 canvas.bind("<Motion>", event_deplacement_souris)
 master.bind("<KeyPress-space>", event_key_space)
 master.bind("<Escape>", event_key_escape)
+master.bind("<KeyPress-F1>", event_key_F1)
 master.bind("<KeyPress-F3>", event_key_F3)
 master.bind("<KeyPress-F4>", event_key_F4)
 master.bind("<KeyPress-F5>", event_key_F5)
 master.bind("<KeyPress-F7>", event_key_F7)
+master.bind("<KeyPress-Delete>", event_key_delete)
+
 master.protocol("WM_DELETE_WINDOW", on_closing)
 
 clientTCP = TCPClient()
