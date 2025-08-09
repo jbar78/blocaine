@@ -61,12 +61,12 @@ def io_text(io):
                 #evt= " ("+thread['name']+")"
                 evt= " ("+PARAM_ICONE_EVENT+thread['name']+")"
     else:
-        if 'local_name' in io:
-            name = io['local_name']
-        else:
-            name = io['name']
         evt = ""
-    return val+name+evt
+    if 'local_name' in io:
+        io_name = io['local_name']
+    else:
+        io_name = io['name']
+    return val+io_name+evt
 
 class c_mire:
     """dessine la mire"""
