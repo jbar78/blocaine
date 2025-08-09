@@ -61,8 +61,12 @@ def io_text(io):
                 #evt= " ("+thread['name']+")"
                 evt= " ("+PARAM_ICONE_EVENT+thread['name']+")"
     else:
+        if 'local_name' in io:
+            name = io['local_name']
+        else:
+            name = io['name']
         evt = ""
-    return val+io['name']+evt
+    return val+name+evt
 
 class c_mire:
     """dessine la mire"""
@@ -1714,10 +1718,12 @@ def menu_bar():
     help_mouse_menubar.add_command(label = "[wheel rotation] to zoom (in/out)")
     help_key_menubar = Menu(help_menubar)
     help_menubar.add_cascade(label = "Key usage", menu = help_key_menubar)
+    help_key_menubar.add_command(label = "[F1] Open the documentation for the bloc whose header is located under the cursor")
     help_key_menubar.add_command(label = "[F3] to save curant bloc")
     help_key_menubar.add_command(label = "[F4] to save curant bloc as")
     help_key_menubar.add_command(label = "[F5] to update curant bloc")
     help_key_menubar.add_command(label = "[F7] to layout curant bloc")
+    help_key_menubar.add_command(label = "[Delete] Delete the bloc whose header is located under the cursor")
     help_key_menubar.add_command(label = "[Space] to monitor the target variables in real time (on/off)")
     help_key_menubar.add_command(label = "[Escape] to close window")
     #-------------------------

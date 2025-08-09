@@ -346,7 +346,7 @@ def c_exesubloc_edge (pebloc, pieb, pio, pcounter):
     else:
         cesubloc.header['counter'] = pcounter
         try:
-            print ("début EDGE les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
+            #print ("début EDGE les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
             pebloc.c_exebloc_recup_input(pieb, pcounter, 0)
             #cesubloc.outputs[0]['var']=True
             #cesubloc.outputs[1]['var']=True
