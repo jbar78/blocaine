@@ -1750,12 +1750,12 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Compare", command = debug_compare)
     #help_menubar.add_command(label = "Debug: debug2", command = debug2)
     #-------------------------
-    menubar.add_command(label = "   ")
+    menubar.add_command(label = "  ")
     menubar.add_command(label = PARAM_ICONE_DISQUETTE, font=tkinter.font.Font(family="Helvetica", size=12), background = PARAM_COLOR_BG_HEADER_OUTPUT, command = lambda: save_file(save_as=False))
-    menubar.add_command(label = " ")
-    menubar.add_command(label = PARAM_ICONE_OEIL, font=tkinter.font.Font(family="Helvetica", size=14), background = PARAM_COLOR_BG_HEADER_OUTPUT, command = flip_monitoring)
-    menubar.add_command(label = "   ")
+    menubar.add_command(label = "  ")
     menubar.add_command(label = PARAM_ICONE_EVENT, font=tkinter.font.Font(family="Helvetica", size=14), background = PARAM_COLOR_BG_HEADER_OUTPUT, command = lambda: set_compile_thread("execute"))
+    menubar.add_command(label = "  ")
+    menubar.add_command(label = PARAM_ICONE_OEIL, font=tkinter.font.Font(family="Helvetica", size=14), background = PARAM_COLOR_BG_HEADER_OUTPUT, command = flip_monitoring)
 def menu_target():
     global bloc, canvas, list_compiled, target_menubar, clientTCP
     if 'target_menubar' in globals():
