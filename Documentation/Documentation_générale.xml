@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<indexing>
+ <paragraph index="6" node_type="writer">documentation générale : mise à jour le 5 août 2025</paragraph>
+ <paragraph index="9" node_type="writer">Page /</paragraph>
+ <object alt="" name="Image3" object_type="graphic"/>
+ <object alt="" name="Image1 Copie 1" object_type="graphic"/>
+ <object alt="" name="Image4" object_type="graphic"/>
+ <object alt="" name="Image3 Copie 1" object_type="graphic"/>
+ <object alt="" name="Image4 Copie 1" object_type="graphic"/>
+ <object alt="" name="Image1" object_type="graphic"/>
+ <object alt="" name="Image5" object_type="graphic"/>
+ <paragraph index="42" node_type="writer">Blocaïne</paragraph>
+ <paragraph index="43" node_type="writer">(La solution open source pour l’automatisme)</paragraph>
+ <object index="45" name="Table des matières1" object_type="section"/>
+ <object index="46" name="Table des matières1_Head" object_type="section"/>
+ <paragraph index="47" node_type="writer" parent_index="46">Table des matières</paragraph>
+ <paragraph index="49" node_type="writer" parent_index="45">1 Généralité	2</paragraph>
+ <paragraph index="50" node_type="writer" parent_index="45">1.1 Caractéristiques	3</paragraph>
+ <paragraph index="51" node_type="writer" parent_index="45">1.2 Avancement du projet	3</paragraph>
+ <paragraph index="52" node_type="writer" parent_index="45">1.3 Précautions d’usages, responsabilités	3</paragraph>
+ <paragraph index="53" node_type="writer" parent_index="45">2 Principes	4</paragraph>
+ <paragraph index="54" node_type="writer" parent_index="45">2.1 Tout est bloc	4</paragraph>
+ <paragraph index="55" node_type="writer" parent_index="45">2.2 Chargement à Chaud (Hot Swap)	4</paragraph>
+ <paragraph index="56" node_type="writer" parent_index="45">2.3 Méthode d’exécution	4</paragraph>
+ <paragraph index="57" node_type="writer" parent_index="45">2.4 Typage de variables	4</paragraph>
+ <paragraph index="58" node_type="writer" parent_index="45">2.5 Bit de validité	4</paragraph>
+ <paragraph index="59" node_type="writer" parent_index="45">2.6 Valeurs par défaut	5</paragraph>
+ <paragraph index="60" node_type="writer" parent_index="45">3 L’Éditeur de blocs	6</paragraph>
+ <paragraph index="61" node_type="writer" parent_index="45">3.1 Généralités	6</paragraph>
+ <paragraph index="62" node_type="writer" parent_index="45">3.2 Bit de validité	6</paragraph>
+ <paragraph index="63" node_type="writer" parent_index="45">3.3 Les entrées/sorties	7</paragraph>
+ <paragraph index="64" node_type="writer" parent_index="45">3.3.1 bloc « input »	7</paragraph>
+ <paragraph index="65" node_type="writer" parent_index="45">3.3.2 bloc « output »	7</paragraph>
+ <paragraph index="66" node_type="writer" parent_index="45">3.3.3 Interface externe d’un bloc user	8</paragraph>
+ <paragraph index="67" node_type="writer" parent_index="45">3.4 Mode : Editing / Monitoring	9</paragraph>
+ <paragraph index="68" node_type="writer" parent_index="45">3.4.1 Mode : édition (Editing)	9</paragraph>
+ <paragraph index="69" node_type="writer" parent_index="45">3.4.2 Mode : visualisation dynamique (Monitoring)	9</paragraph>
+ <paragraph index="70" node_type="writer" parent_index="45">4 L’Exécuteur	11</paragraph>
+ <paragraph index="71" node_type="writer" parent_index="45">4.1 Généralités	11</paragraph>
+ <paragraph index="72" node_type="writer" parent_index="45">4.2 Méthode d’exécution	11</paragraph>
+ <paragraph index="73" node_type="writer" parent_index="45">4.3 Chargement à Chaud	11</paragraph>
+ <paragraph index="74" node_type="writer" parent_index="45">4.4 Bit de validité	11</paragraph>
+ <paragraph index="75" node_type="writer" parent_index="45">4.5 Serveur Web	12</paragraph>
+ <paragraph index="76" node_type="writer" parent_index="45">4.5.1 Généralités	12</paragraph>
+ <paragraph index="77" node_type="writer" parent_index="45">4.5.2 Exemple de page « Task list »	13</paragraph>
+ <paragraph index="78" node_type="writer" parent_index="45">4.5.3 Exemple de page « Bloc &amp; Output list »	14</paragraph>
+ <paragraph index="79" node_type="writer" parent_index="45">4.5.4 Exemple de page « Connexions »	15</paragraph>
+ <paragraph index="83" node_type="writer">Généralité</paragraph>
+ <paragraph index="84" node_type="writer">Blocaïne est une plateforme logicielle conçue pour l'automatisation des procédés industriels. Elle comprend deux composants principaux :</paragraph>
+ <paragraph index="85" node_type="writer">Un Éditeur de blocs, qui permet de créer des programmes en assemblant des blocs fonctionnels.</paragraph>
+ <paragraph index="86" node_type="writer">Un Exécuteur , qui exécute les programmes créés avec l’Éditeur de blocs, pilotant ainsi l’équipement industriel via des entrées/sorties déportées. </paragraph>
+ <paragraph index="87" node_type="writer">L’Éditeur de blocs est installé sur un « PC de Développement » et communique par  Ethernet avec l’Exécuteur, déployé sur un autre ordinateur appelé « Machine cible ».</paragraph>
+ <paragraph index="91" node_type="writer">La connexion Ethernet permet de transférer les programmes créer avec l’Éditeur de blocs vers l’Exécuteur, elle autorise également la visualisation en temps réel au sein de l’Éditeur de blocs des variables des programmes en cours d’exécution par l’Exécuteur.</paragraph>
+ <paragraph index="94" node_type="writer">Caractéristiques</paragraph>
+ <paragraph index="95" node_type="writer">Blocaïne est un logiciel libre et « open source »</paragraph>
+ <paragraph index="96" node_type="writer">Programmation graphique sous forme de blocs fonctionnels chaînés</paragraph>
+ <paragraph index="97" node_type="writer">« Chargement à Chaud » :  possibilité de modifier les programmes en cours d’exécution sans interruption (Hot Swap).</paragraph>
+ <paragraph index="98" node_type="writer">Chaque variable possède nativement un bit de validité, qui se propage de bloc en bloc.</paragraph>
+ <paragraph index="99" node_type="writer">Typage dynamique des variables.</paragraph>
+ <paragraph index="100" node_type="writer">L’ordre d’exécution des blocs est géré automatiquement</paragraph>
+ <paragraph index="101" node_type="writer">La mise en page des blocs est réalisée automatiquement</paragraph>
+ <paragraph index="103" node_type="writer">Avancement du projet</paragraph>
+ <paragraph index="104" node_type="writer">Le projet Blocaïne en est au stade de prototype Fonctionnel.</paragraph>
+ <paragraph index="105" node_type="writer">Il est téléchargeable pour évaluation ou pour réaliser vos projets de domotique, pour lesquels l’usage d’un Raspberry pi comme Machine Cible est recommandé.</paragraph>
+ <paragraph index="106" node_type="writer">À ce stade, il est déconseillé d’utiliser Blocaïne pour des projets industriels.</paragraph>
+ <paragraph index="107" node_type="writer">Si vous souhaitez participer au projet, vous pouvez me contracter par Email : blocaine@barachet.com </paragraph>
+ <paragraph index="108" node_type="writer">Précautions d’usages, responsabilités</paragraph>
+ <paragraph index="109" node_type="writer">Blocaïne est un logiciel libre de droits et open source sans garantie. Son utilisation est libre et se fait sous la responsabilité de l’utilisateur.</paragraph>
+ <paragraph index="112" node_type="writer">Principes</paragraph>
+ <paragraph index="113" node_type="writer">Tout est bloc</paragraph>
+ <paragraph index="114" node_type="writer">Chaque bloc et constitué d’entré(s) de sortie(s) et du code permettant d’évaluer les sortie(s) en fonction des entrée(s).</paragraph>
+ <paragraph index="115" node_type="writer">Pour les blocs de la bibliothèque de base (appelés blocs System) c’est une fonction écrite en Python qui permet d’évaluer les sortie(s) en fonction des entrée(s)</paragraph>
+ <paragraph index="116" node_type="writer">Pour les blocs créés par l’utilisateur (blocs user) c’est un chaînage de blocs system ou/et user, qui permet d’évaluer les sortie(s) en fonction des entrée(s)</paragraph>
+ <paragraph index="117" node_type="writer">Que ce soient, les blocs system, les blocs user ou les blocs « inputs » et « outputs» qui gèrent les entrés/sortie des blocs user, tous sont traités uniformément en tant que bloc par l’éditeur de blocs.</paragraph>
+ <paragraph index="118" node_type="writer">Chargement à Chaud (Hot Swap)</paragraph>
+ <paragraph index="119" node_type="writer">l’Exécuteur dispose pour chaque programme (bloc « user ») de deux versions Shift A et Shift B. La nouvelle version d’un bloc est toujours téléchargée dans le Shift qui n’est pas en cours d’exécution, lorsqu’un HotSwap est initié, les valeurs courantes des variables du Shift en cours d’exécution sont transférés à l’autre Shift, qui prend alors la relève.     </paragraph>
+ <paragraph index="120" node_type="writer">Méthode d’exécution</paragraph>
+ <paragraph index="121" node_type="writer">Lorsqu’un bloc user est démarré (Running), l’Exécuteur évalue périodiquement tous les blocs « output » de ce bloc user. Si l’entrée d’un bloc « output » est chaîné à un autre bloc, l’Exécuteur évalue d’abord le bloc précédent, et ainsi de suite. Cette approche élimine la nécessité de définir explicitement l’ordre d’exécution des blocs.</paragraph>
+ <paragraph index="122" node_type="writer">Typage de variables</paragraph>
+ <paragraph index="123" node_type="writer">Puisque Blocaïne s’appuyant sur le langage Python, les variables (d’entrée et de sortie) utilisées par les blocs sont typées dynamiquement, leur type peut être quelconque y compris des structures complexes, dés lors qu’il s’agit d’une combinaison de types Python (chaîne de caractères, entier, flottant, list, dictionnaire, etc.).</paragraph>
+ <paragraph index="124" node_type="writer">Bit de validité</paragraph>
+ <paragraph index="125" node_type="writer">Le bit de validité associé à chaque sortie de bloc est évalué automatiquement à chaque exécution en fonction de la validité des entrées et de la possibilité ou non d’évaluer de la sortie.</paragraph>
+ <paragraph index="126" node_type="writer">Valeurs par défaut</paragraph>
+ <paragraph index="127" node_type="writer">chaque entrée de bloc, qu’il s’agisse d’un bloc « system » ou « user », possède une valeur par défaut modifiable à l’instanciation. </paragraph>
+ <paragraph index="129" node_type="writer">L’Éditeur de blocs</paragraph>
+ <paragraph index="130" node_type="writer">Généralités</paragraph>
+ <paragraph index="131" node_type="writer">Rappel : l’Éditeur de blocs est un outil graphique généralement installé dans un PC de Développement.</paragraph>
+ <paragraph index="132" node_type="writer"> l’Éditeur de blocs permet :</paragraph>
+ <paragraph index="133" node_type="writer">La création et la modification de programmes sous forme de blocs « user » contenant des blocs fonctionnels chaînés entre eux.</paragraph>
+ <paragraph index="134" node_type="writer">La compilation , le téléchargement et le lancement de l’exécution d’un bloc « user » dans la Machine Cible.</paragraph>
+ <paragraph index="135" node_type="writer">la visualisation dynamique des valeurs des variables contenues dans les blocs « user » et les sous-blocs en cours d’exécution.</paragraph>
+ <paragraph index="137" node_type="writer">Chaque bloc est constitué de :</paragraph>
+ <paragraph index="138" node_type="writer">Une entête : contenant le nom du bloc</paragraph>
+ <paragraph index="139" node_type="writer">D’entrée(s) : située(s) à gauche sous l’entête, contenant le nom de l’entrée</paragraph>
+ <paragraph index="140" node_type="writer">De sortie(s) : située(s) à droite sous l’entête à, contenant le nom de la sortie</paragraph>
+ <paragraph index="141" node_type="writer">Les blocs peuvent êtres chaînés entre eux par des liens, notez qu’une sortie ne peut être liée qu’à une entrée et qu’une entrée ne peut être liée qu’à une seule sortie.</paragraph>
+ <paragraph index="142" node_type="writer">À chaque bloc correspond un fichier nommé : « nom du bloc.bloc ». Les blocs « system » sont dans le répertoire /blocs/system, alors que les blocs « user » sont dans /blocs/user.</paragraph>
+ <paragraph index="145" node_type="writer">Bit de validité</paragraph>
+ <paragraph index="146" node_type="writer">Les bits de validité peuvent être lus ou modifiés par les blocs « system » suivants :</paragraph>
+ <paragraph index="147" node_type="writer">« valideRead » : permet de lire le bit de validité, cela permet par exemple de sélectionner une position de replie dans le cas de variables « invalide »</paragraph>
+ <paragraph index="148" node_type="writer">« valideWrite » : permet l’écriture du bit de validité, autorisant l’utilisateur à définir sa propre équation de validité.</paragraph>
+ <paragraph index="150" node_type="writer">Les entrées/sorties</paragraph>
+ <paragraph index="151" node_type="writer">L’interface d’un bloc user est constitué ; d’entrées et de sorties, celle-ci sont optionnelles mais indispensable pour la communication avec les autres blocs.</paragraph>
+ <paragraph index="152" node_type="writer">Les entrées sont collectées à l’aide de blocs system « input »</paragraph>
+ <paragraph index="153" node_type="writer">Les sorties sont délivrées à l’aide de blocs system « output »</paragraph>
+ <paragraph index="154" node_type="writer">bloc « input »</paragraph>
+ <paragraph index="155" node_type="writer">Voici l’interface graphique du bloc system « input »</paragraph>
+ <paragraph index="159" node_type="writer">Sa fonction est de définir une entrée d’un bloc user. Le bloc « input » n’a pas d’entrée, mais possède une sortie nommée « in_0 », c’est la variable (de type quelconque) qui rentrera dans du bloc user,  sa valeur par défaut est 0 (int), elle peut être ajustée pour chaque instance d’un bloc « input ». Cette sortie peut être renommée, le nouveau nom apparaîtra dans l’interface externe du bloc user en tant qu’entrée. </paragraph>
+ <paragraph index="161" node_type="writer">bloc « output »</paragraph>
+ <paragraph index="162" node_type="writer">Voici l’interface graphique du bloc system « output »</paragraph>
+ <paragraph index="167" node_type="writer">Sa fonction est de définir une sortie d’un bloc user. Le bloc « output » n’a pas de sortie, mais possède une entrée nommée « out_0 », c’est la variable (de type quelconque) qui sortira du bloc user, elle n’a pas de valeur par défaut, mais une valeur par défaut peut être ajouter pour chaque instance d’un bloc « output ». Cette entrée peut être renommée, le nouveau nom apparaîtra dans l’interface externe du bloc user en tant que sortie.</paragraph>
+ <paragraph index="171" node_type="writer">Interface externe d’un bloc user</paragraph>
+ <paragraph index="172" node_type="writer">Voici un bloc user nommé « règle de 3 » qui contient trois blocs « input » et un bloc « output ».</paragraph>
+ <paragraph index="173" node_type="writer">la sortie du première bloc « input » a été renommée en « in »</paragraph>
+ <paragraph index="174" node_type="writer">la sortie du second bloc « input » a été renommée en « coeff »</paragraph>
+ <paragraph index="175" node_type="writer">la sortie du troisième bloc « input » a été renommée en « div »</paragraph>
+ <paragraph index="176" node_type="writer">l’entrée du bloc « output » a été renommée en « out »</paragraph>
+ <paragraph index="177" node_type="writer"> </paragraph>
+ <paragraph index="178" node_type="writer"> Voici l’interface externe de bloc « règle de 3 », lorsqu’un autre bloc user nommé « bloc1 » fait référence au bloc « régle de 3 », les 3 entrées et sa sortie correspondent aux « input »/« output » définies dans le bloc « régle de 3 » sont bien présent dans son interface externe.</paragraph>
+ <paragraph index="179" node_type="writer"> </paragraph>
+ <paragraph index="188" node_type="writer">Mode : Editing / Monitoring</paragraph>
+ <paragraph index="189" node_type="writer">Le basculement du mode « édition » au mode « visualisation dynamique » et vice versa, s’effectue en cliquant sur dans l’onglet « Edit » de la barre de menu puis sur « monitoring (Start/Stop) [Space] » ou directement sur l’icône « œil » ou en appuyant sur la touche « Espace », bien sûr le bloc édité doit être en cours d’exécution pour pouvoir basculé en mode « visu dynamique ». </paragraph>
+ <paragraph index="190" node_type="writer">Mode : édition (Editing)</paragraph>
+ <paragraph index="191" node_type="writer">Ce mode est dédié à création et à la modification de bloc »user »</paragraph>
+ <paragraph index="192" node_type="writer">Voici un exemple de bloc « user » qui calcule la moyenne de 2 nombres :</paragraph>
+ <paragraph index="193" node_type="writer">Figure 2 : bloc en mode édition</paragraph>
+ <paragraph index="194" node_type="writer">Mode : visualisation dynamique (Monitoring) </paragraph>
+ <paragraph index="195" node_type="writer">Ce mode est dédié au débogage, il permet la visualisation en temps réel des valeurs des variables d’un bloc « user » ou d’un sous-bloc « user »</paragraph>
+ <paragraph index="196" node_type="writer">la validité de chaque variable est représentée par la couleur de fond :</paragraph>
+ <paragraph index="197" node_type="writer">Vert	= valide</paragraph>
+ <paragraph index="198" node_type="writer">Rouge	= invalide</paragraph>
+ <paragraph index="200" node_type="writer"> Voici un exemple du bloc « moyenne » (en visualisation dynamique) :</paragraph>
+ <paragraph index="201" node_type="writer">Figure 3 : bloc en mode visu dynamique</paragraph>
+ <paragraph index="204" node_type="writer">L’Exécuteur</paragraph>
+ <paragraph index="205" node_type="writer">Généralités</paragraph>
+ <paragraph index="206" node_type="writer">Rapel : L’exécuteur est installé sur un PC appelé « Machine cible », il exécute les programmes (blocs « user ») qui pilotent l’équipement industriel en utilisant les entrées/sorties déportées (hardware).</paragraph>
+ <paragraph index="207" node_type="writer"> Certaines commandes liées aux blocs user déjà présent dans l’exécuteur, telles que : le démarrage, l’arrêt, l’initialisation, le swap, la suppression, peuvent être accomplies par l’exécuteur par le biais de son serveur web intégré vous chapitre #7.5.</paragraph>
+ <paragraph index="208" node_type="writer">Les opération de téléchargement d’un nouveau bloc user dans l’exécuteur, de modification d’un bloc user déjà présent, ou la visualisation en temps réel les valeurs des variables des blocs user en cours d’exécution, ne sont pas disponible qu’à partir de l’Éditeur de blocs.</paragraph>
+ <paragraph index="209" node_type="writer">Méthode d’exécution</paragraph>
+ <paragraph index="210" node_type="writer">Pour qu’un chaînage de blocs contenu dans le bloc « user » soient exécutable, il est impératif que ce chaînage se termine par un bloc « output » et que ce dernier soit associé à un événement (comme l’événement périodique à 100ms par exemple). Dans ce cas l’Exécuteur évalue périodiquement tous les blocs « output » du bloc « user », déclenchant ainsi l’évaluation des blocs précédents. Cette approche élimine la nécessité de définir explicitement l’ordre d’exécution.</paragraph>
+ <paragraph index="211" node_type="writer">Un bloc « user » peut contenir plusieurs blocs « output », chaque « output » pouvant êtres associés à un événement différent. Il est donc possible d’inclure dans un même blocs « user » des chaînes de blocs qui seront exécutés avec des périodicités différentes. Si il existe des liens entre les chaînes de blocs de périodicité différente, sur chaque lien inter-chaîne il faudra insérer des blocs System « previous », afin que la chaîne qui doit être exécuté lentement ne soit pas exécuté à la période de la chaîne la plus rapide.</paragraph>
+ <paragraph index="212" node_type="writer">Chargement à Chaud</paragraph>
+ <paragraph index="213" node_type="writer">Pour que le chargement à la volée soit possible, l’Exécuteur dispose pour chaque bloc user (programme) de deux versions Shift A et Shift B. La nouvelle version d’un bloc user est toujours téléchargée dans le Shift qui n’est pas en cours d’exécution, lorsqu’un « hot swap » est initié, les valeurs courantes des variables du Shift en cours d’exécution sont transférés à l’autre Shift, qui prend alors la relève.</paragraph>
+ <paragraph index="214" node_type="writer">Bit de validité</paragraph>
+ <paragraph index="215" node_type="writer">De manière générale tant qu’un bloc n’a pas était évalué ses sorties sont « invalides »</paragraph>
+ <paragraph index="216" node_type="writer">La validité associée à chaque sortie d’un bloc est évaluée automatiquement lorsque le bloc est exécuté. Si une des entrées nécessaires à l’évaluation de la sortie est « invalide » ou si la sortie du bloc ne peut être évalué à cause d’un confit de type ou autre, la sortie du bloc sera « invalide », sinon elle sera « valide »</paragraph>
+ <paragraph index="217" node_type="writer">Serveur Web</paragraph>
+ <paragraph index="218" node_type="writer">Généralités</paragraph>
+ <paragraph index="219" node_type="writer">Un serveur HTTP est intégré à l’Exécuteur il permet à l’utilisateur par le biais d’un simple navigateur web de visualiser l’état de la Machine Cible :</paragraph>
+ <paragraph index="220" node_type="writer">Visualiser les événements disponibles et le nombre de « output » associé </paragraph>
+ <paragraph index="221" node_type="writer">Visualiser la charge CPU générale et par événement</paragraph>
+ <paragraph index="222" node_type="writer">Visualiser la liste des blocs disponible dans la Machine Cible et l’état des Shifts (A &amp;t B) (Pending, Ready, Running)</paragraph>
+ <paragraph index="223" node_type="writer">Visualiser l’état et la valeur des « output » de tous les blocs pour les Shifts (A &amp; B)</paragraph>
+ <paragraph index="224" node_type="writer">Visualisé les connexions Ethernet en cours gérées par l’Exécuteur  </paragraph>
+ <paragraph index="225" node_type="writer">Il permet aussi de passer des commandes simples telle que :</paragraph>
+ <paragraph index="226" node_type="writer">Arrêter l’exécution d’un bloc « user » (commande : Stop)</paragraph>
+ <paragraph index="227" node_type="writer">Démarrer l’exécution d’un bloc « user » (commande : Run)</paragraph>
+ <paragraph index="228" node_type="writer">Initialiser un bloc « user » (commande : Initialize)</paragraph>
+ <paragraph index="229" node_type="writer">Supprimer un bloc « user » (commande : Delete)</paragraph>
+ <paragraph index="230" node_type="writer">Intervertir les « Shift A » et « Shift B »</paragraph>
+ <paragraph index="231" node_type="writer">lorsqu’aucun « Shift » est « Running » (commande : ClodSwap)</paragraph>
+ <paragraph index="232" node_type="writer">lorsqu’un « Shift » est « Running » (commande : HotSwap)</paragraph>
+ <paragraph index="233" node_type="writer">Lancer des commandes dédiés au débug</paragraph>
+ <paragraph index="234" node_type="writer"> (commande : print list_compiled)</paragraph>
+ <paragraph index="235" node_type="writer"> (commande : print list_threads)</paragraph>
+ <paragraph index="238" node_type="writer">Exemple de page « Task list »</paragraph>
+ <paragraph index="239" node_type="writer">Target: jbar-HLYL-WXX9 (ip:192.168.5.58)</paragraph>
+ <object index="240" name="Tableau1" object_type="table"/>
+ <paragraph index="242" node_type="writer" parent_index="240">Menu</paragraph>
+ <paragraph index="245" node_type="writer" parent_index="240">Task list
+Bloc &amp; Output list
+Connexions
+print list_compiled
+print list_threads</paragraph>
+ <object index="249" name="Tableau2" object_type="table"/>
+ <paragraph index="251" node_type="writer" parent_index="249">Task list</paragraph>
+ <paragraph index="254" node_type="writer" parent_index="249">Setting</paragraph>
+ <paragraph index="257" node_type="writer" parent_index="249">Feedback</paragraph>
+ <paragraph index="260" node_type="writer" parent_index="249">name</paragraph>
+ <paragraph index="263" node_type="writer" parent_index="249">id</paragraph>
+ <paragraph index="266" node_type="writer" parent_index="249">period</paragraph>
+ <paragraph index="269" node_type="writer" parent_index="249">cycle time</paragraph>
+ <paragraph index="272" node_type="writer" parent_index="249">cycle time
+min</paragraph>
+ <paragraph index="275" node_type="writer" parent_index="249">cycle time
+max</paragraph>
+ <paragraph index="278" node_type="writer" parent_index="249">counter</paragraph>
+ <paragraph index="281" node_type="writer" parent_index="249">number of
+output</paragraph>
+ <paragraph index="284" node_type="writer" parent_index="249">CPU load</paragraph>
+ <paragraph index="287" node_type="writer" parent_index="249">10s</paragraph>
+ <paragraph index="290" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="293" node_type="writer" parent_index="249">10s</paragraph>
+ <paragraph index="296" node_type="writer" parent_index="249">10.000011s</paragraph>
+ <paragraph index="299" node_type="writer" parent_index="249">9.999804s</paragraph>
+ <paragraph index="302" node_type="writer" parent_index="249">10.000738s</paragraph>
+ <paragraph index="305" node_type="writer" parent_index="249">155</paragraph>
+ <paragraph index="308" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="311" node_type="writer" parent_index="249">0.000%</paragraph>
+ <paragraph index="314" node_type="writer" parent_index="249">3s</paragraph>
+ <paragraph index="317" node_type="writer" parent_index="249">1</paragraph>
+ <paragraph index="320" node_type="writer" parent_index="249">3s</paragraph>
+ <paragraph index="323" node_type="writer" parent_index="249">3.000265s</paragraph>
+ <paragraph index="326" node_type="writer" parent_index="249">2.999798s</paragraph>
+ <paragraph index="329" node_type="writer" parent_index="249">3.000808s</paragraph>
+ <paragraph index="332" node_type="writer" parent_index="249">518</paragraph>
+ <paragraph index="335" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="338" node_type="writer" parent_index="249">0.000%</paragraph>
+ <paragraph index="341" node_type="writer" parent_index="249">1s</paragraph>
+ <paragraph index="344" node_type="writer" parent_index="249">2</paragraph>
+ <paragraph index="347" node_type="writer" parent_index="249">1s</paragraph>
+ <paragraph index="350" node_type="writer" parent_index="249">1.000031s</paragraph>
+ <paragraph index="353" node_type="writer" parent_index="249">0.999822s</paragraph>
+ <paragraph index="356" node_type="writer" parent_index="249">1.002054s</paragraph>
+ <paragraph index="359" node_type="writer" parent_index="249">1555</paragraph>
+ <paragraph index="362" node_type="writer" parent_index="249">2</paragraph>
+ <paragraph index="365" node_type="writer" parent_index="249">0.004%</paragraph>
+ <paragraph index="368" node_type="writer" parent_index="249">200ms</paragraph>
+ <paragraph index="371" node_type="writer" parent_index="249">3</paragraph>
+ <paragraph index="374" node_type="writer" parent_index="249">200ms</paragraph>
+ <paragraph index="377" node_type="writer" parent_index="249">200.046ms</paragraph>
+ <paragraph index="380" node_type="writer" parent_index="249">199.769ms</paragraph>
+ <paragraph index="383" node_type="writer" parent_index="249">201.699ms</paragraph>
+ <paragraph index="386" node_type="writer" parent_index="249">7775</paragraph>
+ <paragraph index="389" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="392" node_type="writer" parent_index="249">0.001%</paragraph>
+ <paragraph index="395" node_type="writer" parent_index="249">100ms</paragraph>
+ <paragraph index="398" node_type="writer" parent_index="249">4</paragraph>
+ <paragraph index="401" node_type="writer" parent_index="249">100ms</paragraph>
+ <paragraph index="404" node_type="writer" parent_index="249">99.994ms</paragraph>
+ <paragraph index="407" node_type="writer" parent_index="249">99.745ms</paragraph>
+ <paragraph index="410" node_type="writer" parent_index="249">103.087ms</paragraph>
+ <paragraph index="413" node_type="writer" parent_index="249">15547</paragraph>
+ <paragraph index="416" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="419" node_type="writer" parent_index="249">0.003%</paragraph>
+ <paragraph index="422" node_type="writer" parent_index="249">50ms</paragraph>
+ <paragraph index="425" node_type="writer" parent_index="249">5</paragraph>
+ <paragraph index="428" node_type="writer" parent_index="249">50ms</paragraph>
+ <paragraph index="431" node_type="writer" parent_index="249">49.937ms</paragraph>
+ <paragraph index="434" node_type="writer" parent_index="249">49.749ms</paragraph>
+ <paragraph index="437" node_type="writer" parent_index="249">52.764ms</paragraph>
+ <paragraph index="440" node_type="writer" parent_index="249">31083</paragraph>
+ <paragraph index="443" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="446" node_type="writer" parent_index="249">0.010%</paragraph>
+ <paragraph index="449" node_type="writer" parent_index="249">20ms</paragraph>
+ <paragraph index="452" node_type="writer" parent_index="249">6</paragraph>
+ <paragraph index="455" node_type="writer" parent_index="249">20ms</paragraph>
+ <paragraph index="458" node_type="writer" parent_index="249">19.953ms</paragraph>
+ <paragraph index="461" node_type="writer" parent_index="249">19.744ms</paragraph>
+ <paragraph index="464" node_type="writer" parent_index="249">22.160ms</paragraph>
+ <paragraph index="467" node_type="writer" parent_index="249">77657</paragraph>
+ <paragraph index="470" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="473" node_type="writer" parent_index="249">0.020%</paragraph>
+ <paragraph index="476" node_type="writer" parent_index="249">10ms</paragraph>
+ <paragraph index="479" node_type="writer" parent_index="249">7</paragraph>
+ <paragraph index="482" node_type="writer" parent_index="249">10ms</paragraph>
+ <paragraph index="485" node_type="writer" parent_index="249">9.996ms</paragraph>
+ <paragraph index="488" node_type="writer" parent_index="249">9.743ms</paragraph>
+ <paragraph index="491" node_type="writer" parent_index="249">12.555ms</paragraph>
+ <paragraph index="494" node_type="writer" parent_index="249">155273</paragraph>
+ <paragraph index="497" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="500" node_type="writer" parent_index="249">0.043%</paragraph>
+ <paragraph index="503" node_type="writer" parent_index="249">5ms</paragraph>
+ <paragraph index="506" node_type="writer" parent_index="249">8</paragraph>
+ <paragraph index="509" node_type="writer" parent_index="249">5ms</paragraph>
+ <paragraph index="512" node_type="writer" parent_index="249">5.028ms</paragraph>
+ <paragraph index="515" node_type="writer" parent_index="249">4.743ms</paragraph>
+ <paragraph index="518" node_type="writer" parent_index="249">7.809ms</paragraph>
+ <paragraph index="521" node_type="writer" parent_index="249">310276</paragraph>
+ <paragraph index="524" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="527" node_type="writer" parent_index="249">0.062%</paragraph>
+ <paragraph index="530" node_type="writer" parent_index="249">2ms</paragraph>
+ <paragraph index="533" node_type="writer" parent_index="249">9</paragraph>
+ <paragraph index="536" node_type="writer" parent_index="249">2ms</paragraph>
+ <paragraph index="539" node_type="writer" parent_index="249">2.022ms</paragraph>
+ <paragraph index="542" node_type="writer" parent_index="249">1.708ms</paragraph>
+ <paragraph index="545" node_type="writer" parent_index="249">3.533ms</paragraph>
+ <paragraph index="548" node_type="writer" parent_index="249">792271</paragraph>
+ <paragraph index="551" node_type="writer" parent_index="249">0</paragraph>
+ <paragraph index="554" node_type="writer" parent_index="249">0.379%</paragraph>
+ <paragraph index="557" node_type="writer">User tasks CPU load = 0.52%
+Refresh</paragraph>
+ <paragraph index="560" node_type="writer">Exemple de page « Bloc &amp; Output list »</paragraph>
+ <paragraph index="561" node_type="writer">Target: jbar-HLYL-WXX9 (ip:192.168.5.58)</paragraph>
+ <object index="562" name="Tableau3" object_type="table"/>
+ <paragraph index="564" node_type="writer" parent_index="562">Menu</paragraph>
+ <paragraph index="567" node_type="writer" parent_index="562">Task list
+Bloc &amp; Output list
+Connexions
+print list_compiled
+print list_threads</paragraph>
+ <object index="571" name="Tableau4" object_type="table"/>
+ <paragraph index="573" node_type="writer" parent_index="571">bloc list</paragraph>
+ <paragraph index="576" node_type="writer" parent_index="571">bloc
+name</paragraph>
+ <paragraph index="579" node_type="writer" parent_index="571">status</paragraph>
+ <paragraph index="582" node_type="writer" parent_index="571">order</paragraph>
+ <paragraph index="591" node_type="writer" parent_index="571">shift A</paragraph>
+ <paragraph index="594" node_type="writer" parent_index="571">shift B</paragraph>
+ <paragraph index="603" node_type="writer" parent_index="571">call2loops</paragraph>
+ <paragraph index="606" node_type="writer" parent_index="571">Pending</paragraph>
+ <paragraph index="609" node_type="writer" parent_index="571">Running</paragraph>
+ <paragraph index="612" node_type="writer" parent_index="571"> Stop  Initialize  HotSwap </paragraph>
+ <object index="619" name="Tableau5" object_type="table"/>
+ <paragraph index="621" node_type="writer" parent_index="619">bloc output list</paragraph>
+ <paragraph index="624" node_type="writer" parent_index="619">bloc</paragraph>
+ <paragraph index="627" node_type="writer" parent_index="619">output</paragraph>
+ <paragraph index="630" node_type="writer" parent_index="619">status</paragraph>
+ <paragraph index="633" node_type="writer" parent_index="619">task</paragraph>
+ <paragraph index="636" node_type="writer" parent_index="619">name</paragraph>
+ <paragraph index="639" node_type="writer" parent_index="619">shift</paragraph>
+ <paragraph index="642" node_type="writer" parent_index="619">building time (yyyy/mm/dd)</paragraph>
+ <paragraph index="645" node_type="writer" parent_index="619">name</paragraph>
+ <paragraph index="648" node_type="writer" parent_index="619">id</paragraph>
+ <paragraph index="651" node_type="writer" parent_index="619">value</paragraph>
+ <paragraph index="654" node_type="writer" parent_index="619">validity</paragraph>
+ <paragraph index="660" node_type="writer" parent_index="619">name</paragraph>
+ <paragraph index="663" node_type="writer" parent_index="619">id</paragraph>
+ <paragraph index="666" node_type="writer" parent_index="619">call2loops</paragraph>
+ <paragraph index="669" node_type="writer" parent_index="619">A</paragraph>
+ <paragraph index="672" node_type="writer" parent_index="619">2025/07/30 - 18:19:10</paragraph>
+ <paragraph index="675" node_type="writer" parent_index="619">out_1</paragraph>
+ <paragraph index="678" node_type="writer" parent_index="619">5</paragraph>
+ <paragraph index="681" node_type="writer" parent_index="619">...</paragraph>
+ <paragraph index="684" node_type="writer" parent_index="619">...</paragraph>
+ <paragraph index="687" node_type="writer" parent_index="619">Down</paragraph>
+ <paragraph index="690" node_type="writer" parent_index="619">1s</paragraph>
+ <paragraph index="693" node_type="writer" parent_index="619">2</paragraph>
+ <paragraph index="696" node_type="writer" parent_index="619">call2loops</paragraph>
+ <paragraph index="699" node_type="writer" parent_index="619">A</paragraph>
+ <paragraph index="702" node_type="writer" parent_index="619">2025/07/30 - 18:19:10</paragraph>
+ <paragraph index="705" node_type="writer" parent_index="619">out_1</paragraph>
+ <paragraph index="708" node_type="writer" parent_index="619">10</paragraph>
+ <paragraph index="711" node_type="writer" parent_index="619">...</paragraph>
+ <paragraph index="714" node_type="writer" parent_index="619">...</paragraph>
+ <paragraph index="717" node_type="writer" parent_index="619">Down</paragraph>
+ <paragraph index="720" node_type="writer" parent_index="619">1s</paragraph>
+ <paragraph index="723" node_type="writer" parent_index="619">2</paragraph>
+ <paragraph index="726" node_type="writer" parent_index="619">call2loops</paragraph>
+ <paragraph index="729" node_type="writer" parent_index="619">B</paragraph>
+ <paragraph index="732" node_type="writer" parent_index="619">2025/07/30 - 18:25:40</paragraph>
+ <paragraph index="735" node_type="writer" parent_index="619">out_1</paragraph>
+ <paragraph index="738" node_type="writer" parent_index="619">5</paragraph>
+ <paragraph index="741" node_type="writer" parent_index="619">1303</paragraph>
+ <paragraph index="744" node_type="writer" parent_index="619">😊</paragraph>
+ <paragraph index="747" node_type="writer" parent_index="619">Running</paragraph>
+ <paragraph index="750" node_type="writer" parent_index="619">1s</paragraph>
+ <paragraph index="753" node_type="writer" parent_index="619">2</paragraph>
+ <paragraph index="756" node_type="writer" parent_index="619">call2loops</paragraph>
+ <paragraph index="759" node_type="writer" parent_index="619">B</paragraph>
+ <paragraph index="762" node_type="writer" parent_index="619">2025/07/30 - 18:25:40</paragraph>
+ <paragraph index="765" node_type="writer" parent_index="619">out_1</paragraph>
+ <paragraph index="768" node_type="writer" parent_index="619">10</paragraph>
+ <paragraph index="771" node_type="writer" parent_index="619">6515</paragraph>
+ <paragraph index="774" node_type="writer" parent_index="619">😊</paragraph>
+ <paragraph index="777" node_type="writer" parent_index="619">Running</paragraph>
+ <paragraph index="780" node_type="writer" parent_index="619">1s</paragraph>
+ <paragraph index="783" node_type="writer" parent_index="619">2</paragraph>
+ <paragraph index="786" node_type="writer">Refresh</paragraph>
+ <paragraph index="789" node_type="writer">Exemple de page « Connexions »</paragraph>
+ <paragraph index="790" node_type="writer">Target: jbar-HLYL-WXX9 (ip:192.168.5.58)</paragraph>
+ <object index="791" name="Tableau6" object_type="table"/>
+ <paragraph index="793" node_type="writer" parent_index="791">Menu</paragraph>
+ <paragraph index="796" node_type="writer" parent_index="791">Task list
+Bloc &amp; Output list
+Connexions
+print list_compiled
+print list_threads</paragraph>
+ <object index="800" name="Tableau7" object_type="table"/>
+ <paragraph index="802" node_type="writer" parent_index="800">HTTP protocol</paragraph>
+ <paragraph index="805" node_type="writer" parent_index="800">...</paragraph>
+ <paragraph index="808" node_type="writer" parent_index="800">@ip</paragraph>
+ <paragraph index="811" node_type="writer" parent_index="800">port</paragraph>
+ <paragraph index="814" node_type="writer" parent_index="800">Host name</paragraph>
+ <paragraph index="817" node_type="writer" parent_index="800">Server</paragraph>
+ <paragraph index="820" node_type="writer" parent_index="800">192.168.5.58</paragraph>
+ <paragraph index="823" node_type="writer" parent_index="800">80</paragraph>
+ <paragraph index="826" node_type="writer" parent_index="800">jbar-HLYL-WXX9</paragraph>
+ <paragraph index="829" node_type="writer" parent_index="800">Last Client</paragraph>
+ <paragraph index="832" node_type="writer" parent_index="800">192.168.122.1</paragraph>
+ <paragraph index="835" node_type="writer" parent_index="800">39032</paragraph>
+ <paragraph index="838" node_type="writer" parent_index="800">Jbar-HLYL-WXX9</paragraph>
+ <object index="842" name="Tableau8" object_type="table"/>
+ <paragraph index="844" node_type="writer" parent_index="842">TCP/IP protocol</paragraph>
+ <paragraph index="847" node_type="writer" parent_index="842">...</paragraph>
+ <paragraph index="850" node_type="writer" parent_index="842">@ip</paragraph>
+ <paragraph index="853" node_type="writer" parent_index="842">port</paragraph>
+ <paragraph index="856" node_type="writer" parent_index="842">server</paragraph>
+ <paragraph index="859" node_type="writer" parent_index="842">192.168.5.58</paragraph>
+ <paragraph index="862" node_type="writer" parent_index="842">8000</paragraph>
+ <paragraph index="865" node_type="writer" parent_index="842">client[0]</paragraph>
+ <paragraph index="868" node_type="writer" parent_index="842">192.168.122.1</paragraph>
+ <paragraph index="871" node_type="writer" parent_index="842">49062</paragraph>
+ <paragraph index="874" node_type="writer">Refresh</paragraph>
+ <object name="Cadre de texte 8" alt="" object_type="shape" description=""/>
+ <paragraph index="0" node_type="common" object_name="Cadre de texte 8">Figure 1 : Architecture générale</paragraph>
+</indexing>

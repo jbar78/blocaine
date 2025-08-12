@@ -1699,13 +1699,13 @@ def menu_bar():
     edit_menubar = Menu(menubar)
     menubar.add_cascade(label = "Edit", menu = edit_menubar)
     edit_menubar.add_command(label = "Auto layout [F7]", command = routage)
-    edit_menubar.add_command(label = "Monitoring (Start/Stop) [Space]", command = flip_monitoring)
-    edit_menubar.add_command(label = "Statusbar (show/hide)", command = status_bar)
+    #edit_menubar.add_command(label = "Monitoring (Start/Stop) [Space]", command = flip_monitoring)
+    edit_menubar.add_command(label = "Status bar (show/hide)", command = status_bar)
     #-------------------------
     help_menubar = Menu(menubar)
     menubar.add_cascade(label = "Help", menu = help_menubar)
     help_version_menubar = Menu(help_menubar)
-    help_menubar.add_cascade(label = "Version", menu = help_version_menubar)
+    help_menubar.add_cascade(label = "Versions", menu = help_version_menubar)
     help_version_menubar.add_command(label = "bloc editor: Version 1.1")
     help_version_menubar.add_command(label = f"bloc structure: Version {bloc.header['structure_version']}")
     help_mouse_menubar = Menu(help_menubar)
@@ -1736,11 +1736,12 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Reset draw", command = bloc.c_bloc_erase_draw)
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
+    doc_txt  = 'General Documentation'
     doc_file = 'Documentation/Documentation_générale.html'
     if sys.platform == "linux":
-        help_menubar.add_command(label = "Documentation", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
+        help_menubar.add_command(label = doc_txt, command = lambda: subprocess.Popen(['xdg-open', doc_file]))
     else:
-        help_menubar.add_command(label = "Documentation", command = lambda: os.startfile(doc_file))
+        help_menubar.add_command(label = doc_txt, command = lambda: os.startfile(doc_file))
     help_menubar.add_separator()
     help_menubar.add_command(label = "Debug: print bloc", command = lambda: bloc.c_bloc_print())
     help_menubar.add_command(label = "Debug: print list_compiled", command = lambda: print_exeblocs())
@@ -1782,6 +1783,9 @@ def menu_target():
             target_menubar.add_command(label = "Check & Transfer <"+bloc.header['name']+">", command = lambda: set_compile_thread("transfer"))
             #print (proc_name, "ajout Transfer & exécution")
             target_menubar.add_command(label = "Check, Transfer & Execute <"+bloc.header['name']+">", command = lambda: set_compile_thread("execute"))
+            target_menubar.add_separator()
+            target_menubar.add_command(label = "Monitoring (Start/Stop) [Space]", command = flip_monitoring)
+
 def menu_header(event, elem):
     """construit le menu lié à un entête de bloc"""
     global menu_contextuel, list_threads
