@@ -2452,36 +2452,6 @@ def compile_bloc(pbloc, porder):
                         print (proc_name, f"ERROR: aucun bloc ne pointe vers ce USER bloc")
         print(proc_name, "fin")
 
-    def monitoring_user_liensxxx (pexebloc):
-        """ cré des liens pour le monitonring des io des bloc USER """
-        proc_name = "monitoring_user_liens: "
-        for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" 1) boucle_lien[{i}]: elem scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
-            if esubloc.c_exesubloc_user_type ():
-                print (proc_name, f" 1) boucle_lien[{i}]: c'est un bloc USER: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
-                for j, input in enumerate(esubloc.inputs):
-                    print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']})")
-                    if 'lien' in input:
-                        print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   lien={input['lien']})")
-                        input['monitoring_type'] = "out"
-                        input['monitoring_bloc_index'], input['monitoring_io_index'] = find_index_of_lien(pexebloc, esubloc.parent_ids, input['lien']) 
-                    else:
-                        print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   PAS de lien)")
-                for k, output in enumerate(esubloc.outputs):
-                    print (proc_name, f"boucle_outputs[{k}]  (name<{output['name']}>,  id={output['id']})")
-                    for ii, esubloc2 in enumerate(pexebloc.sublocs):
-                        print (proc_name, f" boucle_recherche bloc scruté:   esubloc2[{ii}]: elem scruté: name<{esubloc2.header['name']}>  id={esubloc2.header['id']}")
-                        for jj, input2 in enumerate(esubloc2.inputs):
-                            if 'lien' in input2:
-                                print (proc_name, f"boucle_inputs2[{jj}] lien trouvé (name<{input2['name']}>,  id={input2['id']},   lien={input2['lien']})")
-                                if esubloc.header['id'] == input2['lien']['id_parent'] and output['id'] == input2['lien']['id_io']:
-                                    print (proc_name, f"boucle_inputs2[{jj}] pointe (name<{input2['name']}>,  id={input2['id']},   lien={input2['lien']})")
-                                    if esubloc.parent_ids == esubloc2.parent_ids:
-                                        print(proc_name, f"TROUVé affectation monitoring,  bloc{ii},  output{jj}")
-                                        output['monitoring_type'] = "in"
-                                        output['monitoring_bloc_index'] = ii
-                                        output['monitoring_io_index']   = jj
-
     global compile_level
     proc_name = "compile_bloc: "
     print (proc_name, "------------------------------------------------début - BLOC éditabel")
