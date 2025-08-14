@@ -35,6 +35,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_DIV:          procedure= c_exesubloc_div
     elif psubloc.header['name'] == PARAM_NAME_BLOC_MINMAX:       procedure= c_exesubloc_minmax
     elif psubloc.header['name'] == PARAM_NAME_BLOC_CONST_PI:     procedure= c_exesubloc_const_pi
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_MEMORY:       procedure= c_exesubloc_memory
     else:
         print (proc_name, " ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -61,7 +62,7 @@ def c_exesubloc_output (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " OUTPUT retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " OUTPUT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_input (pebloc, pieb, pio, pcounter):
@@ -86,7 +87,7 @@ def c_exesubloc_input (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " INPUT retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " INPUT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_previous (pebloc, pieb, pio, pcounter):
@@ -112,7 +113,7 @@ def c_exesubloc_previous (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " PREVIOUS retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " PREVIOUS retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_select (pebloc, pieb, pio, pcounter):
@@ -147,7 +148,7 @@ def c_exesubloc_select (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " SELECT retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " SELECT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_validRead (pebloc, pieb, pio, pcounter):
@@ -170,7 +171,7 @@ def c_exesubloc_validRead (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " VALIREAD retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " VALIREAD retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_validWrite (pebloc, pieb, pio, pcounter):
@@ -193,7 +194,7 @@ def c_exesubloc_validWrite (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " VALIDWRITE retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " VALIDWRITE retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_dt (pebloc, pieb, pio, pcounter):
@@ -224,10 +225,9 @@ def c_exesubloc_dt (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[pio]['valide'] = False
-    if debug_blocs: print (trace_txt, " DT retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " DT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
-
 def c_exesubloc_comp (pebloc, pieb, pio, pcounter):
     """ exécution du bloc COMPARE (dans la boucler écurcive)"""
     global exec_level
@@ -251,7 +251,7 @@ def c_exesubloc_comp (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " COMP retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " COMP retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_and (pebloc, pieb, pio, pcounter):
@@ -275,7 +275,7 @@ def c_exesubloc_and (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " AND retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " AND retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_or (pebloc, pieb, pio, pcounter):
@@ -299,7 +299,7 @@ def c_exesubloc_or (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " OR retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " OR retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_not (pebloc, pieb, pio, pcounter):
@@ -323,7 +323,7 @@ def c_exesubloc_not (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " NOT retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " NOT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_edge (pebloc, pieb, pio, pcounter):
@@ -350,10 +350,9 @@ def c_exesubloc_edge (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " EDGE retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " EDGE retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
-
 def c_exesubloc_cablin (pebloc, pieb, pio, pcounter):
     """ exécution du bloc CABLIN (dans la boucle récurcive)"""
     global exec_level
@@ -375,7 +374,7 @@ def c_exesubloc_cablin (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " CABLIN retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " CABLIN retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_cablout (pebloc, pieb, pio, pcounter):
@@ -400,10 +399,9 @@ def c_exesubloc_cablout (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (proc_name, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " CABLOUT retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " CABLOUT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
-
 def c_exesubloc_add (pebloc, pieb, pio, pcounter):
     """ exécution du bloc ADDITION (dans la boucler écurcive)"""
     global exec_level
@@ -426,7 +424,7 @@ def c_exesubloc_add (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " ADD retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " ADD retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_sub (pebloc, pieb, pio, pcounter):
@@ -450,7 +448,7 @@ def c_exesubloc_sub (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " SUB retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " SUB retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_mult (pebloc, pieb, pio, pcounter):
@@ -474,7 +472,7 @@ def c_exesubloc_mult (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " MUL retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " MUL retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_div (pebloc, pieb, pio, pcounter):
@@ -498,7 +496,7 @@ def c_exesubloc_div (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " DIV retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " DIV retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_minmax (pebloc, pieb, pio, pcounter):
@@ -523,7 +521,7 @@ def c_exesubloc_minmax (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " MINMAX retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " MINMAX retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_const_pi (pebloc, pieb, pio, pcounter):
@@ -545,6 +543,38 @@ def c_exesubloc_const_pi (pebloc, pieb, pio, pcounter):
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
-    if debug_blocs: print (trace_txt, " CONST_PI retourne l'outout [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    if debug_blocs: print (trace_txt, " CONST_PI retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    exec_level -=1
+    return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+def c_exesubloc_memory (pebloc, pieb, pio, pcounter):
+    """ exécution du bloc bascule RS (dans la boucle récurcive)"""
+    global exec_level
+    SET=0
+    RESET=1
+    RESET_PRIORITAIRE=2
+    exec_level +=1
+    cesubloc = pebloc.sublocs[pieb]
+    if debug_blocs:
+        trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
+        print (trace_txt, "début MEMORY les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
+    if cesubloc.header['counter'] == pcounter:
+        if debug_blocs: print (trace_txt, "  cesubloc['counter'] == pcounter: =", pcounter, "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pcounter
+        try:
+            #print ("début MEMORY les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
+            pebloc.c_exebloc_recup_input(pieb, pcounter, 0)
+            cesubloc.c_exesubloc_validation_standard()
+
+            if cesubloc.inputs[SET]['var'] and (not cesubloc.inputs[RESET_PRIORITAIRE]['var'] or not cesubloc.inputs[RESET]['var']):
+                cesubloc.outputs[0]['var'] = True
+
+            if cesubloc.inputs[RESET]['var'] and (cesubloc.inputs[RESET_PRIORITAIRE]['var']  or not cesubloc.inputs[SET]['var']):
+                cesubloc.outputs[0]['var'] = False
+        except:
+            trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
+            print (trace_txt, PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[0]['valide'] = False
+    if debug_blocs: print (trace_txt, " MEMORY retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
