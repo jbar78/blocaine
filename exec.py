@@ -54,7 +54,6 @@ def c_exesubloc_output (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         if True: #try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
@@ -79,7 +78,6 @@ def c_exesubloc_input (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
@@ -106,7 +104,6 @@ def c_exesubloc_previous (pebloc, pieb, pio, pcounter):
         try:
             if pio != 1: # la pate (n-1) est morte! (elle ne gérére pas l'éxecution du bloc)
                 pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-                #c_exesubloc_validation_standard(pebloc, pieb)
                 cesubloc.c_exesubloc_validation_standard()
 
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] # n
@@ -245,7 +242,6 @@ def c_exesubloc_comp (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] >  cesubloc.inputs[1]['var']
@@ -272,7 +268,6 @@ def c_exesubloc_and (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] and cesubloc.inputs[1]['var']
@@ -297,7 +292,6 @@ def c_exesubloc_or (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] or cesubloc.inputs[1]['var']
@@ -322,7 +316,6 @@ def c_exesubloc_not (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = not cesubloc.inputs[0]['var']
@@ -348,9 +341,6 @@ def c_exesubloc_edge (pebloc, pieb, pio, pcounter):
         try:
             #print ("début EDGE les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
             pebloc.c_exebloc_recup_input(pieb, pcounter, 0)
-            #cesubloc.outputs[0]['var']=True
-            #cesubloc.outputs[1]['var']=True
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = (cesubloc.inputs[1]['var'] and      cesubloc.inputs[0]['var']  and not cesubloc.outputs[1]['var'])\
@@ -428,7 +418,6 @@ def c_exesubloc_add (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] + cesubloc.inputs[1]['var']
@@ -454,7 +443,6 @@ def c_exesubloc_sub (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] - cesubloc.inputs[1]['var']
@@ -479,7 +467,6 @@ def c_exesubloc_mult (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] * cesubloc.inputs[1]['var']
@@ -504,7 +491,6 @@ def c_exesubloc_div (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] / cesubloc.inputs[1]['var']
@@ -529,7 +515,6 @@ def c_exesubloc_minmax (pebloc, pieb, pio, pcounter):
         cesubloc.header['counter'] = pcounter
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pcounter)
-            #c_exesubloc_validation_standard(pebloc, pieb)
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = max(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
