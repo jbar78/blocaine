@@ -36,6 +36,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_MINMAX:       procedure= c_exesubloc_minmax
     elif psubloc.header['name'] == PARAM_NAME_BLOC_CONST_PI:     procedure= c_exesubloc_const_pi
     elif psubloc.header['name'] == PARAM_NAME_BLOC_MEMORY:       procedure= c_exesubloc_memory
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_DELAY:        procedure= c_exesubloc_delay
     else:
         print (proc_name, " ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -119,31 +120,34 @@ def c_exesubloc_previous (pebloc, pieb, pio, pcounter):
 def c_exesubloc_select (pebloc, pieb, pio, pcounter):
     """ exécution du bloc SELECTION (dans la boucler écurcive)"""
     global exec_level
+    #les index IOs
+    #I_GATE=0
+    #I_IF0=1
+    #I_IF1=2
+    #O_OUT
     exec_level +=1
     cesubloc = pebloc.sublocs[pieb]
     if debug_blocs:
         trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
         print (trace_txt, "début SELECT les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
-    INDEX_GATE=0
-    INDEX_IF0=1
-    INDEX_IF1=2
+    
     if cesubloc.header['counter'] == pcounter:
         if debug_blocs: print (trace_txt, "  cesubloc['counter'] == pcounter: =", pcounter, "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pcounter
         try:
-            pebloc.c_exebloc_recup_input (pieb, pcounter, INDEX_GATE)
+            pebloc.c_exebloc_recup_input (pieb, pcounter, 0)
             #if PARAM_DEBUG: print (trace_txt, "  GATE: input[0]['var']=", cesubloc.inputs[0]['var'], "   input[0]['valide']=", cesubloc.inputs[0]['valide'])
-            if cesubloc.inputs[INDEX_GATE]['var']:
-                pebloc.c_exebloc_recup_input (pieb, pcounter, INDEX_IF1)
+            if cesubloc.inputs[0]['var']:
+                pebloc.c_exebloc_recup_input (pieb, pcounter, 2)
                 #if PARAM_DEBUG: print (trace_txt, "  IF1: input[2]['var']=", cesubloc.inputs[2]['var'], "   input[2]['valide']=", cesubloc.inputs[2]['valide'])
-                cesubloc.outputs[0]['valide'] = cesubloc.inputs[INDEX_GATE]['valide'] and cesubloc.inputs[INDEX_IF1]['valide']
-                cesubloc.outputs[0]['var']    = cesubloc.inputs[INDEX_IF1]['var']
+                cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[2]['valide']
+                cesubloc.outputs[0]['var']    = cesubloc.inputs[2]['var']
             else:
-                pebloc.c_exebloc_recup_input (pieb, pcounter, INDEX_IF0)
+                pebloc.c_exebloc_recup_input (pieb, pcounter, 1)
                 #if PARAM_DEBUG: print (trace_txt, "  IF0: input[1]['var']=", cesubloc.inputs[1]['var'], "   input[1]['valide']=", cesubloc.inputs[1]['valide'])
-                cesubloc.outputs[0]['valide'] = cesubloc.inputs[INDEX_GATE]['valide'] and cesubloc.inputs[INDEX_IF0]['valide']
-                cesubloc.outputs[0]['var']    = cesubloc.inputs[INDEX_IF0]['var']
+                cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
+                cesubloc.outputs[0]['var']    = cesubloc.inputs[1]['var']
         except:
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
@@ -329,6 +333,12 @@ def c_exesubloc_not (pebloc, pieb, pio, pcounter):
 def c_exesubloc_edge (pebloc, pieb, pio, pcounter):
     """ exécution du bloc détection de fronts (dans la boucle récurcive)"""
     global exec_level
+    # les index des IOs
+    #I_IN = 0
+    #I_RISE = 1
+    #I_FALL = 2
+    #O_OUT = 0
+    #O_IN_NM1 = 1
     exec_level +=1
     cesubloc = pebloc.sublocs[pieb]
     if debug_blocs:
@@ -549,9 +559,11 @@ def c_exesubloc_const_pi (pebloc, pieb, pio, pcounter):
 def c_exesubloc_memory (pebloc, pieb, pio, pcounter):
     """ exécution du bloc bascule RS (dans la boucle récurcive)"""
     global exec_level
-    SET=0
-    RESET=1
-    RESET_PRIORITAIRE=2
+    # les index des IOs
+    #I_SET = 0
+    #I_RESET = 1
+    #I_RESET_PRIORITAIRE = 2
+    #O_OUT = 0
     exec_level +=1
     cesubloc = pebloc.sublocs[pieb]
     if debug_blocs:
@@ -566,15 +578,77 @@ def c_exesubloc_memory (pebloc, pieb, pio, pcounter):
             pebloc.c_exebloc_recup_input(pieb, pcounter, 0)
             cesubloc.c_exesubloc_validation_standard()
 
-            if cesubloc.inputs[SET]['var'] and (not cesubloc.inputs[RESET_PRIORITAIRE]['var'] or not cesubloc.inputs[RESET]['var']):
+            if cesubloc.inputs[0]['var'] and (not cesubloc.inputs[2]['var'] or not cesubloc.inputs[1]['var']):
                 cesubloc.outputs[0]['var'] = True
 
-            if cesubloc.inputs[RESET]['var'] and (cesubloc.inputs[RESET_PRIORITAIRE]['var']  or not cesubloc.inputs[SET]['var']):
+            if cesubloc.inputs[1]['var'] and (cesubloc.inputs[2]['var']  or not cesubloc.inputs[0]['var']):
                 cesubloc.outputs[0]['var'] = False
         except:
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             print (trace_txt, PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
     if debug_blocs: print (trace_txt, " MEMORY retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    exec_level -=1
+    return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+def c_exesubloc_delay (pebloc, pieb, pio, pcounter):
+    """ exécution du bloc retard à la montée et à la descente (dans la boucle récurcive)"""
+    global exec_level
+    # les index des IO
+    I_IN = 0
+    I_RISE = 1
+    I_FALL = 2
+    I_DELAY_RISE = 3
+    I_DELAY_FALL = 4
+    O_OUT = 0
+    O_IN_NM1 = 1
+    O_RT_RISE = 2 #remening time
+    O_RT_FALL = 3 #remening time
+    dt = 1
+    exec_level +=1
+    cesubloc = pebloc.sublocs[pieb]
+    if debug_blocs:
+        trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
+        print (trace_txt, "début DELAY les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
+    if cesubloc.header['counter'] == pcounter:
+        if debug_blocs: print (trace_txt, "  cesubloc['counter'] == pcounter: =", pcounter, "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pcounter
+        try:
+            #print ("début MEMORY les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pcounter)
+            pebloc.c_exebloc_recup_input(pieb, pcounter, 0)
+            cesubloc.c_exesubloc_validation_standard()
+
+            if cesubloc.inputs[I_RISE]['var']: 
+                if  (cesubloc.inputs[I_RISE]['var'] and      cesubloc.inputs[I_IN]['var']  and not cesubloc.outputs[O_IN_NM1]['var']):
+                    cesubloc.outputs[O_RT_RISE]['var'] = cesubloc.inputs[I_DELAY_RISE]['var']
+                if cesubloc.outputs[O_RT_RISE]['var'] > 0:
+                    cesubloc.outputs[O_RT_RISE]['var'] -= dt
+                    rise_delay_active = True
+                else:
+                    rise_delay_active =False
+            else:
+                rise_delay_active =False
+
+            if cesubloc.inputs[I_FALL]['var']:
+                if (cesubloc.inputs[I_FALL]['var'] and (not cesubloc.inputs[I_IN]['var']) and     cesubloc.outputs[O_IN_NM1]['var']):
+                    cesubloc.outputs[O_RT_FALL]['var'] = cesubloc.inputs[I_DELAY_FALL]['var']
+                if cesubloc.outputs[O_RT_FALL]['var'] > 0:
+                    cesubloc.outputs[O_RT_FALL]['var'] -= dt
+                    fall_delay_active = True
+                else:
+                    fall_delay_active =False
+            else:
+                fall_delay_active =False
+
+
+            cesubloc.outputs[O_OUT]['var'] = cesubloc.inputs[I_IN]['var'] and not rise_delay_active or fall_delay_active
+            cesubloc.outputs[O_IN_NM1]['var'] = cesubloc.inputs[I_IN]['var']
+
+
+        except:
+            trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
+            print (trace_txt, PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[0]['valide'] = False
+    if debug_blocs: print (trace_txt, " DELAY retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
