@@ -2,6 +2,7 @@
 
 # nom des blocs "system"
 PARAM_NAME_BLOC_DT = "dt"
+PARAM_NAME_BLOC_DT_TASK = "dt_task"
 PARAM_NAME_BLOC_OUTPUT = "output"
 PARAM_NAME_BLOC_INPUT = "input"
 PARAM_NAME_BLOC_PREVIOUS = "previous"

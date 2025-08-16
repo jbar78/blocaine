@@ -21,7 +21,8 @@ def motor(pthread):
             if exe['run']:
                 cesubloc = exe['exebloc'].sublocs[exe['iesubloc']]
                 #print (proc_name, "BLOC<"+exe['exebloc'].header['name']+"> /"+exe['exebloc'].header['AB'])
-                result = cesubloc.header['procedure'](exe['exebloc'], exe['iesubloc'], 0, pthread['counter'] ) #### appel procédure liée au bloc ####
+                #print (proc_name, "début---Periode="+str(pthread['period'])+"(s)---Counter="+str(pthread['counter']))
+                result = cesubloc.header['procedure'](exe['exebloc'], exe['iesubloc'], 0, pthread ) #### appel procédure liée au bloc ####
 
         if FLAG_PRINT_OUTPUTS:
             for i, exe in enumerate(pthread['list_exe']):

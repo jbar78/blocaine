@@ -42,7 +42,7 @@ class c_exebloc:
                     print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                     return i
         print (proc_name, f"ERROR: id not found in exebloc,  id={pid}, ids={pparent_ids}")
-    def c_exebloc_recup_input (self, pieb, pcounter, piei):
+    def c_exebloc_recup_input (self, pieb, pthread, piei):
         """affecte un input en appelant le bloc parent (dans la boucle récurcive)"""
         def c_exebloc_recup_defaut (ptrace_txt, pinput):
             """affecte un input avec les valeurs par défaut"""
@@ -61,11 +61,11 @@ class c_exebloc:
         input = cesubloc.inputs[piei]
         if debug_c_exe:
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
-            print (trace_txt, f"début RECUP_INPUT les paramètres sont:   piei={piei},   counter={pcounter}")
+            print (trace_txt, f"début RECUP_INPUT les paramètres sont:   piei={piei},   counter={pthread['counter']}")
         if 'lien_bloc_index' in input and 'lien_output_index' in input:
             if debug_c_exe: print (trace_txt, "  il y a un lien pour cette input[", piei, "]:  name<", input['name'], ">")
             nesubloc = self.sublocs[input['lien_bloc_index']]
-            input['var'], input['valide'] = nesubloc.header['procedure'](self, input['lien_bloc_index'], input['lien_output_index'], pcounter) #### appel procédure liée au bloc ####
+            input['var'], input['valide'] = nesubloc.header['procedure'](self, input['lien_bloc_index'], input['lien_output_index'], pthread) #### appel procédure liée au bloc ####
         else:
             if debug_c_exe: print (trace_txt, "  il n'y a pas de lien pour cette input[" + str(piei) + "]:  name<" + input['name'] + ">")
             else: trace_txt = ":"
@@ -75,14 +75,14 @@ class c_exebloc:
                 print (trace_txt, ": ERROR: input[", piei, "] can not be found")
                 input['valide'] = False
         if debug_c_exe: print (trace_txt, ": input[", piei, "], récupérée: var=", input['var'], "val=", input['valide'])
-    def c_exebloc_recup_inputs (self, pieb, pcounter):
+    def c_exebloc_recup_inputs (self, pieb, pthread):
         """affecte les inputs en appelant les blocs parents (dans la boucle récurcive)"""
         cesubloc = self.sublocs[pieb]
         if debug_c_exe:
             trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
             #print (trace_txt, "début:")
         for index_input, input in enumerate(cesubloc.inputs):
-            self.c_exebloc_recup_input (pieb, pcounter, index_input)
+            self.c_exebloc_recup_input (pieb, pthread, index_input)
         #print (proc_name, "fin")
     def c_exebloc_filtre_blocs_userxxx (self):
         """retourne la liste des bocs USER ou SYSTEM"""
