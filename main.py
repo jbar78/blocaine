@@ -322,9 +322,9 @@ class c_sublocs:
                         if 'memory' in io:
                             print(proc_name, ": récupération de memory")
                             sub_obj['memory']= io['memory']
-                            if 'inital_value' in io:
-                                print(proc_name, ": récupération de memory")
-                                sub_obj['initial_value']= io['initial_value']
+                        if 'initial_value' in io:
+                            print(proc_name, ": récupération de initial_value")
+                            sub_obj['initial_value']= io['initial_value']
                         ios.append(sub_obj)
         self.header = header
         self.ios = ios
@@ -1041,8 +1041,12 @@ def update_bloc(elem):
                 couple['initial_value'] = io['initial_value']
                 mem_initial_values.append(couple)
                 print (proc_name, "memo initial_value: couple=", couple)
-    #print (proc_name, "liste des liens \"in\"=", mem_liens_in)
-    #print (proc_name, "liste des liens \"out\"=", mem_liens_out)
+
+    print (proc_name, f"liste des liens_in={mem_liens_in}")
+    print (proc_name, f"liste des liens_out={mem_liens_out}")
+    print (proc_name, f"liste des local_names={mem_local_names}")
+    print (proc_name, f"liste des defaut_values={mem_defaut_values}")
+    print (proc_name, f"liste des initial_values={mem_initial_values}")
 
     updated_elem.header['id']= bloc_id
     bloc.header['last_id'] -= 1 #pas de nouvel id
@@ -1057,7 +1061,7 @@ def update_bloc(elem):
 
     #refaire les liens mémorisés
     for i, io in enumerate(elem.ios):
-        print (proc_name, "io boucle reconstruction liens: id=", io['id'], " type=", io['type'])
+        print (proc_name, f"io boucle[{i}] reconstruction liens: id={io['id']},  type={io['type']},  io={io}")
         if io['type']=='in':
             for lien in mem_liens_in:
                 if io['id'] == lien['id']:
