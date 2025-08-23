@@ -1587,6 +1587,13 @@ def find_bloc_under_event(event):
                                     print (proc_name, f" en y")
                                     return elem
     return None
+def doc_file_name (pelem):
+    if 'system' in pelem.header['key_word']:
+        txt_type = "system_"
+    else:
+        txt_type = "user_"
+    return "Documentation/bloc_"+txt_type+pelem.header['name']+".html"
+
 def event_key_F1(event):
     """callback: sur evenement"""
     global bloc, canvas
@@ -1594,7 +1601,7 @@ def event_key_F1(event):
     print (proc_name," arg=", event)
     elem = find_bloc_under_event(event)
     if elem != None:
-        doc_file = "Documentation/bloc_"+elem.header['name']+".html"
+        doc_file = doc_file_name (elem)
         if os.path.isfile(doc_file):
             print (proc_name, f"nom du fichier d'aide={doc_file}")
             if sys.platform == "linux":
@@ -1835,13 +1842,17 @@ def menu_header(event, elem):
         if pos_io < nbr_io:
             menu_contextuel.add_command(label = "move down", command = lambda: io_interface_move(elem, "down"))
     menu_contextuel.add_separator()
-    doc_file = "Documentation/bloc_"+elem.header['name']+".html"
+    doc_file = doc_file_name(elem)
+    #doc_file = "Documentation/bloc_"+elem.header['name']+".html"
     if os.path.isfile(doc_file):
         if sys.platform == "linux":
             menu_contextuel.add_command(label = "Documentation", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
         else:
             menu_contextuel.add_command(label = "Documentation", command = lambda: os.startfile(doc_file))
         menu_contextuel.add_separator()
+    else:
+        menu_contextuel.add_command(label = "Documentation not available")
+
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_header(event.x_root, event.y_root, elem, modification=0))#0
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
