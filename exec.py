@@ -643,12 +643,11 @@ def c_exesubloc_delay (pebloc, pieb, pio, pthread):
     global exec_level
     # les index des IO
     I_IN = 0
-    I_DELAY_RISE = 1
-    I_DELAY_FALL = 2
+    I_RISE = 1
+    I_DELAY = 2
     O_OUT = 0
-    O_RT_RISE = 1 #remening time
-    O_RT_FALL = 2 #remening time
-    O_IN_NM1 = 3
+    O_RT = 1 #remening time
+    O_IN_NM1 = 2
     exec_level +=1
     cesubloc = pebloc.sublocs[pieb]
     if debug_blocs:
@@ -662,34 +661,37 @@ def c_exesubloc_delay (pebloc, pieb, pio, pthread):
             pebloc.c_exebloc_recup_input(pieb, pthread, 0)
             #cesubloc.c_exesubloc_validation_standard()
 
-            if cesubloc.inputs[I_DELAY_RISE]['var'] > 0:
-                if  cesubloc.inputs[I_IN]['var'] and not cesubloc.outputs[O_IN_NM1]['var']:
-                    cesubloc.outputs[O_RT_RISE]['var'] = cesubloc.inputs[I_DELAY_RISE]['var']
-                if  not cesubloc.inputs[I_IN]['var']:
-                    cesubloc.outputs[O_RT_RISE]['var'] = 0                    
-                if cesubloc.outputs[O_RT_RISE]['var'] > 0:
-                    cesubloc.outputs[O_RT_RISE]['var'] -= pthread['cycle_time']
-                    rise_delay_active = True
+            if cesubloc.inputs[I_RISE]['var']:
+                if cesubloc.inputs[I_DELAY]['var'] > 0:
+                    if  cesubloc.inputs[I_IN]['var'] and not cesubloc.outputs[O_IN_NM1]['var']:
+                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_DELAY]['var']
+                    if  not cesubloc.inputs[I_IN]['var']:
+                        cesubloc.outputs[O_RT]['var'] = 0                    
+                    if cesubloc.outputs[O_RT]['var'] > 0:
+                        cesubloc.outputs[O_RT]['var'] -= pthread['cycle_time']
+                        rise_delay_active = True
+                    else:
+                        rise_delay_active = False
                 else:
                     rise_delay_active = False
+                fall_delay_active = False
             else:
-                rise_delay_active = False
-
-            if cesubloc.inputs[I_DELAY_FALL]['var'] > 0:
-                if (not cesubloc.inputs[I_IN]['var']) and cesubloc.outputs[O_IN_NM1]['var']:
-                    cesubloc.outputs[O_RT_FALL]['var'] = cesubloc.inputs[I_DELAY_FALL]['var']
-                if  cesubloc.inputs[I_IN]['var']:
-                    cesubloc.outputs[O_RT_FALL]['var'] = 0                    
-                if cesubloc.outputs[O_RT_FALL]['var'] > 0:
-                    cesubloc.outputs[O_RT_FALL]['var'] -= pthread['cycle_time']
-                    fall_delay_active = True
+                if cesubloc.inputs[I_DELAY]['var'] > 0:
+                    if (not cesubloc.inputs[I_IN]['var']) and cesubloc.outputs[O_IN_NM1]['var']:
+                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_DELAY]['var']
+                    if  cesubloc.inputs[I_IN]['var']:
+                        cesubloc.outputs[O_RT]['var'] = 0                    
+                    if cesubloc.outputs[O_RT]['var'] > 0:
+                        cesubloc.outputs[O_RT]['var'] -= pthread['cycle_time']
+                        fall_delay_active = True
+                    else:
+                        fall_delay_active = False
                 else:
                     fall_delay_active = False
-            else:
-                fall_delay_active = False
+                rise_delay_active = False
 
             cesubloc.outputs[O_OUT]['var'] = cesubloc.inputs[I_IN]['var'] and (not rise_delay_active) or fall_delay_active
-            cesubloc.outputs[O_OUT]['valide'] = cesubloc.outputs[O_IN_NM1]['valide'] and cesubloc.inputs[I_IN]['valide'] and cesubloc.inputs[I_DELAY_RISE]['valide'] and cesubloc.inputs[I_DELAY_FALL]['valide']
+            cesubloc.outputs[O_OUT]['valide'] = cesubloc.outputs[O_IN_NM1]['valide'] and cesubloc.inputs[I_IN]['valide'] and cesubloc.inputs[I_RISE]['valide'] and cesubloc.inputs[I_DELAY]['valide']
             cesubloc.outputs[O_IN_NM1]['var'] = cesubloc.inputs[I_IN]['var']
             cesubloc.outputs[O_IN_NM1]['valide'] = cesubloc.inputs[I_IN]['valide']
 
