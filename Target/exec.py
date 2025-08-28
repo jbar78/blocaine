@@ -39,6 +39,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_MEMORY:       procedure= c_exesubloc_memory
     elif psubloc.header['name'] == PARAM_NAME_BLOC_DELAY:        procedure= c_exesubloc_delay
     elif psubloc.header['name'] == PARAM_NAME_BLOC_CLOCK:        procedure= c_exesubloc_clock
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_LIMIT:        procedure= c_exesubloc_limit
     else:
         print (proc_name, " ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -744,5 +745,47 @@ def c_exesubloc_clock (pebloc, pieb, pio, pthread):
                 output['valide'] = False
 
     if debug_blocs: print (trace_txt, " CLOCK retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    exec_level -=1
+    return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+def c_exesubloc_limit (pebloc, pieb, pio, pthread):
+    """ exécution du bloc LIMIT (dans la boucler écurcive)"""
+    global exec_level
+    exec_level +=1
+    cesubloc = pebloc.sublocs[pieb]
+    if debug_blocs:
+        trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
+        print (trace_txt, "début LIMIT les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        if debug_blocs: print (trace_txt, "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+
+            if cesubloc.inputs[0]['var'] < cesubloc.inputs[2]['var']:
+                cesubloc.outputs[0]['valide'] = False
+                cesubloc.outputs[1]['valide'] = False
+                cesubloc.outputs[2]['valide'] = False
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
+            elif cesubloc.inputs[1]['var'] > cesubloc.inputs[0]['var']:
+                cesubloc.outputs[0]['var'] = True
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
+                cesubloc.outputs[2]['var'] = False
+            elif cesubloc.inputs[1]['var'] < cesubloc.inputs[2]['var']:
+                cesubloc.outputs[0]['var'] = False
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[2]['var']
+                cesubloc.outputs[2]['var'] = True
+            else:
+                cesubloc.outputs[0]['var'] = False
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
+                cesubloc.outputs[2]['var'] = False
+ 
+        except:
+            trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
+            print (trace_txt, PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+    if debug_blocs: print (trace_txt, " LIMIT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']

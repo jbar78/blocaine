@@ -2573,7 +2573,10 @@ def monitoring_bloc():
             return PARAM_COLOR_BG_IO_FALSE 
     def formatage(var):
         """ retourne la valeur mais formatée"""
-        if isinstance(var, float):
+        if isinstance(var, bool):
+            if var: return "True"
+            else: return "False"
+        elif isinstance(var, float):
             return f"{var:8.3f}"
         else:
             return var
