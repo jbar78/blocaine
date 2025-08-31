@@ -2580,8 +2580,8 @@ def monitoring_bloc():
             return f"{var:8.3f}"
         else:
             return var
-    def show_io(ptype, pio, pmsb, pid):
-        proc_name = "show_io: "
+    def show_monitored_io(ptype, pio, pmsb, pid):
+        proc_name = "show_monitored_io: "
         #print (proc_name, f"parametres: type={ptype},   io(name={pio['name']}, type={pio['type']}, id={pio['id']}),  msb_name={pmsb.header['name']}, id={pid}")
         if ptype == 'in':
             for minput in pmsb.inputs:
@@ -2594,7 +2594,18 @@ def monitoring_bloc():
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput['valide']))
                     canvas.itemconfig(io['id_texte'], text=formatage(moutput['var']))
         else:
-            messagebox.showinfo("ERROR", f"Shoing IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+    def show_normal_io(pio):
+        proc_name = "show_normal_io: "
+        print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
+        if pio['type'] == 'in':
+            color = PARAM_COLOR_BG_INPUT
+        elif pio['type'] == 'out':
+            color = PARAM_COLOR_BG_OUTPUT
+        else:
+            messagebox.showinfo("ERROR", f"Shoing normal IO 'type' is not 'in' or 'out',  io={pio}")
+        canvas.itemconfig(io['id_cadre'], fill= color)
+        canvas.itemconfig(io['id_texte'], text= io_text(pio))
 
 
     monitoring = {}
@@ -2639,12 +2650,19 @@ def monitoring_bloc():
                         for ii, msb in enumerate(monitored_sublocs):
                             if msb.header['id'] == sb.header['id']:
                                 #print(proc_name, f"bloc SYSTEM id==id: monitored_subloc[{ii}].header['name']=<{msb.header['name']}> bloc.subloc[{j}].header['name']=<{sb.header['name']}>")
-                                show_io (io['type'], io, msb, io['id'])
+                                show_monitored_io (io['type'], io, msb, io['id'])
 
             time.sleep(0.1)
         else: #except:
             print(proc_name, "EXECPTION: buffer reçu=", buff)
-    bloc.c_bloc_redraw()
+    print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
+    for i, sb in enumerate(bloc.sublocs):
+        print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+        for j, io in enumerate(sb.ios):
+            print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+            show_normal_io (io)
+    #bloc.c_bloc_redraw()
+    print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
     print(proc_name, "fin")
 
 
