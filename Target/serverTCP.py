@@ -38,8 +38,27 @@ def handle_clientTCP(client_socket, addr):
             for output in ebloc.outputs:
                 #print (proc_name, f"boucle sublocs/outputs: ebloc_name={ebloc.header['name']}  output_name={output['name']}")
                 monitoring_user_bloc_io(output)
+    def maj_forced_io (inputs_or_outputs):
+        """ mise à jour de forced des inputs ou outputs """
+        for ioput in inputs_or_outputs:
+            print (proc_name, f"boucle sublocs/__puts: subloc_name={subloc.header['name']}  __put_name={ioput['name']}")
+            if ioput['id'] == io_id:
+                print(proc_name, f"input['id']==io_id  {ioput['id']}")
+                if cas == b"overwriting_validity":
+                    print(proc_name, f"validity 'forced' in __put['id']={ioput['id']}")
+                    ioput['forced_valide']= not ioput['forced_valide']
+                elif cas == b"overwriting_start":
+                    print(proc_name, f"add 'forced' in __put['id']={ioput['id']}")
+                    ioput['forced_value']= ioput['var']
+                    ioput['forced_valide']= ioput['valide']
+                    ioput['forced']= True
+                elif cas == b"overwriting_stop":
+                    print(proc_name, f"del 'forced in __put['id']={ioput['id']}")
+                    del ioput['forced']
+                else: print (proc_name, "ERREUR: not start and no stop")
 
     global clientsTCP, list_compiled
+    monitoring = None
     proc_name = "handle_clientTCP: "
     print ("clintsTCP.append")
     clientsTCP.append(addr)
@@ -108,12 +127,41 @@ def handle_clientTCP(client_socket, addr):
                 else:
                     response = b"monitoring:not_found"
                 client_socket.send(response)
-            elif cas == b"cas3" and index!= -1:
-                print(proc_name, f"cas N°3 reconnu    cas: {cas}")
-                response = b"cas3"
-            elif cas == b"cas44" and index!= -1:
-                print(proc_name, f"cas N°44 reconnu    cas: {cas}")
-                response = b"cas4"
+            elif (cas == b"overwriting_start" or cas == b"overwriting_stop" or cas == b"overwriting_validity") and index!= -1:
+                print(proc_name, f"cas N°3 reconnu  OVERWRITING  cas: {cas}")
+                print(proc_name, f"texte brut: {request}")
+                print(proc_name, "-----------------------------------")
+                textes = request.split(b':')
+                print(proc_name, "textes=", textes)
+                print(proc_name, "commande=textes[0]=", textes[0])
+                tab_bloc_id = textes[1].split(b'=')
+                print(proc_name, "txt bloc_id=tab_bloc_id[0]=", tab_bloc_id[0])
+                print(proc_name, "txt bloc_id=tab_bloc_id[1]=", tab_bloc_id[1])
+                bloc_id = int(tab_bloc_id[1])
+                print(proc_name, f"bloc_id={bloc_id}")
+                tab_io_id = textes[2].split(b'=')
+                print(proc_name, "txt bloc_id=tab_io_id[0]=", tab_io_id[0])
+                print(proc_name, "txt bloc_id=tab_io_id[1]=", tab_io_id[1])
+                io_id = int(tab_io_id[1])
+                print(proc_name, f"io_id={io_id}")
+                print(proc_name, "-----------------------------------")
+                for ic, comp in enumerate(list_compiled):
+                    print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']}")
+                    if comp.header['name'] == monitoring['name'] and comp.header['master']:
+                        #monitoring_user_bloc (comp)
+                        print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
+                        for subloc in comp.sublocs:
+                            print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
+                            if subloc.parent_ids == monitoring['arbo_ids']:
+                                print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
+                                if subloc.header['id'] == bloc_id:
+                                    print(proc_name, f"==bloc_id  {subloc.header['id']}")
+                                    maj_forced_io(subloc.inputs)
+                                    maj_forced_io(subloc.outputs)
+
+            elif cas == b"cas4" and index!= -1:
+                print(proc_name, f"cas N°4 reconnu    cas: {cas}")
+                #response = b"cas4"
             else:
                 print(proc_name, f"Unknow Message Received: {request}")
                 response = b"?"

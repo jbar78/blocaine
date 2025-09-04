@@ -31,6 +31,7 @@ PARAM_MODE_EDITION="edit"
 
 flag_monitoring = False
 monitoring_thread = None
+monitored_sublocs = None
 
 lien_origine = {}
 lien_destination = {}
@@ -1140,10 +1141,33 @@ def del_lien(io):
     #elem = find_parent (io)
     #print (proc_name, f"parent (elem.header)={elem.header}")
     #update_bloc(elem)
-def overwriting(io):
-    """Forçage d'une entrée ou d'une sortie"""
-    print ("OverWritting: io=<{}>".format(io))
-    messagebox.showinfo("Warnning", "This function is not yet implemented")
+def overwriting(io, pstart, ptoggle):
+    """Forçage/déforçage d'une entrée ou d'une sortie"""
+    proc_name = "overwriting: "
+    print (proc_name, "debut: io=<{}>".format(io))
+    if pstart:
+        message=b"overwriting_start:"
+    elif ptoggle:
+        message=b"overwriting_validity:"
+    else:
+        message=b"overwriting_stop:"
+    message += b"subloc_id="
+    message += str(int(find_parent (io).header['id'])).encode()
+    message += b":io_id="
+    message += str(int(io['id'])).encode()
+    print (proc_name, "   message envoyé à la cible:", message)
+    clientTCP.send_message(message)
+    #messagebox.showinfo("Warnning", "This function is not yet implemented")
+    print (proc_name, "fin: io=<{}>".format(io))
+def overwriting_change(io):
+    """Forçage/déforçage d'une entrée ou d'une sortie"""
+    proc_name = "overwriting_change: "
+    print (proc_name, "debut: io=<{}>".format(io), "ptoggle=", ptoggle)
+    if ptoggle:
+        message=b"overwriting_validity:"
+    else:
+        message=b"overwriting_value:"
+    print (proc_name, "fin: io=<{}>".format(io))
 def rename_io(px, py, io):
     """renome une entrée ou une sortie"""
     global bloc
@@ -1857,7 +1881,34 @@ def menu_header(event, elem):
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
     """construit le menu lié à un IO"""
-    global menu_contextuel
+    global bloc, monitored_sublocs, menu_contextuel
+    def io_forced (pmonitored_sublocs):
+        """ Retourn létat de l'OI du bloc exécutable: True=forced, Falce=not forced"""
+        proc_name = "io_forced: "
+        io_forced = False
+
+        #for i, sb in enumerate(bloc.sublocs):
+        #    print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+        #        for j, io in enumerate(sb.ios):
+        #            print(proc_name, f" : ois[{k}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+
+        sb = find_parent (io)
+        for ii, msb in enumerate(pmonitored_sublocs):
+            if msb.header['id'] == sb.header['id']:
+                if io['type'] == 'in':
+                    for minput in msb.inputs:
+                        if minput['id'] == io['id']:
+                            if 'forced' in minput:
+                                return True
+                elif io['type'] == 'out':
+                    for moutput in msb.outputs:
+                        if moutput['id'] == io['id']:
+                            if 'forced' in moutput:
+                                return True
+                else:
+                    messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
+        return False
+
     proc_name = "menu_io: "
     #print (proc_name, "objet=<{}>".format(io))
     try:
@@ -1893,9 +1944,6 @@ def menu_io(event, io):
         menu_contextuel.add_command(label = "Set default value", command = lambda: set_defaut_value_io(event.x_root, event.y_root, io, "defaut_value"))
 
 
-    #xxxif (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT):
-    #xxx    if bloc.c_exesubloc_user_type ():
-    #xxx        menu_contextuel.add_command(label = "Set default value", command = lambda: set_defaut_value_io(event.x_root, event.y_root, io, "defaut_value"))
 
     if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT):
             if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
@@ -1914,8 +1962,17 @@ def menu_io(event, io):
 
 
     menu_contextuel.add_separator()
-    menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io))
-    menu_contextuel.add_separator()
+    if flag_monitoring:
+        if io_forced(monitored_sublocs):
+            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(io, pstart=False, ptoggle=False))
+            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting_change(io))
+            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=False, ptoggle=True))
+        else:
+            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=True, ptoggle=False))
+
+        menu_contextuel.add_separator()
+    #else:
+    #   menu_contextuel.add_command(label = "OverWriting tmp add io['forced']",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting_startforced(io))
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io))
     #menu_contextuel.add_command(label = "del defaut value", command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
     #menu_contextuel.add_command(label = "del local defaut value", command = lambda: delete_local_defaut_value_io(event.x_root, event.y_root, io))
@@ -2564,10 +2621,12 @@ def compile_bloc(pbloc, porder):
     print (proc_name,"_____________________________________fin de compilation")
 def monitoring_bloc():
     """ thread: Visualisation en temps réel d'un bloc ou sous-blocs """
-    global master, canvas, fag_monitoring
-    def bg_color(valide):
+    global master, canvas, fag_monitoring, monitored_sublocs
+    def bg_color(pio):
         """ retourne la couleur du fond selon la validité"""
-        if valide: 
+        if 'forced' in pio:
+            return PARAM_COLOR_BG_IO_FORCED
+        elif pio['valide']: 
             return PARAM_COLOR_BG_IO_TRUE 
         else:
             return PARAM_COLOR_BG_IO_FALSE 
@@ -2586,12 +2645,14 @@ def monitoring_bloc():
         if ptype == 'in':
             for minput in pmsb.inputs:
                 if minput['id'] == pid:
-                    canvas.itemconfig(io['id_cadre'], fill=bg_color(minput['valide']))
+                    #canvas.itemconfig(io['id_cadre'], fill=bg_color(minput['valide']))
+                    canvas.itemconfig(io['id_cadre'], fill=bg_color(minput))
                     canvas.itemconfig(io['id_texte'], text=formatage(minput['var']))
         elif ptype == 'out':
             for moutput in pmsb.outputs:
                 if moutput['id'] == pid:
-                    canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput['valide']))
+                    #canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput['valide']))
+                    canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
                     canvas.itemconfig(io['id_texte'], text=formatage(moutput['var']))
         else:
             messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={pio}")
@@ -2655,14 +2716,14 @@ def monitoring_bloc():
             time.sleep(0.1)
         else: #except:
             print(proc_name, "EXECPTION: buffer reçu=", buff)
-    print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
+    print(proc_name, "fin du monitoring")
     for i, sb in enumerate(bloc.sublocs):
         print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
         for j, io in enumerate(sb.ios):
             print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
             show_normal_io (io)
     #bloc.c_bloc_redraw()
-    print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
+    #print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
     print(proc_name, "fin")
 
 

@@ -74,6 +74,9 @@ class c_exebloc:
                 trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
                 print (trace_txt, ": ERROR: input[", piei, "] can not be found")
                 input['valide'] = False
+        if 'forced' in input:
+            input['var'] = input['forced_value']
+            input['valide'] = input['forced_valide']
         if debug_c_exe: print (trace_txt, ": input[", piei, "], récupérée: var=", input['var'], "val=", input['valide'])
     def c_exebloc_recup_inputs (self, pieb, pthread):
         """affecte les inputs en appelant les blocs parents (dans la boucle récurcive)"""

@@ -480,6 +480,10 @@ def c_exesubloc_add (pebloc, pieb, pio, pthread):
                 output['valide'] = False
     if debug_blocs: print (trace_txt, " ADD retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     exec_level -=1
+    #return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+    if 'forced' in cesubloc.outputs[pio]:
+        cesubloc.outputs[pio]['var'] = cesubloc.outputs[pio]['forced_value']
+        cesubloc.outputs[pio]['valide'] = cesubloc.outputs[pio]['forced_valide']
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_sub (pebloc, pieb, pio, pthread):
     """ exécution du bloc SOUSTRACTION (dans la boucler écurcive)"""
