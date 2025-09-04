@@ -1145,19 +1145,23 @@ def overwriting(io, pstart, ptoggle):
     """Forçage/déforçage d'une entrée ou d'une sortie"""
     proc_name = "overwriting: "
     print (proc_name, "debut: io=<{}>".format(io))
-    if pstart:
-        message=b"overwriting_start:"
-    elif ptoggle:
-        message=b"overwriting_validity:"
+    bloc_parent = find_parent (io)
+    if not 'system' in bloc_parent.header['key_word']:
+        messagebox.showinfo("Warning", "IO overwriting from a USER bloc interface is not yet available, please open the USER bloc and then overwrite the desired IO inside it.")
     else:
-        message=b"overwriting_stop:"
-    message += b"subloc_id="
-    message += str(int(find_parent (io).header['id'])).encode()
-    message += b":io_id="
-    message += str(int(io['id'])).encode()
-    print (proc_name, "   message envoyé à la cible:", message)
-    clientTCP.send_message(message)
-    #messagebox.showinfo("Warnning", "This function is not yet implemented")
+        if pstart:
+            message=b"overwriting_start:"
+        elif ptoggle:
+            message=b"overwriting_validity:"
+        else:
+            message=b"overwriting_stop:"
+        message += b"subloc_id="
+        message += str(int(find_parent (io).header['id'])).encode()
+        message += b":io_id="
+        message += str(int(io['id'])).encode()
+        print (proc_name, "   message envoyé à la cible:", message)
+        clientTCP.send_message(message)
+        #messagebox.showinfo("Warnning", "This function is not yet implemented")
     print (proc_name, "fin: io=<{}>".format(io))
 def overwriting_change(io):
     """Forçage/déforçage d'une entrée ou d'une sortie"""
@@ -2622,14 +2626,26 @@ def compile_bloc(pbloc, porder):
 def monitoring_bloc():
     """ thread: Visualisation en temps réel d'un bloc ou sous-blocs """
     global master, canvas, fag_monitoring, monitored_sublocs
+    def tx_color(pio):
+        """ retourne la couleur du texte selon la validité"""
+        if 'forced' in pio:
+            if pio['valide']:
+                return PARAM_COLOR_TX_IO_BLACK
+            else:
+                return PARAM_COLOR_TX_IO_WHITE
+        else:
+            return PARAM_COLOR_TX_IO_BLACK
     def bg_color(pio):
         """ retourne la couleur du fond selon la validité"""
         if 'forced' in pio:
-            return PARAM_COLOR_BG_IO_FORCED
+            if pio['valide']:
+                return PARAM_COLOR_BG_IO_FORCED_VALIDE
+            else:
+                return PARAM_COLOR_BG_IO_FORCED_INVALIDE
         elif pio['valide']: 
-            return PARAM_COLOR_BG_IO_TRUE 
+            return PARAM_COLOR_BG_IO_VALIDE
         else:
-            return PARAM_COLOR_BG_IO_FALSE 
+            return PARAM_COLOR_BG_IO_INVALIDE
     def formatage(var):
         """ retourne la valeur mais formatée"""
         if isinstance(var, bool):
@@ -2647,13 +2663,13 @@ def monitoring_bloc():
                 if minput['id'] == pid:
                     #canvas.itemconfig(io['id_cadre'], fill=bg_color(minput['valide']))
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(minput))
-                    canvas.itemconfig(io['id_texte'], text=formatage(minput['var']))
+                    canvas.itemconfig(io['id_texte'], fill=tx_color(minput), text=formatage(minput['var']))
         elif ptype == 'out':
             for moutput in pmsb.outputs:
                 if moutput['id'] == pid:
                     #canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput['valide']))
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
-                    canvas.itemconfig(io['id_texte'], text=formatage(moutput['var']))
+                    canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
         else:
             messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={pio}")
     def show_normal_io(pio):
