@@ -1141,7 +1141,7 @@ def del_lien(io):
     #elem = find_parent (io)
     #print (proc_name, f"parent (elem.header)={elem.header}")
     #update_bloc(elem)
-def overwriting(io, pstart, ptoggle):
+def overwriting(io, pstart, ptoggle, pchange):
     """Forçage/déforçage d'une entrée ou d'une sortie"""
     proc_name = "overwriting: "
     print (proc_name, "debut: io=<{}>".format(io))
@@ -1153,17 +1153,22 @@ def overwriting(io, pstart, ptoggle):
             message=b"overwriting_start:"
         elif ptoggle:
             message=b"overwriting_validity:"
+        elif pchange:
+            message=b"overwriting_value:"
         else:
             message=b"overwriting_stop:"
         message += b"subloc_id="
         message += str(int(find_parent (io).header['id'])).encode()
         message += b":io_id="
         message += str(int(io['id'])).encode()
+        if pchange:
+            message += b":value="
+            message += str(int(999)).encode()
         print (proc_name, "   message envoyé à la cible:", message)
         clientTCP.send_message(message)
         #messagebox.showinfo("Warnning", "This function is not yet implemented")
     print (proc_name, "fin: io=<{}>".format(io))
-def overwriting_change(io):
+def overwriting_changexxx(io):
     """Forçage/déforçage d'une entrée ou d'une sortie"""
     proc_name = "overwriting_change: "
     print (proc_name, "debut: io=<{}>".format(io), "ptoggle=", ptoggle)
@@ -1968,11 +1973,11 @@ def menu_io(event, io):
     menu_contextuel.add_separator()
     if flag_monitoring:
         if io_forced(monitored_sublocs):
-            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(io, pstart=False, ptoggle=False))
-            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting_change(io))
-            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=False, ptoggle=True))
+            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(io, pstart=False, ptoggle=False, pchange=False))
+            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=False, ptoggle=False, pchange=True))
+            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=False, ptoggle=True, pchange=False))
         else:
-            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=True, ptoggle=False))
+            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=True, ptoggle=False, pchange=False))
 
         menu_contextuel.add_separator()
     #else:

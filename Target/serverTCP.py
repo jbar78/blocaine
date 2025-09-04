@@ -44,7 +44,9 @@ def handle_clientTCP(client_socket, addr):
             print (proc_name, f"boucle sublocs/__puts: subloc_name={subloc.header['name']}  __put_name={ioput['name']}")
             if ioput['id'] == io_id:
                 print(proc_name, f"input['id']==io_id  {ioput['id']}")
-                if cas == b"overwriting_validity":
+                if  cas == b"overwriting_value":
+                    ioput['forced_value']= io_value
+                elif cas == b"overwriting_validity":
                     print(proc_name, f"validity 'forced' in __put['id']={ioput['id']}")
                     ioput['forced_valide']= not ioput['forced_valide']
                 elif cas == b"overwriting_start":
@@ -127,7 +129,7 @@ def handle_clientTCP(client_socket, addr):
                 else:
                     response = b"monitoring:not_found"
                 client_socket.send(response)
-            elif (cas == b"overwriting_start" or cas == b"overwriting_stop" or cas == b"overwriting_validity") and index!= -1:
+            elif (cas == b"overwriting_start" or cas == b"overwriting_stop" or cas == b"overwriting_validity" or cas == b"overwriting_value") and index!= -1:
                 print(proc_name, f"cas N°3 reconnu  OVERWRITING  cas: {cas}")
                 print(proc_name, f"texte brut: {request}")
                 print(proc_name, "-----------------------------------")
@@ -140,9 +142,15 @@ def handle_clientTCP(client_socket, addr):
                 bloc_id = int(tab_bloc_id[1])
                 print(proc_name, f"bloc_id={bloc_id}")
                 tab_io_id = textes[2].split(b'=')
-                print(proc_name, "txt bloc_id=tab_io_id[0]=", tab_io_id[0])
-                print(proc_name, "txt bloc_id=tab_io_id[1]=", tab_io_id[1])
+                print(proc_name, "txt io_id=tab_io_id[0]=", tab_io_id[0])
+                print(proc_name, "txt io_id=tab_io_id[1]=", tab_io_id[1])
                 io_id = int(tab_io_id[1])
+                if cas == b"overwriting_value":
+                    tab_io_value = textes[3].split(b'=')
+                    print(proc_name, "txt value=tab_io_value[0]=", tab_io_value[0])
+                    print(proc_name, "txt value=tab_io_value[1]=", tab_io_value[1])
+                    io_value = int(tab_io_value[1])
+
                 print(proc_name, f"io_id={io_id}")
                 print(proc_name, "-----------------------------------")
                 for ic, comp in enumerate(list_compiled):
