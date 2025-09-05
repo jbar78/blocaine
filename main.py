@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-import decimal
 import threading
 import time
 import os
@@ -657,7 +656,6 @@ def type_index(pvariable):
     if (type(pvariable) == int): return 1
     if (type(pvariable) == bool): return 2
     if (type(pvariable) == str): return 3
-    if (type(pvariable) == decimal.Decimal): return 4
     print (proc_name, "ERROR: unknow type: ", type(pvariable))
             
 def find_thread_index(pthreads, pthread_id):
@@ -1277,7 +1275,7 @@ def set_defaut_value_io(px, py, io, pdic):
         if combox_type.get() == "bool":
             #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
             io[pdic] = io_defaut_value.get() == "True" or io_defaut_value.get() == "1"
-        if combox_type.get() == "string": io[pdic] = (io_defaut_value.get())
+        if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
 
         pop.popup.destroy()
         bloc.c_bloc_redraw()
@@ -1287,7 +1285,16 @@ def set_defaut_value_io(px, py, io, pdic):
     label_type = Label(pop.popup, text="type:")
     label_type.grid(row = pop.ligne, column = 0)
     combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
-    combox_type.set(PARAM_TYPE_LIST[0])
+    print (proc_name, f"existing type={type(io[pdic])}")
+    print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
+    index_type = 0
+    for i, typ in enumerate(PARAM_TYPE_LIST):
+        print (proc_name, f"loop type={typ}")
+        if type(io[pdic]).__name__ == typ:
+            print (proc_name, f"io([pdic]==typ")
+            index_type = i
+            break
+    combox_type.set(PARAM_TYPE_LIST[index_type])
     combox_type.grid(row = pop.ligne, column = 1)
     pop.ligne += 1
     BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
