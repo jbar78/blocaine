@@ -155,7 +155,7 @@ def handle_clientTCP(client_socket, addr):
                 print(proc_name, "-----------------------------------")
                 for ic, comp in enumerate(list_compiled):
                     print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']}")
-                    if comp.header['name'] == monitoring['name'] and comp.header['master']:
+                    if comp.header['name'] == monitoring['name']: #and comp.header['master']: appliquer aux 2 shift A&B
                         #monitoring_user_bloc (comp)
                         print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
                         for subloc in comp.sublocs:

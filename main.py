@@ -1139,8 +1139,17 @@ def del_lien(io):
     #elem = find_parent (io)
     #print (proc_name, f"parent (elem.header)={elem.header}")
     #update_bloc(elem)
-def overwriting(io, pstart, ptoggle, pchange):
+def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
     """Forçage/déforçage d'une entrée ou d'une sortie"""
+    def proc(val, pmessage):
+        proc_name = "proc: "
+        print (proc_name, "---fin-----proc---------")
+        print(proc_name, f">>>>>>>>>>>>>msessage={pmessage}")
+        pmessage += b":value="
+        pmessage += str(int(val)).encode()
+        print (proc_name, "   message envoyé à la cible:", pmessage)
+        clientTCP.send_message(pmessage)
+        print (proc_name, "---fin-----proc---------")
     proc_name = "overwriting: "
     print (proc_name, "debut: io=<{}>".format(io))
     bloc_parent = find_parent (io)
@@ -1160,20 +1169,34 @@ def overwriting(io, pstart, ptoggle, pchange):
         message += b":io_id="
         message += str(int(io['id'])).encode()
         if pchange:
-            message += b":value="
-            message += str(int(999)).encode()
-        print (proc_name, "   message envoyé à la cible:", message)
-        clientTCP.send_message(message)
-        #messagebox.showinfo("Warnning", "This function is not yet implemented")
-    print (proc_name, "fin: io=<{}>".format(io))
-def overwriting_changexxx(io):
-    """Forçage/déforçage d'une entrée ou d'une sortie"""
-    proc_name = "overwriting_change: "
-    print (proc_name, "debut: io=<{}>".format(io), "ptoggle=", ptoggle)
-    if ptoggle:
-        message=b"overwriting_validity:"
-    else:
-        message=b"overwriting_value:"
+            bloc_parent_de_io = find_parent (io)
+            print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+            for ii, msb in enumerate(pmonitored_sublocs):
+                print(proc_name, f" :boucle msb[{ii}].header['name']=<{msb.header['name']}>")
+                if msb.header['id'] == bloc_parent_de_io.header['id']:
+                    msg1=""
+                    print(proc_name, f"bloc id==id:  monitored_subloc[{ii}].header['name']=<{msb.header['name']}>,   bloc.subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+                    if io['type'] == 'in':
+                        print(proc_name, f"type='in'")
+                        for minput in msb.inputs:
+                            print(proc_name, f"boucle type='in' ' minput{minput}]")
+                            if minput['id'] == io['id']:
+                                print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
+                                set_value_io(pos_x, pos_y, minput, 'forced_value', message, proc)
+                                print(proc_name, f"après set_value_io() minput['forced_value']={minput['forced_value']}")
+                                forced_value = minput['forced_value']
+                    elif io['type'] == 'out':
+                        print(proc_name, f"type='out'")
+                        for moutput in msb.outputs:
+                            print(proc_name, f"boucle type='out' ' moutput{moutput}]")
+                            if moutput['id'] == io['id']:
+                                print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
+                                set_value_io(pos_x, pos_y, moutput, 'forced_value', message, proc)
+                                print(proc_name, f"après set_value_io() moutput['forced_value']={moutput['forced_value']}")
+                                forced_value = moutput['forced_value']
+        else:
+            print (proc_name, "   message envoyé à la cible:", message)
+            clientTCP.send_message(message)
     print (proc_name, "fin: io=<{}>".format(io))
 def rename_io(px, py, io):
     """renome une entrée ou une sortie"""
@@ -1239,10 +1262,19 @@ def delete_local_name_io(px, py, io):
     del io['local_name']
     bloc.c_bloc_redraw()
 def change_initial_value_io(px, py, io):
-    """pour definir la valeur par défaut d'une sortie de l'instance"""
+    """pour definir la valeur initiale d'une sortie mémorisée de l'instance"""
+    def procc(val, txt):
+        print ("-------procc initial_value------------val=", val, ",   txt=", txt)
     proc_name = "change_initial_value_io: "
     print (proc_name, "début")
-    set_defaut_value_io(px, py, io, "initial_value")
+    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", procc)
+def change_defaut_value_io(px, py, io):
+    """pour definir la valeur par défaut d'une entrée de l'instance"""
+    def procc(val, txt):
+        print ("-------procc defaut_value------------val=", val, ",   txt=", txt)
+    proc_name = "change_defaut_value_io: "
+    print (proc_name, "début")
+    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", procc)
 def delete_initial_value_io(px, py, io):
     """ supprime la valeur par défaut d'une sortie d'une instance"""
     global bloc
@@ -1260,7 +1292,7 @@ def delete_local_defaut_value_io(px, py, io):
     proc_name = "delete_local_defaut_value_io: "
     print (proc_name, "supprime io['local_defaut_value']=", io['local_defaut_value'])
     del io['local_defaut_value']
-def set_defaut_value_io(px, py, io, pdic):
+def set_defaut_value_io_old(px, py, io, pdic):
     """pour definir la valeur par défaut d'une entrée"""
     global PARAM_TYPE_LIST
     proc_name = "defaut_value: "
@@ -1282,6 +1314,57 @@ def set_defaut_value_io(px, py, io, pdic):
     pop = c_popup(pdic, 25+px, 75+py)
     if not pdic in io: io[pdic]=0
     io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
+    label_type = Label(pop.popup, text="type:")
+    label_type.grid(row = pop.ligne, column = 0)
+    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+    print (proc_name, f"existing type={type(io[pdic])}")
+    print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
+    index_type = 0
+    for i, typ in enumerate(PARAM_TYPE_LIST):
+        print (proc_name, f"loop type={typ}")
+        if type(value).__name__ == typ:
+            print (proc_name, f"io([pdic]==typ")
+            index_type = i
+            break
+    combox_type.set(PARAM_TYPE_LIST[index_type])
+    combox_type.grid(row = pop.ligne, column = 1)
+    pop.ligne += 1
+    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+    BP_escape.grid(row = pop.ligne, column = 0)
+    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+    BP_validation.grid(row = pop.ligne, column = 1)
+    #BP_escape.focus()
+    BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
+    BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
+    BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
+    BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
+
+    pop.entry[0].focus()
+    pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
+    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
+def set_value_io(px, py, io, pdic, pmsg, pproc):
+    """pour definir la valeur par défaut d'une entrée"""
+    global PARAM_TYPE_LIST
+    proc_name = "set_value_io: "
+    print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, ")
+    def proc_null():
+        return
+    def validation():
+        global bloc
+        #io['defaut_value'] = float(io_defaut_value.get())
+        if combox_type.get() == "float":  io[pdic] = float(io_defaut_value.get())
+        if combox_type.get() == "int":    io[pdic] = int(io_defaut_value.get())
+        if combox_type.get() == "bool":
+            #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
+            io[pdic] = io_defaut_value.get() == "True" or io_defaut_value.get() == "1"
+        if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
+        pproc(io[pdic], pmsg)
+        pop.popup.destroy()
+        bloc.c_bloc_redraw()
+    pop = c_popup(pdic, 25+px, 75+py)
+    print(proc_name, f"io={io}")
+    if not pdic in io: io[pdic]=0
+    io_defaut_value = pop.c_popup_add_une_propriete("Défaut io[pdic]:", io[pdic], proc_null)
     label_type = Label(pop.popup, text="type:")
     label_type.grid(row = pop.ligne, column = 0)
     combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
@@ -1957,7 +2040,7 @@ def menu_io(event, io):
     if ((elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT and bloc.header['name'] != PARAM_NAME_BLOC_OUTPUT) or \
         (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT and not 'system' in bloc.header) or \
         (io['type'] == 'in' and not 'system' in bloc.header)):
-        menu_contextuel.add_command(label = "Set default value", command = lambda: set_defaut_value_io(event.x_root, event.y_root, io, "defaut_value"))
+        menu_contextuel.add_command(label = "Set default value", command = lambda: change_defaut_value_io(event.x_root, event.y_root, io))
 
 
 
@@ -1980,18 +2063,14 @@ def menu_io(event, io):
     menu_contextuel.add_separator()
     if flag_monitoring:
         if io_forced(monitored_sublocs):
-            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(io, pstart=False, ptoggle=False, pchange=False))
-            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=False, ptoggle=False, pchange=True))
-            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=False, ptoggle=True, pchange=False))
+            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False))
+            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=True))
+            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=True, pchange=False))
         else:
-            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(io, pstart=True, ptoggle=False, pchange=False))
+            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=True, ptoggle=False, pchange=False))
 
         menu_contextuel.add_separator()
-    #else:
-    #   menu_contextuel.add_command(label = "OverWriting tmp add io['forced']",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting_startforced(io))
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io))
-    #menu_contextuel.add_command(label = "del defaut value", command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
-    #menu_contextuel.add_command(label = "del local defaut value", command = lambda: delete_local_defaut_value_io(event.x_root, event.y_root, io))
     menu_contextuel.post(event.x_root, event.y_root)
 def open_file(pf_name, decal):
     """lit et dessine un bloc"""
@@ -2418,7 +2497,6 @@ def compile_bloc(pbloc, porder):
                         print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   PAS de lien)")
             else:
                 print (proc_name, f"<{esubloc.header['name']}>,  id={esubloc.header['id']} est un bloc USER donc on ne refait pas les liens")
-
     def find_index_of_input_bloc_of_bloc_input (pexebloc, puser_bloc_index, puser_input_id):
         """ returne l'index du bloc "INPUT" correspondant à une patte d'entrée dun USER"""
         user_sublocs_ids = []
@@ -2464,7 +2542,6 @@ def compile_bloc(pbloc, porder):
                     return i
         if not find:
             print (proc_name, f"ERROR: OUTPUT bloc of USER bloc output not found")
-
     def faire_lien_user_input(pexebloc):
         proc_name = "faire_lien_user_input"
         for i, esubloc in enumerate(pexebloc.sublocs):
@@ -2571,7 +2648,7 @@ def compile_bloc(pbloc, porder):
     print (proc_name, f"\n\n___EXEBLOC: name<{exebloc.header['name']}>______________________PRINT: exebloc avec USER, lien index intra USER, INPUT et OUTPUT\n", exebloc)
 
     
-    for i in range(0,100):
+    for i in range(0, PARAM_COMPIL_NBR_STRAT_MAX):
         print (proc_name, f"boucle de compilation: i=[{i}]")
         all_user_bloc_compiled = True
         all_user_bloc_compiled1 = True
@@ -2582,9 +2659,9 @@ def compile_bloc(pbloc, porder):
                 else:
                     all_user_bloc_compiled = False
 
-            all_user_bloc_compiled1 = all_user_bloc_compiled1 and ('compiled' in esubloc.header or not esubloc.c_exesubloc_user_type ())
+            #all_user_bloc_compiled1 = all_user_bloc_compiled1 and ('compiled' in esubloc.header or not esubloc.c_exesubloc_user_type ())
         print (proc_name, f"all_user_bloc_compiled ={all_user_bloc_compiled}")    
-        print (proc_name, f"all_user_bloc_compiled&={all_user_bloc_compiled1}")    
+        #print (proc_name, f"all_user_bloc_compiled&={all_user_bloc_compiled1}")    
         if all_user_bloc_compiled:
             print (proc_name, f"boucle de compilation: BREAK: avant execution, i=[{i}]")
             break

@@ -87,13 +87,7 @@ class c_exebloc:
         for index_input, input in enumerate(cesubloc.inputs):
             self.c_exebloc_recup_input (pieb, pthread, index_input)
         #print (proc_name, "fin")
-    def c_exebloc_filtre_blocs_userxxx (self):
-        """retourne la liste des bocs USER ou SYSTEM"""
-        user_list = []
-        for esubloc in self.sublocs:
-            if not 'system' in esubloc.header['key_word']:
-                user_list.append(esubloc)
-        return user_list
+
 
 
 
@@ -121,6 +115,14 @@ class c_exesubloc:
         for i, elem in enumerate(self.outputs):
             chaine= chaine + "        outputs=" + str(self.outputs[i]) + "\n"
         return chaine  #+ "\n"
+    def c_exesubloc_find_index_exeinput (self, pid):
+        """ retourne l'index d'un input du sous-bloc executable correspondant à l'id de l'input"""
+        proc_name = 'find_index_exeinput'
+        for i, input in enumerate(self.inputs):
+            if input['id'] == pid:
+                print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
+                return i
+        print (proc_name, f"ERROR: id not found in exesubbloc: id={pid}")
     def c_exesubloc_find_index_exeoutput (self, pid):
         """ retourne l'index d'un output du sous-bloc executable correspondant à l'id de l'output"""
         proc_name = 'find_index_exeoutput'

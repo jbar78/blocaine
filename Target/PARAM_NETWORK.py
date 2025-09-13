@@ -4,4 +4,4 @@ PARAM_TCP_HOST_IP = "127.0.0.1" #"192.168.122.1" #local="192.168.122.1" #VM="192
 PARAM_TCP_HOST_PORT = 8000 # replace with the server's port number
 PARAM_TCP_BUFFER_SIZE = 32765 # to recive full bloc
 
-PARAM_HTTP_PORT = 80 
+PARAM_HTTP_PORT = 8080

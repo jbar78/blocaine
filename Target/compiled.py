@@ -203,9 +203,10 @@ def running(pname, pAB):
 def swaping(pname, pAB):
     """ Arrête l'execution de la version courante et demarre la version pAB
     ajoute les subbloc OUTPUT à exécuté dans la structure list_threads """
-    """utlilisation de fonction de captation des paramètre: capture_add_event"""
     global list_compiled, list_threads
     list_omemos= []
+    list_iforceds= []
+    list_oforceds= []
     proc_name = "running: "
     print (proc_name, "paramètres:  name<"+pname+">    AB="+pAB)
     #______________________________stop the bloc NON pAB
@@ -213,33 +214,65 @@ def swaping(pname, pAB):
         for exe in thread['list_exe']:
             if pname == exe['exebloc'].header['name'] and pAB != exe['exebloc'].header['AB']:
                 exe['run'] = False
-    #____________________________récup les valeurs mémorisées du bloc NON pAB
+    #____________________________récup les valeurs mémorisées et des façages du bloc NON pAB
     for ebloc in list_compiled:
         if pname == ebloc.header['name'] and pAB != ebloc.header['AB']:
-            print (proc_name, " boucle récup: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
+            #print (proc_name, " boucle récup: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
             for subloc in ebloc.sublocs:
-                print (proc_name, " boucle récup subobj: name=",subloc.header['name'])
-                if 'system' in subloc.header['key_word']:
-                    print (proc_name, " récup Memory: c'est un subloc SYSTEM name=",subloc.header['name'])
-                    for index_output, output in enumerate(subloc.outputs):
-                        print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
+                #print (proc_name, " boucle récup subobj: name=",subloc.header['name'])
+                for index_input, input in enumerate(subloc.inputs):
+                    #print (proc_name, "  récup: input["+str(index_input)+"] name<"+input['name']+">")
+
+                    """if 'forced' in input:
+                        iforced = {}
+                        #print (proc_name, "  récup Forced: input["+str(index_input)+"] name<"+input['name']+"> Forced trouvée")
+                        iforced['subloc_id'] = subloc.header['id']
+                        iforced['parent_ids'] = subloc.parent_ids
+                        iforced['input_id'] = subloc.inputs[index_input]['id']
+                        if 'forced_value' in subloc.inputs[index_input]:
+                            iforced['forced_value'] = subloc.inputs[index_input]['forced_value']
+                        if 'forced_valide' in subloc.inputs[index_input]:
+                            iforced['forced_valide'] = subloc.inputs[index_input]['forced_valide']
+                        #print (proc_name, "  iforced=", iforced, "récup=", iforced['forced_value'], "dans /",ebloc.header['AB'])
+                        list_iforceds.append(iforced)"""
+
+                for index_output, output in enumerate(subloc.outputs):
+                    #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
+
+                    """if 'forced' in output:
+                        oforced = {}
+                        #print (proc_name, "  récup Forced: output["+str(index_output)+"] name<"+output['name']+"> Forced trouvée")
+                        oforced['subloc_id'] = subloc.header['id']
+                        oforced['parent_ids'] = subloc.parent_ids
+                        oforced['output_id'] = subloc.outputs[index_output]['id']
+                        if 'forced_value' in subloc.outputs[index_output]:
+                            oforced['forced_value'] = subloc.outputs[index_output]['forced_value']
+                        if 'forced_valide' in subloc.outputs[index_output]:
+                            oforced['forced_valide'] = subloc.outputs[index_output]['forced_valide']
+                        #print (proc_name, "  oforced=", oforced, "récup=", oforced['forced_value'], "dans /",ebloc.header['AB'])
+                        list_oforceds.append(oforced)"""
+
+                    if 'system' in subloc.header['key_word']:
+                        print (proc_name, " récup Memory: c'est un subloc SYSTEM name=",subloc.header['name'])
+
                         if 'memory' in output:
                             omemo = {}
-                            print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+"> Memory trouvée")
+                            #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+"> Memory trouvée")
                             omemo['subloc_id'] = subloc.header['id']
                             omemo['parent_ids'] = subloc.parent_ids
                             omemo['output_id'] = subloc.outputs[index_output]['id']
                             omemo['var'] = subloc.outputs[index_output]['var']
                             omemo['valide'] = subloc.outputs[index_output]['valide']
-                            print (proc_name, "  omemo=", omemo, "récup var=", omemo['var'], "dans /",ebloc.header['AB'])
+                            #print (proc_name, "  omemo=", omemo, "récup var=", omemo['var'], "dans /",ebloc.header['AB'])
                             list_omemos.append(omemo)
-                    #omemo['subloc_id'] = subloc.header['id']
-                    #omemo['parent_ids'] = subloc.parent_ids
-                    #omemo['output_id'] = subloc.outputs[ioutput]['id']
-                    #omemo['var'] = subloc.outputs[ioutput]['var']
-                    #omemo['valide'] = subloc.outputs[ioutput]['valide']
-                    #print (proc_name, "  omemo=", omemo, "récup var=", omemo['var'], "dans /",ebloc.header['AB'])
-                    #list_omemos.append(omemo)
+
+    """    print (proc_name, "Liste des inpout forcés (nb element="+str(len(list_iforceds))+") récupéré dans"+ebloc.header['AB']+":")
+    for i, m in enumerate(list_iforceds):
+        print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_iforceds["+str(i)+"]=", m)
+    print (proc_name, "Liste des outpout forcés (nb element="+str(len(list_oforceds))+") récupéré dans"+ebloc.header['AB']+":")
+    for i, m in enumerate(list_oforceds):
+        print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_oforceds["+str(i)+"]=", m)"""
+
     print (proc_name, "Liste des outpout mémorisé (nb element="+str(len(list_omemos))+") récupéré dans"+ebloc.header['AB']+":")
     for i, m in enumerate(list_omemos):
         print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_omemos["+str(i)+"]=", m)
@@ -249,13 +282,37 @@ def swaping(pname, pAB):
             print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
             for ib, subloc in enumerate(ebloc.sublocs):
                 print (proc_name, "     subobj: name=",subloc.header['name'])
-                #if 'subloc_id' in omemo:
                 for omemo in list_omemos:
                     if subloc.header['id'] == omemo['subloc_id'] and subloc.parent_ids == omemo['parent_ids']:
                         index_output = subloc.c_exesubloc_find_index_exeoutput (omemo['output_id'])
                         subloc.outputs[index_output]['var']    = omemo['var']
                         subloc.outputs[index_output]['valide'] = omemo['valide']
                         print (proc_name, "  omemo=", omemo, "copié var=", omemo['var'], " dans /",ebloc.header['AB'])
+
+    #____________________________copie les valeurs mémorisées vers le bloc version A et B
+        """for ebloc in list_compiled:
+        if pname == ebloc.header['name']:
+            print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
+            for ib, subloc in enumerate(ebloc.sublocs):
+                print (proc_name, "     subobj: name=",subloc.header['name'])
+                for iforced in list_iforceds:
+                    if subloc.header['id'] == iforced['subloc_id'] and subloc.parent_ids == iforced['parent_ids']:
+                        index_input = subloc.c_exesubloc_find_index_exeinput (iforced['input_id'])
+                        subloc.inputs[index_input]['forced'] = True
+                        if 'forced_value' in  iforced:
+                            subloc.inputs[index_input]['forced_value']  = iforced['forced_value']
+                        if 'forced_valide' in iforced:
+                            subloc.inputs[index_input]['forced_valide'] = iforced['forced_valide']
+                        print (proc_name, "  iforced=", iforced, "copié forced_value=", iforced['forced_value'], " dans /",ebloc.header['AB'])
+                for oforced in list_oforceds:
+                    if subloc.header['id'] == oforced['subloc_id'] and subloc.parent_ids == oforced['parent_ids']:
+                        index_output = subloc.c_exesubloc_find_index_exeoutput (oforced['output_id'])
+                        subloc.outputs[index_output]['forced'] = True
+                        if 'forced_value' in  oforced:
+                            subloc.outputs[index_output]['forced_value']  = oforced['forced_value']
+                        if 'forced_valide' in oforced:
+                            subloc.outputs[index_output]['forced_valide'] = oforced['forced_valide']
+                        print (proc_name, "  oforced=", oforced, "copié forced_value=", oforced['forced_value'], " dans /",ebloc.header['AB'])"""
 
     #______________________________start the bloc pAB
     for thread in list_threads:

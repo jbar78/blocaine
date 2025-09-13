@@ -8,13 +8,14 @@ from sharedata import list_threads
 
 
 def motor(pthread):
+    """ moteur d'exécution """
     pthread['start_time'] = time.time()
     proc_name= "motor: "
     #print (proc_name, "début-----Periode="+str(pthread['period'])+"(s)")
     pthread['idle_time'] = pthread['start_time'] - pthread['end_time']
     #_________________________________début
     FLAG_PRINT_OUTPUTS = False
-    flag_print_debut = False
+    FLAG_PRINT_EN_COURS = False
     if 'list_exe' in pthread:
         #print (proc_name, "_debut_______________________________________________________________________________ periode="+str(pthread['period'])+"(s)")
         for i, exe in enumerate(pthread['list_exe']):
@@ -34,11 +35,11 @@ def motor(pthread):
                 var  = exe['exebloc'].sublocs[ibo].outputs[0]['var']     # valeur de l'ouptput
                 val  = exe['exebloc'].sublocs[ibo].outputs[0]['valide']  # validité de l'ouptput
                 if exe['run']:
-                    if not flag_print_debut:
-                        flag_print_debut = True
+                    if not FLAG_PRINT_EN_COURS:
+                        FLAG_PRINT_EN_COURS = True
                         print (proc_name, "début---Periode="+str(pthread['period'])+"(s)---Counter="+str(pthread['counter']))
                     print (proc_name, "        Periode="+str(pthread['period'])+"(s)---Counter="+str(pthread['counter'])+"--- BLOC<"+bloc_name+"> /"+AB+"    résultat de l'OUTPUT name=<"+oname+"> (id="+str(ido)+")  bloc["+str(ibo)+"]:   valide="+str(val)+"   var=",var)
-            if flag_print_debut:
+            if FLAG_PRINT_EN_COURS:
                 print (proc_name, "fin-----Periode="+str(pthread['period'])+"(s)\n")
     #print (proc_name, "fin-----Periode="+str(pthread['period'])+"(s)\n")
     pthread['counter'] += 1
@@ -57,7 +58,7 @@ def motor(pthread):
 serverHTTP_thread = threading.Thread(target=run_serverHTTP)
 serverHTTP_thread.start()
 
-# Démarrez le serveur TCP: communication avec éditeur de bloc
+# Démarrez le serveur TCP dans un thread séparé (communication avec éditeur de bloc)
 serverTCP_thread = threading.Thread(target=run_serverTCP)
 serverTCP_thread.start()
 
