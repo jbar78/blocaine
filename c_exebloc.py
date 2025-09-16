@@ -1,7 +1,6 @@
 # ATTENTION: la source de ce fichier ce trouve dans le répertoire "Target"
 import pickle
 import inspect
-from trace import trace_proc, exec_level
 debug_c_exe = False
 
 
@@ -44,49 +43,42 @@ class c_exebloc:
         print (proc_name, f"ERROR: id not found in exebloc,  id={pid}, ids={pparent_ids}")
     def c_exebloc_recup_input (self, pieb, pthread, piei):
         """affecte un input en appelant le bloc parent (dans la boucle récurcive)"""
-        def c_exebloc_recup_defaut (ptrace_txt, pinput):
+        def c_exebloc_recup_defaut (pinput):
             """affecte un input avec les valeurs par défaut"""
-            global exec_level
             pinput['valide'] = True
             if 'local_defaut_value' in pinput:
-                if debug_c_exe: print (ptrace_txt, ": récupération; local_defaut_value=", pinput['local_defaut_value'])
+                #print ("récupération; local_defaut_value=", pinput['local_defaut_value'])
                 pinput['var'] = pinput['local_defaut_value']
             elif 'defaut_value' in pinput:
-                if debug_c_exe: print (ptrace_txt, ": récupération; defaut_value=", pinput['defaut_value'])
+                #print ("récupération; defaut_value=", pinput['defaut_value'])
                 pinput['var'] = pinput['defaut_value']
             else:
                 return False
             return True
         cesubloc = self.sublocs[pieb]
         input = cesubloc.inputs[piei]
-        if debug_c_exe:
-            trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
-            print (trace_txt, f"début RECUP_INPUT les paramètres sont:   piei={piei},   counter={pthread['counter']}")
+            #print (f"RECUP_INPUT les paramètres sont:   piei={piei},   counter={pthread['counter']}")
         if 'lien_bloc_index' in input and 'lien_output_index' in input:
-            if debug_c_exe: print (trace_txt, "  il y a un lien pour cette input[", piei, "]:  name<", input['name'], ">")
+            #print ("  il y a un lien pour cette input[", piei, "]:  name<", input['name'], ">")
             nesubloc = self.sublocs[input['lien_bloc_index']]
             input['var'], input['valide'] = nesubloc.header['procedure'](self, input['lien_bloc_index'], input['lien_output_index'], pthread) #### appel procédure liée au bloc ####
         else:
-            if debug_c_exe: print (trace_txt, "  il n'y a pas de lien pour cette input[" + str(piei) + "]:  name<" + input['name'] + ">")
-            else: trace_txt = ":"
-            defaut_value_found = c_exebloc_recup_defaut (trace_txt, input)
+            #print ("  il n'y a pas de lien pour cette input[" + str(piei) + "]:  name<" + input['name'] + ">")
+            defaut_value_found = c_exebloc_recup_defaut (input)
             if not defaut_value_found:
-                trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
-                print (trace_txt, ": ERROR: input[", piei, "] can not be found")
+                print (": ERROR: input[", piei, "] can not be found")
                 input['valide'] = False
         if 'forced' in input:
             input['var'] = input['forced_value']
             input['valide'] = input['forced_valide']
-        if debug_c_exe: print (trace_txt, ": input[", piei, "], récupérée: var=", input['var'], "val=", input['valide'])
+        #print (": input[", piei, "], récupérée: var=", input['var'], "val=", input['valide'])
     def c_exebloc_recup_inputs (self, pieb, pthread):
         """affecte les inputs en appelant les blocs parents (dans la boucle récurcive)"""
         cesubloc = self.sublocs[pieb]
-        if debug_c_exe:
-            trace_txt = trace_proc(cesubloc, inspect.currentframe().f_code.co_name, exec_level)
-            #print (trace_txt, "début:")
+            #print ("RECUP_INPUTS: début")
         for index_input, input in enumerate(cesubloc.inputs):
             self.c_exebloc_recup_input (pieb, pthread, index_input)
-        #print (proc_name, "fin")
+        #print ("RECUP_INPUTS: fin")
 
 
 
@@ -140,25 +132,19 @@ class c_exesubloc:
 
 
 
-    def c_exesubloc_recup_last_outputxxxxxxx (self, pio):
-        """retour l'ouput pio du bloc"""
-        global exec_level
-        #exec_level +=1
-        #cesubloc = pebloc.sublocs[pieb]
-        if debug_exec:
-            trace_txt = trace_proc(self, inspect.currentframe().f_code.co_name, exec_level)
-            print (trace_txt, f"début RECUP_LAST_OUTPUT les paramètres sont:  pio={pio}")
-        #exec_level -=1
-        if debug_exec: print (trace_txt, " LAST_OUTPUT retourne l'outout [", pio, "]: var=", self.outputs[pio]['var'], "val=", self.outputs[pio]['valide'])
-        return self.outputs[pio]['var'], self.outputs[pio]['valide']
+    #def c_exesubloc_recup_last_outputxxxxxxx (self, pio):
+    #    """retour l'ouput pio du bloc"""
+    #    #cesubloc = pebloc.sublocs[pieb]
+    #    print (f"début RECUP_LAST_OUTPUT les paramètres sont:  pio={pio}")
+    #    print (" LAST_OUTPUT retourne l'outout [", pio, "]: var=", self.outputs[pio]['var'], "val=", self.outputs[pio]['valide'])
+    #    return self.outputs[pio]['var'], self.outputs[pio]['valide']
 
 
 
     def c_exesubloc_validation_standard(self):
-        """ affecte de validités des sorties en fonction des validités des entrées
+        """ affecte les validités des sorties en fonction des validités des entrées
         une entrée invalide, inlalide toutes les sorties
         """
-        proc_name = 'find_index_exeoutput'
         standard_val =True
         for input in self.inputs:
             if not input['valide']:
