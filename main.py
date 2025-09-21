@@ -44,13 +44,13 @@ arborescence = "/"
 def io_text(io):
     """retourn le texte d'un IO """
     proc_name = "io_text: "
-    print (proc_name, f"oi={io}")
+    #print (proc_name, f"oi={io}")
     if not 'lien' in io and 'defaut_value' in io:
-        print (proc_name, f"pas de lien")
+        #print (proc_name, f"pas de lien")
         val = io['defaut_value']
         val = str(val)+PARAM_FLECHE_DROITE
     elif 'initial_value' in io:
-        print (proc_name, f"initial value")
+        #print (proc_name, f"initial value")
         val = io['initial_value']
         val = str(val)+PARAM_ICONE_INITIALISATION
     else:
@@ -209,7 +209,7 @@ class c_bloc:
     def c_bloc_del_tkinter_id(self):
         proc_name= "c_bloc_del_tkinter_id :"
         for elem in self.sublocs:
-            print (proc_name, "elem=", elem)
+            #print (proc_name, "elem=", elem)
             if 'id_cadre' in elem.header:
                 del elem.header['id_cadre']
                 #nb_collected = gc.collect()
@@ -531,22 +531,22 @@ class c_sublocs:
         proc_name= inspect.currentframe().f_code.co_name
         for io in self.ios:
             if 'id_cadre' in io:
-                print (proc_name, "del:io['id_cadre']", io['id_cadre'])
+                #print (proc_name, "del:io['id_cadre']", io['id_cadre'])
                 del io['id_cadre']
                 #nb_collected = gc.collect()
                 #print (proc_name, "id_cadre: nbr collected=", nb_collected)
             if 'id_texte' in io:
-                print (proc_name, "del:io['id_texte']", io['id_texte'])
+                #print (proc_name, "del:io['id_texte']", io['id_texte'])
                 del io['id_texte']
                 #nb_collected = gc.collect()
                 #print (proc_name, "id_texte: nbr collected=", nb_collected)
             if 'id_lien' in io:
-                print (proc_name, "del:io['id_lien']", io['id_lien'])
+                #print (proc_name, "del:io['id_lien']", io['id_lien'])
                 del io['id_lien']
                 #nb_collected = gc.collect()
                 #print (proc_name, "id_lien: nbr collected=", nb_collected)
             if 'id_lien_provisoire' in io:
-                print (proc_name, "del:io['id_lien_provisoire']", io['id_lien_provisoire'])
+                #print (proc_name, "del:io['id_lien_provisoire']", io['id_lien_provisoire'])
                 del io['id_lien_provisoire']
     def c_sublocs_comp(self, other):
         proc_name= inspect.currentframe().f_code.co_name
@@ -1146,7 +1146,8 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
         print (proc_name, "---fin-----proc---------")
         print(proc_name, f">>>>>>>>>>>>>msessage={pmessage}")
         pmessage += b":value="
-        pmessage += str(int(val)).encode()
+        pmessage += pickle.dumps(val)
+        #pmessage += str(int(val)).encode()
         print (proc_name, "   message envoyé à la cible:", pmessage)
         clientTCP.send_message(pmessage)
         print (proc_name, "---fin-----proc---------")
@@ -1263,18 +1264,18 @@ def delete_local_name_io(px, py, io):
     bloc.c_bloc_redraw()
 def change_initial_value_io(px, py, io):
     """pour definir la valeur initiale d'une sortie mémorisée de l'instance"""
-    def procc(val, txt):
+    def proc_nul(val, txt):
         print ("-------procc initial_value------------val=", val, ",   txt=", txt)
     proc_name = "change_initial_value_io: "
     print (proc_name, "début")
-    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", procc)
+    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", proc_nul)
 def change_defaut_value_io(px, py, io):
     """pour definir la valeur par défaut d'une entrée de l'instance"""
     def procc(val, txt):
         print ("-------procc defaut_value------------val=", val, ",   txt=", txt)
     proc_name = "change_defaut_value_io: "
     print (proc_name, "début")
-    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", procc)
+    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", proc_nul)
 def delete_initial_value_io(px, py, io):
     """ supprime la valeur par défaut d'une sortie d'une instance"""
     global bloc
@@ -1356,7 +1357,7 @@ def set_value_io(px, py, io, pdic, pmsg, pproc):
         if combox_type.get() == "int":    io[pdic] = int(io_defaut_value.get())
         if combox_type.get() == "bool":
             #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
-            io[pdic] = io_defaut_value.get() == "True" or io_defaut_value.get() == "1"
+            io[pdic] = bool(io_defaut_value.get() == "True" or io_defaut_value.get() == "1")
         if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
         pproc(io[pdic], pmsg)
         pop.popup.destroy()
@@ -1919,7 +1920,6 @@ def menu_target():
             target_menubar.add_command(label = "Check, Transfer & Execute <"+bloc.header['name']+">", command = lambda: set_compile_thread("execute"))
             target_menubar.add_separator()
             target_menubar.add_command(label = "Monitoring (Start/Stop) [Space]", command = flip_monitoring)
-
 def menu_header(event, elem):
     """construit le menu lié à un entête de bloc"""
     global menu_contextuel, list_threads
@@ -2072,6 +2072,7 @@ def menu_io(event, io):
         menu_contextuel.add_separator()
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io))
     menu_contextuel.post(event.x_root, event.y_root)
+
 def open_file(pf_name, decal):
     """lit et dessine un bloc"""
     global canvas, mire, bloc, memo_bloc
@@ -2746,7 +2747,7 @@ def monitoring_bloc():
             return var
     def show_monitored_io(ptype, pio, pmsb, pid):
         proc_name = "show_monitored_io: "
-        #print (proc_name, f"parametres: type={ptype},   io(name={pio['name']}, type={pio['type']}, id={pio['id']}),  msb_name={pmsb.header['name']}, id={pid}")
+        #print (proc_name, f"parametres: type={ptype},     pio(name={pio['name']} (type={pio['type']}, id={pio['id']}),     pmsb_name={pmsb.header['name']},   pid={pid}")
         if ptype == 'in':
             for minput in pmsb.inputs:
                 if minput['id'] == pid:
@@ -2767,7 +2768,11 @@ def monitoring_bloc():
         if pio['type'] == 'in':
             color = PARAM_COLOR_BG_INPUT
         elif pio['type'] == 'out':
-            color = PARAM_COLOR_BG_OUTPUT
+            if 'memory' in pio:
+                color = PARAM_COLOR_BG_MEMORY
+            else:
+                color = PARAM_COLOR_BG_OUTPUT
+            #color = PARAM_COLOR_BG_OUTPUT
         else:
             messagebox.showinfo("ERROR", f"Shoing normal IO 'type' is not 'in' or 'out',  io={pio}")
         canvas.itemconfig(io['id_cadre'], fill= color)

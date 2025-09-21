@@ -260,7 +260,7 @@ def c_exesubloc_comp (pebloc, pieb, pio, pthread):
             #print ("<COMP>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-    print ("<COMP> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<COMP> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     if 'forced' in cesubloc.outputs[pio]:
         cesubloc.outputs[pio]['var'] = cesubloc.outputs[pio]['forced_value']
         cesubloc.outputs[pio]['valide'] = cesubloc.outputs[pio]['forced_valide']
@@ -376,7 +376,7 @@ def c_exesubloc_cablin (pebloc, pieb, pio, pthread):
             cesubloc.outputs[0]['valide'] = (cesubloc.inputs[0]['valide'], cesubloc.inputs[1]['valide'])
             cesubloc.outputs[0]['var']    = (cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
         except:
-            print ("<CABLIN>", PARAM_TEXT_EXCEPTION)
+            #print ("<CABLIN>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
     #print ("<CABLIN> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
@@ -511,10 +511,10 @@ def c_exesubloc_minmax (pebloc, pieb, pio, pthread):
             cesubloc.outputs[0]['var'] = max(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
             cesubloc.outputs[1]['var'] = min(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
         except:
-            print ("<MINMAX>", PARAM_TEXT_EXCEPTION)
+            #print ("<MINMAX>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-    print ("<MINMAX> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<MINMAX> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     if 'forced' in cesubloc.outputs[pio]:
         cesubloc.outputs[pio]['var'] = cesubloc.outputs[pio]['forced_value']
         cesubloc.outputs[pio]['valide'] = cesubloc.outputs[pio]['forced_valide']

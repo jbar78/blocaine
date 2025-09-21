@@ -1,5 +1,7 @@
+from c_exebloc import *
 from PARAM_NAME_BLOC import *
 from sharedata import list_compiled, list_threads
+PARAM_FORCED_SHIFTS_LINKED = False
 
 def compiled_find_master(bloc_name, master):
     """retourne index du master ou non master"""
@@ -147,7 +149,7 @@ def compiled_load(curant_exebloc):
 
     print(proc_name,  f"fin: list_compiled,  len={len(list_compiled)}")
 def find_thread_index(pthread_id):
-    """ retour l'index du thread correspondant à l'ID"""
+    """ retourne l'index du thread correspondant à l'ID"""
     global list_threads
     proc_name = "find_thread_index"
     #print (proc_name, ":  liste des threads: (ID à trouver=", pthread_id, ")")
@@ -159,7 +161,7 @@ def find_thread_index(pthread_id):
     print (proc_name, " WARNING thread ID<"+str(pthread_id)+"> non trouvé")
     return None
 def find_running_bloc(pname, pAB):
-    """ retour vrai si le bloc "name" de la version AB tourne """
+    """ retourne vrai si le bloc "name" de la version AB tourne """
     global list_threads
     proc_name = "find_running_bloc: "
     #print (proc_name, "  BLOC recherché:  name=", pname, "   version=", pAB)
@@ -209,52 +211,22 @@ def swaping(pname, pAB):
     list_oforceds= []
     proc_name = "running: "
     print (proc_name, "paramètres:  name<"+pname+">    AB="+pAB)
+
     #______________________________stop the bloc NON pAB
     for thread in list_threads:
         for exe in thread['list_exe']:
             if pname == exe['exebloc'].header['name'] and pAB != exe['exebloc'].header['AB']:
                 exe['run'] = False
-    #____________________________récup les valeurs mémorisées et des façages du bloc NON pAB
+    #____________________________récup les valeurs mémorisées du bloc NON pAB
     for ebloc in list_compiled:
         if pname == ebloc.header['name'] and pAB != ebloc.header['AB']:
             #print (proc_name, " boucle récup: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
             for subloc in ebloc.sublocs:
                 #print (proc_name, " boucle récup subobj: name=",subloc.header['name'])
-                for index_input, input in enumerate(subloc.inputs):
-                    #print (proc_name, "  récup: input["+str(index_input)+"] name<"+input['name']+">")
-
-                    """if 'forced' in input:
-                        iforced = {}
-                        #print (proc_name, "  récup Forced: input["+str(index_input)+"] name<"+input['name']+"> Forced trouvée")
-                        iforced['subloc_id'] = subloc.header['id']
-                        iforced['parent_ids'] = subloc.parent_ids
-                        iforced['input_id'] = subloc.inputs[index_input]['id']
-                        if 'forced_value' in subloc.inputs[index_input]:
-                            iforced['forced_value'] = subloc.inputs[index_input]['forced_value']
-                        if 'forced_valide' in subloc.inputs[index_input]:
-                            iforced['forced_valide'] = subloc.inputs[index_input]['forced_valide']
-                        #print (proc_name, "  iforced=", iforced, "récup=", iforced['forced_value'], "dans /",ebloc.header['AB'])
-                        list_iforceds.append(iforced)"""
-
                 for index_output, output in enumerate(subloc.outputs):
                     #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
-
-                    """if 'forced' in output:
-                        oforced = {}
-                        #print (proc_name, "  récup Forced: output["+str(index_output)+"] name<"+output['name']+"> Forced trouvée")
-                        oforced['subloc_id'] = subloc.header['id']
-                        oforced['parent_ids'] = subloc.parent_ids
-                        oforced['output_id'] = subloc.outputs[index_output]['id']
-                        if 'forced_value' in subloc.outputs[index_output]:
-                            oforced['forced_value'] = subloc.outputs[index_output]['forced_value']
-                        if 'forced_valide' in subloc.outputs[index_output]:
-                            oforced['forced_valide'] = subloc.outputs[index_output]['forced_valide']
-                        #print (proc_name, "  oforced=", oforced, "récup=", oforced['forced_value'], "dans /",ebloc.header['AB'])
-                        list_oforceds.append(oforced)"""
-
                     if 'system' in subloc.header['key_word']:
                         print (proc_name, " récup Memory: c'est un subloc SYSTEM name=",subloc.header['name'])
-
                         if 'memory' in output:
                             omemo = {}
                             #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+"> Memory trouvée")
@@ -266,17 +238,57 @@ def swaping(pname, pAB):
                             #print (proc_name, "  omemo=", omemo, "récup var=", omemo['var'], "dans /",ebloc.header['AB'])
                             list_omemos.append(omemo)
 
-    """    print (proc_name, "Liste des inpout forcés (nb element="+str(len(list_iforceds))+") récupéré dans"+ebloc.header['AB']+":")
-    for i, m in enumerate(list_iforceds):
-        print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_iforceds["+str(i)+"]=", m)
-    print (proc_name, "Liste des outpout forcés (nb element="+str(len(list_oforceds))+") récupéré dans"+ebloc.header['AB']+":")
-    for i, m in enumerate(list_oforceds):
-        print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_oforceds["+str(i)+"]=", m)"""
+    if PARAM_FORCED_SHIFTS_LINKED: #____________________________récup des façages du bloc NON pAB
+        for ebloc in list_compiled:
+            if pname == ebloc.header['name'] and pAB != ebloc.header['AB']:
+                #print (proc_name, " boucle récup: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
+                for subloc in ebloc.sublocs:
+                    #print (proc_name, " boucle récup subobj: name=",subloc.header['name'])
+                    for index_input, input in enumerate(subloc.inputs):
+                        #print (proc_name, "  récup: input["+str(index_input)+"] name<"+input['name']+">")
+
+                        if 'forced' in input:
+                            iforced = {}
+                            #print (proc_name, "  récup Forced: input["+str(index_input)+"] name<"+input['name']+"> Forced trouvée")
+                            iforced['subloc_id'] = subloc.header['id']
+                            iforced['parent_ids'] = subloc.parent_ids
+                            iforced['input_id'] = subloc.inputs[index_input]['id']
+                            if 'forced_value' in subloc.inputs[index_input]:
+                                iforced['forced_value'] = subloc.inputs[index_input]['forced_value']
+                            if 'forced_valide' in subloc.inputs[index_input]:
+                                iforced['forced_valide'] = subloc.inputs[index_input]['forced_valide']
+                            #print (proc_name, "  iforced=", iforced, "récup=", iforced['forced_value'], "dans /",ebloc.header['AB'])
+                            list_iforceds.append(iforced)
+
+                    for index_output, output in enumerate(subloc.outputs):
+                        #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
+
+                        if 'forced' in output:
+                            oforced = {}
+                            #print (proc_name, "  récup Forced: output["+str(index_output)+"] name<"+output['name']+"> Forced trouvée")
+                            oforced['subloc_id'] = subloc.header['id']
+                            oforced['parent_ids'] = subloc.parent_ids
+                            oforced['output_id'] = subloc.outputs[index_output]['id']
+                            if 'forced_value' in subloc.outputs[index_output]:
+                                oforced['forced_value'] = subloc.outputs[index_output]['forced_value']
+                            if 'forced_valide' in subloc.outputs[index_output]:
+                                oforced['forced_valide'] = subloc.outputs[index_output]['forced_valide']
+                            #print (proc_name, "  oforced=", oforced, "récup=", oforced['forced_value'], "dans /",ebloc.header['AB'])
+                            list_oforceds.append(oforced)
+
+
+        print (proc_name, "Liste des inpout forcés (nb element="+str(len(list_iforceds))+") récupéré dans"+ebloc.header['AB']+":")
+        for i, m in enumerate(list_iforceds):
+            print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_iforceds["+str(i)+"]=", m)
+        print (proc_name, "Liste des outpout forcés (nb element="+str(len(list_oforceds))+") récupéré dans"+ebloc.header['AB']+":")
+        for i, m in enumerate(list_oforceds):
+            print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_oforceds["+str(i)+"]=", m)
 
     print (proc_name, "Liste des outpout mémorisé (nb element="+str(len(list_omemos))+") récupéré dans"+ebloc.header['AB']+":")
     for i, m in enumerate(list_omemos):
         print (proc_name, "    récup dans /"+ebloc.header['AB']+"   list_omemos["+str(i)+"]=", m)
-    #____________________________copie les valeurs mémorisées vers le bloc pAB
+
+    #____________________________copie les valeurs mémorisées vers le shift  pAB
     for ebloc in list_compiled:
         if pname == ebloc.header['name'] and pAB == ebloc.header['AB']:
             print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
@@ -289,30 +301,30 @@ def swaping(pname, pAB):
                         subloc.outputs[index_output]['valide'] = omemo['valide']
                         print (proc_name, "  omemo=", omemo, "copié var=", omemo['var'], " dans /",ebloc.header['AB'])
 
-    #____________________________copie les valeurs mémorisées vers le bloc version A et B
-        """for ebloc in list_compiled:
-        if pname == ebloc.header['name']:
-            print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
-            for ib, subloc in enumerate(ebloc.sublocs):
-                print (proc_name, "     subobj: name=",subloc.header['name'])
-                for iforced in list_iforceds:
-                    if subloc.header['id'] == iforced['subloc_id'] and subloc.parent_ids == iforced['parent_ids']:
-                        index_input = subloc.c_exesubloc_find_index_exeinput (iforced['input_id'])
-                        subloc.inputs[index_input]['forced'] = True
-                        if 'forced_value' in  iforced:
-                            subloc.inputs[index_input]['forced_value']  = iforced['forced_value']
-                        if 'forced_valide' in iforced:
-                            subloc.inputs[index_input]['forced_valide'] = iforced['forced_valide']
-                        print (proc_name, "  iforced=", iforced, "copié forced_value=", iforced['forced_value'], " dans /",ebloc.header['AB'])
-                for oforced in list_oforceds:
-                    if subloc.header['id'] == oforced['subloc_id'] and subloc.parent_ids == oforced['parent_ids']:
-                        index_output = subloc.c_exesubloc_find_index_exeoutput (oforced['output_id'])
-                        subloc.outputs[index_output]['forced'] = True
-                        if 'forced_value' in  oforced:
-                            subloc.outputs[index_output]['forced_value']  = oforced['forced_value']
-                        if 'forced_valide' in oforced:
-                            subloc.outputs[index_output]['forced_valide'] = oforced['forced_valide']
-                        print (proc_name, "  oforced=", oforced, "copié forced_value=", oforced['forced_value'], " dans /",ebloc.header['AB'])"""
+    if PARAM_FORCED_SHIFTS_LINKED: #____________________________copie les forcages vers le shift pAB
+        for ebloc in list_compiled:
+            if pname == ebloc.header['name'] and pAB == ebloc.header['AB']:
+                print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
+                for ib, subloc in enumerate(ebloc.sublocs):
+                    print (proc_name, "     subobj: name=",subloc.header['name'])
+                    for iforced in list_iforceds:
+                        if subloc.header['id'] == iforced['subloc_id'] and subloc.parent_ids == iforced['parent_ids']:
+                            index_input = subloc.c_exesubloc_find_index_exeinput (iforced['input_id'])
+                            subloc.inputs[index_input]['forced'] = True
+                            if 'forced_value' in  iforced:
+                                subloc.inputs[index_input]['forced_value']  = iforced['forced_value']
+                            if 'forced_valide' in iforced:
+                                subloc.inputs[index_input]['forced_valide'] = iforced['forced_valide']
+                            print (proc_name, "  iforced=", iforced, "copié forced_value=", iforced['forced_value'], " dans /",ebloc.header['AB'])
+                    for oforced in list_oforceds:
+                        if subloc.header['id'] == oforced['subloc_id'] and subloc.parent_ids == oforced['parent_ids']:
+                            index_output = subloc.c_exesubloc_find_index_exeoutput (oforced['output_id'])
+                            subloc.outputs[index_output]['forced'] = True
+                            if 'forced_value' in  oforced:
+                                subloc.outputs[index_output]['forced_value']  = oforced['forced_value']
+                            if 'forced_valide' in oforced:
+                                subloc.outputs[index_output]['forced_valide'] = oforced['forced_valide']
+                            print (proc_name, "  oforced=", oforced, "copié forced_value=", oforced['forced_value'], " dans /",ebloc.header['AB'])
 
     #______________________________start the bloc pAB
     for thread in list_threads:
@@ -432,3 +444,46 @@ def print_threads():
             #print (proc_name, f"list_exe: index OUTPUT={exe['iesubloc']}>")
             #print (proc_name, f"list_exe: run={exe['run']}")
             #print (proc_name, f"list_exe: bloc name<{exe['exebloc'].sublocs[exe['iesubloc']].header['name']}> ")
+def compiled_forced_io_list():
+    """ retourne la liste des io focées"""
+    global list_compiled
+    io_list = []
+    proc_name = "list_forced: "
+    print (proc_name, "Liste des blocs compilés:   nb="+str(len(list_compiled)))
+    for ebloc in list_compiled:
+        print (proc_name, f"  - EBLOC: name<{ebloc.header['name']}>   /{ebloc.header['AB']}")
+        for subloc in ebloc.sublocs:
+            print (proc_name, f"   - subloc: name<{subloc.header['name']}>   id({subloc.header['id']})")
+            for input in subloc.inputs:
+                print (proc_name, f"      - INPUT: name<{input['name']}>   id({input['id']})")
+                forced_io = {}
+                forced_io['main'] = ebloc.header['name']
+                forced_io['shift'] = ebloc.header['AB']
+                forced_io['path']= "ri:"
+                index = 0
+                for i,bid in enumerate(subloc.parent_ids):
+                    index = ebloc.c_exebloc_find_index_exebloc(subloc.header['id'], subloc.parent_ids)
+                    forced_io['path'] += f"index={index}, " 
+                if 'forced' in input:
+                    forced_io['io_name'] = input['name']
+                    forced_io['io_type'] = "input"
+                    forced_io['io_id'] = input['id']
+                    forced_io['io_value'] = input['forced_value']
+                    forced_io['io_validity'] = input['forced_valide']
+                    io_list.append(forced_io)
+            for output in subloc.outputs:
+                print (proc_name, f"      - OUTPUT: name<{output['name']}>   id({output['id']})")
+                forced_io = {}
+                forced_io['main'] = ebloc.header['name']
+                forced_io['shift'] = ebloc.header['AB']
+                forced_io['path']= "ro:"
+                if 'forced' in output:
+                    forced_io['io_name'] = output['name']
+                    forced_io['io_type'] = "output"
+                    forced_io['io_id'] = output['id']
+                    forced_io['io_value'] = output['forced_value']
+                    forced_io['io_validity'] = output['forced_valide']
+                    io_list.append(forced_io)
+    return io_list
+
+

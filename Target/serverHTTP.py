@@ -48,6 +48,7 @@ menu = """<table>
         <tr><td>
         <a href='/threads'>Task list</a><br>
         <a href='/blocs'>Bloc & Output list</a><br>
+        <a href='/overwriting'>Overwriting list</a><br>
         <a href='/connexion'>Connexions</a><br>
         <a href='/list_compiled:print_list_compiled:'>print list_compiled</a><br>
         <a href='/list_threads:print_thread_list:'>print list_threads</a>
@@ -269,7 +270,49 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<a href='/blocs'>Refresh</a>"
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
-        else:
+
+        elif self.path == "/overwriting": #____________________________liste des forçages
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            #self.send_header("Connection", "keep-alive")
+            #self.send_header("Keep-Alive", "timeout=5, max=100")
+            self.end_headers()
+            # page: thread list
+            html = html_debut
+            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html += menu
+            html +="<table>"
+
+
+            html += f"""<tr><th colspan="11">Overwriting list</th></tr>"""
+            html += f"""<tr><th colspan="3">bloc</th><th colspan="5">io</th><th rowspan="2">status</th><th colspan="2">task</th></tr>"""
+            html += f"""<tr><th>main</th><th>shift</th><th>path/name</th><th>name</th><th>type</th><th>id</th><th>value</th><th>validity</th><th>name</th><th>id</th></tr>"""
+            forced_io_list = compiled_forced_io_list()
+            for forced_io in forced_io_list:
+                html += "<tr>"
+                html += f"<td>{forced_io['main']}</td><td>{forced_io['shift']}</td><td>{forced_io['path']}</td>"
+                html += f"<td>{forced_io['io_name']}</td><td>{forced_io['io_type']}</td><td>{forced_io['io_id']}</td>"
+                txt_value = forced_io['io_value']
+                if forced_io['io_validity']:
+                    txt_validity = "😊"
+                    txt_style = ""
+                else:
+                    txt_validity = "☠ "
+                    txt_style = f"""style="font-size: 200%;" """
+                #html += f"<td>{txt_value}</td><td{txt_style}>{txt_validity}</td>"""
+                html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
+                html += f"<td>txt_status</td>"
+                html += f"<td>task name</td><td>task id</td>"
+                html += "</tr>"
+
+
+            html +="</table>"
+            html +="<a href='/overwriting'>Refresh</a>"
+            html += html_fin
+            #print ("HTML=", html)
+            self.wfile.write(html.encode("utf-8"))
+
+        else: #____________________________inconnu ERREUR 404
             self.send_response(404)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")

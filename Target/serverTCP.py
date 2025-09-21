@@ -46,6 +46,7 @@ def handle_clientTCP(client_socket, addr):
                 print(proc_name, f"input['id']==io_id  {ioput['id']}")
                 if  cas == b"overwriting_value":
                     ioput['forced_value']= io_value
+                    ioput['var']= io_value # on force aussi la variable
                 elif cas == b"overwriting_validity":
                     print(proc_name, f"validity 'forced' in __put['id']={ioput['id']}")
                     ioput['forced_valide']= not ioput['forced_valide']
@@ -149,13 +150,15 @@ def handle_clientTCP(client_socket, addr):
                     tab_io_value = textes[3].split(b'=')
                     print(proc_name, "txt value=tab_io_value[0]=", tab_io_value[0])
                     print(proc_name, "txt value=tab_io_value[1]=", tab_io_value[1])
-                    io_value = int(tab_io_value[1])
+                    io_value = pickle.loads(tab_io_value[1])
+                    print (proc_name, f" io_value={io_value}")
+                    #io_value = int(tab_io_value[1])
 
                 print(proc_name, f"io_id={io_id}")
                 print(proc_name, "-----------------------------------")
                 for ic, comp in enumerate(list_compiled):
                     print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']}")
-                    if comp.header['name'] == monitoring['name']: #and comp.header['master']: appliquer aux 2 shift A&B
+                    if comp.header['name'] == monitoring['name'] and comp.header['master']: # ne pas appliquer aux 2 shift A&B
                         #monitoring_user_bloc (comp)
                         print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
                         for subloc in comp.sublocs:

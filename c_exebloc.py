@@ -34,9 +34,9 @@ class c_exebloc:
         proc_name = "c_exebloc_find_index_exebloc: "
         print (proc_name, "début: paramètres: pid=", pid, ",   pparent_ids[]=", pparent_ids)
         for i, esubloc in enumerate(self.sublocs):
-            print (proc_name, "boucle esubloc["+str(i)+"]=    name<"+esubloc.header['name']+">  id<"+str(esubloc.header['id'])+">")
+            #print (proc_name, "boucle esubloc["+str(i)+"]=    name<"+esubloc.header['name']+">  id<"+str(esubloc.header['id'])+">")
             if pparent_ids == esubloc.parent_ids:
-                print (proc_name, " id lites équivalentes:    pparent_ids="+str(pparent_ids)+",   esubloc.parent_ids="+str(esubloc.parent_ids))
+                #print (proc_name, " id lites équivalentes:    pparent_ids="+str(pparent_ids)+",   esubloc.parent_ids="+str(esubloc.parent_ids))
                 if esubloc.header['id'] == pid:
                     print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                     return i
