@@ -446,43 +446,64 @@ def print_threads():
             #print (proc_name, f"list_exe: bloc name<{exe['exebloc'].sublocs[exe['iesubloc']].header['name']}> ")
 def compiled_forced_io_list():
     """ retourne la liste des io focées"""
+    def forced_path(pid, pparent_ids):
+        proc_name = "forced_path: "
+        ids = pickle.loads(pickle.dumps(pparent_ids))
+        ids.append(pid)
+        #print (proc_name, f"pid={pid}, pparent={pparent_ids}")
+        #print (proc_name, f"ids={ids}, len(ids)={len(ids)}")
+        path = ebloc.header['name']
+        for i in range(len(ids)-1):
+            #print(proc_name, f"boucle[{i}]: ")
+            index = ebloc.c_exebloc_find_index_exebloc(ids[i+1], ids[0:i+1])
+            path +=  f"/({ebloc.sublocs[index].header['id']}){ebloc.sublocs[index].header['name']}" 
+        #if len(pparent_ids) == 1:
+        #    index = ebloc.c_exebloc_find_index_exebloc(pid, pparent_ids)
+        #    path +=  f"/{ebloc.sublocs[index].header['name']}({ebloc.sublocs[index].header['id']})" 
+        #if len(pparent_ids) == 2:
+        #    for i,bid in enumerate(pparent_ids):
+        #        if i == 0:
+        #            index = ebloc.c_exebloc_find_index_exebloc(pparent_ids[1], pparent_ids[0:1])
+        #            path +=  f"/({ebloc.sublocs[index].header['id']}){ebloc.sublocs[index].header['name']}" 
+        #        if i == 1:
+        #            index = ebloc.c_exebloc_find_index_exebloc(pid, subloc.parent_ids[0:2])
+        #            path +=  f"/({ebloc.sublocs[index].header['id']}){ebloc.sublocs[index].header['name']}" 
+        return path
+
     global list_compiled
     io_list = []
     proc_name = "list_forced: "
-    print (proc_name, "Liste des blocs compilés:   nb="+str(len(list_compiled)))
+    #print (proc_name, "Liste des blocs compilés:   nb="+str(len(list_compiled)))
     for ebloc in list_compiled:
-        print (proc_name, f"  - EBLOC: name<{ebloc.header['name']}>   /{ebloc.header['AB']}")
-        for subloc in ebloc.sublocs:
-            print (proc_name, f"   - subloc: name<{subloc.header['name']}>   id({subloc.header['id']})")
+        #print (proc_name, f"  - EBLOC: name<{ebloc.header['name']}>   /{ebloc.header['AB']}")
+        for isb, subloc in enumerate(ebloc.sublocs):
+            #print (proc_name, f"   - subloc[{isb}]: name<{subloc.header['name']}>   id({subloc.header['id']})")
             for input in subloc.inputs:
-                print (proc_name, f"      - INPUT: name<{input['name']}>   id({input['id']})")
+                #print (proc_name, f"      - INPUT: name<{input['name']}>   id({input['id']})")
                 forced_io = {}
                 forced_io['main'] = ebloc.header['name']
                 forced_io['shift'] = ebloc.header['AB']
-                forced_io['path']= "ri:"
                 index = 0
-                for i,bid in enumerate(subloc.parent_ids):
-                    index = ebloc.c_exebloc_find_index_exebloc(subloc.header['id'], subloc.parent_ids)
-                    forced_io['path'] += f"index={index}, " 
                 if 'forced' in input:
                     forced_io['io_name'] = input['name']
                     forced_io['io_type'] = "input"
                     forced_io['io_id'] = input['id']
                     forced_io['io_value'] = input['forced_value']
                     forced_io['io_validity'] = input['forced_valide']
+                    forced_io['path'] = forced_path (subloc.header['id'], subloc.parent_ids)
                     io_list.append(forced_io)
             for output in subloc.outputs:
-                print (proc_name, f"      - OUTPUT: name<{output['name']}>   id({output['id']})")
+                #print (proc_name, f"      - OUTPUT: name<{output['name']}>   id({output['id']})")
                 forced_io = {}
                 forced_io['main'] = ebloc.header['name']
                 forced_io['shift'] = ebloc.header['AB']
-                forced_io['path']= "ro:"
                 if 'forced' in output:
                     forced_io['io_name'] = output['name']
                     forced_io['io_type'] = "output"
                     forced_io['io_id'] = output['id']
                     forced_io['io_value'] = output['forced_value']
                     forced_io['io_validity'] = output['forced_valide']
+                    forced_io['path'] = forced_path (subloc.header['id'], subloc.parent_ids)
                     io_list.append(forced_io)
     return io_list
 

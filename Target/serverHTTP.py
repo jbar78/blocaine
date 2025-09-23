@@ -81,6 +81,14 @@ def get_local_ip():
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
+        def return_validity(valide):
+            if valide:
+                txt_validity = "😊"
+                txt_style = ""
+            else:
+                txt_validity = "☠ "
+                txt_style = f"""style="font-size: 200%;" """
+            return txt_validity, txt_style
         proc_name = "do_GET: "
         global httpd
         (ipp, ppp) = httpd.server_address
@@ -248,12 +256,14 @@ class MyServer(BaseHTTPRequestHandler):
                     if exe['run']:
                         txt_status = "Running"
                         txt_value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
-                        if exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide']:
-                            txt_validity = "😊"
-                            txt_style = ""
-                        else:
-                            txt_validity = "☠ "
-                            txt_style = f"""style="font-size: 200%;" """
+                        txt_validity, txt_style = return_validity (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide'])
+
+                        #if exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide']:
+                        #    txt_validity = "😊"
+                        #    txt_style = ""
+                        #else:
+                        #    txt_validity = "☠ "
+                        #    txt_style = f"""style="font-size: 200%;" """
                     else:
                         txt_status = "Down"
                         txt_value = txt_validity = "..."

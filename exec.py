@@ -646,15 +646,19 @@ def c_exesubloc_clock (pebloc, pieb, pio, pthread):
         try:
             pebloc.c_exebloc_recup_input(pieb, pthread, 0)
             cesubloc.c_exesubloc_validation_standard()
-            if cesubloc.outputs[O_RT]['var'] > 0:
-                cesubloc.outputs[O_RT]['var'] -= pthread['cycle_time']
+            if 'forced' in cesubloc.outputs[O_RT]:
+                cesubloc.outputs[O_RT]['var']    = cesubloc.outputs[O_RT]['forced_value'] 
+                cesubloc.outputs[O_RT]['valide'] = cesubloc.outputs[O_RT]['forced_valide']
             else:
-                if cesubloc.outputs[O_CLOCK]['var']:
-                    cesubloc.outputs[O_CLOCK]['var'] = False
-                    cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_OFF]['var']
+                if cesubloc.outputs[O_RT]['var'] > 0:
+                    cesubloc.outputs[O_RT]['var'] -= pthread['cycle_time']
                 else:
-                    cesubloc.outputs[O_CLOCK]['var'] = True
-                    cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_ON]['var']
+                    if cesubloc.outputs[O_CLOCK]['var']:
+                        cesubloc.outputs[O_CLOCK]['var'] = False
+                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_OFF]['var']
+                    else:
+                        cesubloc.outputs[O_CLOCK]['var'] = True
+                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_ON]['var']
         except:
             #print ("<CLOCK>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:

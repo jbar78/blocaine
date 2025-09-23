@@ -1271,7 +1271,7 @@ def change_initial_value_io(px, py, io):
     io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", proc_nul)
 def change_defaut_value_io(px, py, io):
     """pour definir la valeur par défaut d'une entrée de l'instance"""
-    def procc(val, txt):
+    def proc_nul(val, txt):
         print ("-------procc defaut_value------------val=", val, ",   txt=", txt)
     proc_name = "change_defaut_value_io: "
     print (proc_name, "début")
