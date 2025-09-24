@@ -978,6 +978,7 @@ def update_bloc(elem):
     mem_liens_in = []
     mem_liens_out = []
     mem_local_names = []
+    mem_local_comments = []
     mem_defaut_values = []
     mem_initial_values = []
     xxxmem_local_defaut_values = []
@@ -1035,6 +1036,11 @@ def update_bloc(elem):
                 couple['local_name'] = io['local_name']
                 mem_local_names.append(couple)
                 print (proc_name, "memo Local Name: couple=", couple)
+        if 'local_comment' in io:
+                couple['id'] = io['id']
+                couple['local_comment'] = io['local_comment']
+                mem_local_comments.append(couple)
+                print (proc_name, "memo Local Comment: couple=", couple)
         if 'initial_value' in io and io['type']=='out':###
                 couple['id'] = io['id']
                 couple['initial_value'] = io['initial_value']
@@ -1044,6 +1050,7 @@ def update_bloc(elem):
     print (proc_name, f"liste des liens_in={mem_liens_in}")
     print (proc_name, f"liste des liens_out={mem_liens_out}")
     print (proc_name, f"liste des local_names={mem_local_names}")
+    print (proc_name, f"liste des local_comments={mem_local_comments}")
     print (proc_name, f"liste des defaut_values={mem_defaut_values}")
     print (proc_name, f"liste des initial_values={mem_initial_values}")
 
@@ -1096,6 +1103,11 @@ def update_bloc(elem):
                         io['name']=eln['xput_name']
                     else:
                         io['local_name']=eln['local_name']
+        for elc in mem_local_comments:
+            #print (proc_name, "Name dans boucle local_comment, comment=", elc)
+            for i, io in enumerate(elem.ios):
+                if io['id'] == elc['id']:
+                    io['local_comment']=elc['local_comment']
         for dv in mem_defaut_values:
             print (proc_name, "Défaut Value dans boucle defaut_value, value=", dv)
             for i, io in enumerate(elem.ios):
@@ -1262,6 +1274,40 @@ def delete_local_name_io(px, py, io):
     proc_name = "delete_local_name_io: "
     del io['local_name']
     bloc.c_bloc_redraw()
+def change_local_comment_io(px, py, io):
+    """change le commentaire d'une entrée ou une sortie"""
+    global bloc
+    proc_name = "change_local_comment_io: "
+    #print (proc_name, "début")
+    def proc_null():
+        return
+    def validation():
+        io['local_comment'] = io_comment.get()
+        pop.popup.destroy()
+        bloc.c_bloc_redraw()
+    pop = c_popup("io comment", 25+px, 75+py)
+    if not 'local_comment' in io: io['local_comment']="new"
+    io_comment = pop.c_popup_add_une_propriete("Local Comment:", io['local_comment'], proc_null)
+    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+    BP_escape.grid(row = pop.ligne, column = 0)
+    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+    BP_validation.grid(row = pop.ligne, column = 1)
+    #BP_escape.focus()
+    BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
+    BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
+    BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
+    BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
+    #BP_escape.bind("<Escape>", lambda event: BP_escape.invoke())
+
+    pop.entry[0].focus()
+    pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
+    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
+def delete_local_comment_io(px, py, io):
+    """supprime un commentaire local sur une entrée ou une sortie"""
+    global bloc
+    proc_name = "delete_local_comment_io: "
+    del io['local_comment']
+    bloc.c_bloc_redraw()
 def change_initial_value_io(px, py, io):
     """pour definir la valeur initiale d'une sortie mémorisée de l'instance"""
     def proc_nul(val, txt):
@@ -1407,6 +1453,8 @@ def properties_io(px, py, io):
     io_name = pop.c_popup_add_une_propriete("Name:", io['name'], proc_null)
     if 'local_name' in io:
         io_local_name = pop.c_popup_add_une_propriete("Local Name:", io['local_name'], proc_null)
+    if 'local_comment' in io:
+        io_local_comment = pop.c_popup_add_une_propriete("Local Comment:", io['local_comment'], proc_null)
     io_type = pop.c_popup_add_une_propriete("Type:", io['type'], proc_null)
     if 'defaut_value' in io:
         #print (proc_name, "defaut-value type=", type(io['defaut_value']))
@@ -2036,6 +2084,14 @@ def menu_io(event, io):
         if (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and elem_parent.header['name'] != PARAM_NAME_BLOC_INPUT):
             if not 'system' in bloc.header['key_word']:
                 menu_contextuel.add_command(label = "Create local name", command = lambda: change_local_name_io(event.x_root, event.y_root, io))
+    try:
+        io['local_comment']
+        menu_contextuel.add_command(label = "Change local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
+        menu_contextuel.add_command(label = "Delete local comment", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_local_comment_io(event.x_root, event.y_root, io))
+    except KeyError:
+        if (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and elem_parent.header['name'] != PARAM_NAME_BLOC_INPUT):
+            if not 'system' in bloc.header['key_word']:
+                menu_contextuel.add_command(label = "Create local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
 
     if ((elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT and bloc.header['name'] != PARAM_NAME_BLOC_OUTPUT) or \
         (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT and not 'system' in bloc.header) or \
