@@ -75,8 +75,8 @@ class c_mire:
         yoff = can.winfo_height() // 2
         #zoom(1, xoff, yoff)          # applique le zoom par défaut
         self.param_nb_cercle = 19
-        self.param_cercle_couleur= "grey75"
-        self.param_croix_couleur= "#FFAAAA"
+        self.param_cercle_couleur= PARAM_COLOR_MIRE_CERCLE
+        self.param_croix_couleur = PARAM_COLOR_MIRE_CROSS
         self.param_cercle_pas = 2000
         self.param_largeur_trait = 1
         self.cercles = []

@@ -91,22 +91,22 @@ def c_exesubloc_previous (pebloc, pieb, pio, pthread):
     """ exécution du bloc PREVIOUS (dans la boucler écurcive)"""
     cesubloc = pebloc.sublocs[pieb]
     #print ("<PREVIOUS> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            if pio != 1: # la pate (n-1) est morte! (elle ne gérére pas l'éxecution du bloc)
+    if pio != 1: # la pate (n-1) est morte! (elle ne gérére pas l'éxecution du bloc)
+        if cesubloc.header['counter'] == pthread['counter']:
+            pass
+            #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        else:
+            cesubloc.header['counter'] = pthread['counter']
+            try:
                 pebloc.c_exebloc_recup_inputs(pieb, pthread)
                 cesubloc.c_exesubloc_validation_standard()
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] # n
                 cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'] # n-1
-        except:
-            #print ("<PREVIOUS>", PARAM_TEXT_EXCEPTION)
-            for output in cesubloc.outputs:
-                output['valide'] = False
-    #print ("<PREVIOUS> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+            except:
+                #print ("<PREVIOUS>", PARAM_TEXT_EXCEPTION)
+                for output in cesubloc.outputs:
+                    output['valide'] = False
+        #print ("<PREVIOUS> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     if 'forced' in cesubloc.outputs[pio]:
         cesubloc.outputs[pio]['var'] = cesubloc.outputs[pio]['forced_value']
         cesubloc.outputs[pio]['valide'] = cesubloc.outputs[pio]['forced_valide']
