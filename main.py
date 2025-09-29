@@ -1781,7 +1781,8 @@ def event_key_F1(event):
             else:
                 os.startfile(doc_file)
         else:
-         messagebox.showinfo("ERROR", "The ducumentaion is not available for this bloc")
+            message_txt = "The documentaion file:\n"+doc_file+"\nis not available for this bloc"
+            messagebox.showinfo("ERROR", message_txt)
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -2882,15 +2883,15 @@ def monitoring_bloc():
             time.sleep(0.1)
         else: #except:
             print(proc_name, "EXECPTION: buffer reçu=", buff)
-    print(proc_name, "fin du monitoring")
+    #print(proc_name, "fin du monitoring")
     for i, sb in enumerate(bloc.sublocs):
-        print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+        #print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
         for j, io in enumerate(sb.ios):
-            print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+            #print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
             show_normal_io (io)
     #bloc.c_bloc_redraw()
     #print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
-    print(proc_name, "fin")
+    #print(proc_name, "fin")
 
 
 #  début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début ---
