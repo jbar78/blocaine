@@ -812,15 +812,11 @@ def c_exesubloc_filter_FO (pebloc, pieb, pio, pthread):
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             #gain = pthread['period']    / cesubloc.inputs[1]['var']
             gain = pthread['cycle_time'] / cesubloc.inputs[1]['var']
-            cesubloc.outputs[0]['valide'] = cesubloc.outputs[1]['valide'] and cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
-
             if cesubloc.outputs[0]['valide']:
                 cesubloc.outputs[0]['var'] += gain * cesubloc.inputs[0]['var'] - gain * cesubloc.outputs[0]['var']
             else:
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-
-            cesubloc.outputs[1]['var']    = cesubloc.inputs[0]['var']
-            cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
         except:
             #print ("<EDGE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
