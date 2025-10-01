@@ -129,18 +129,6 @@ class c_exesubloc:
 
 
 
-
-
-
-    #def c_exesubloc_recup_last_outputxxxxxxx (self, pio):
-    #    """retour l'ouput pio du bloc"""
-    #    #cesubloc = pebloc.sublocs[pieb]
-    #    print (f"début RECUP_LAST_OUTPUT les paramètres sont:  pio={pio}")
-    #    print (" LAST_OUTPUT retourne l'outout [", pio, "]: var=", self.outputs[pio]['var'], "val=", self.outputs[pio]['valide'])
-    #    return self.outputs[pio]['var'], self.outputs[pio]['valide']
-
-
-
     def c_exesubloc_validation_standard(self):
         """ affecte les validités des sorties en fonction des validités des entrées
         une entrée invalide, inlalide toutes les sorties
@@ -152,3 +140,13 @@ class c_exesubloc:
                 break
         for output in self.outputs:
             output['valide'] = standard_val
+
+    def c_exesubloc_overwriting_outputs(self):
+        """ affecte les sorties en fonction des forcages"""
+        #print ("c_exesubloc_overwriting_outputs: name=", self.header['name'])
+        for output in self.outputs:
+            #print ("c_exesubloc_overwriting_outputs: output=", output)
+            if 'forced' in output:
+                #print ("c_exesubloc_overwriting_outputs: forced: ", "value=", output['forced_value'], "valide=", output['forced_valide'])
+                output['var'] = output['forced_value']
+                output['valide'] = output['forced_valide']

@@ -43,16 +43,25 @@ compile_level=0
 arborescence = "/"
 def io_text(io):
     """retourn le texte d'un IO """
+    def io_format (value):
+        if isinstance(value, bool):
+            if value: return PARAM_ICONE_TRUE #"True"
+            else:     return PARAM_ICONE_FALSE #"False"
+        else:
+            return str(value)
+
     proc_name = "io_text: "
     #print (proc_name, f"oi={io}")
     if not 'lien' in io and 'defaut_value' in io:
         #print (proc_name, f"pas de lien")
-        val = io['defaut_value']
-        val = str(val)+PARAM_FLECHE_DROITE
+        val = io_format (io['defaut_value'])
+        #val = str(val)+PARAM_FLECHE_DROITE
+        val +=PARAM_FLECHE_DROITE
     elif 'initial_value' in io:
         #print (proc_name, f"initial value")
-        val = io['initial_value']
-        val = str(val)+PARAM_ICONE_INITIALISATION
+        val = io_format (io['initial_value'])
+        #val = str(val)+PARAM_ICONE_INITIALISATION
+        val += PARAM_ICONE_INITIALISATION
     else:
         val = ""
     if 'event_id' in io:
@@ -2796,8 +2805,8 @@ def monitoring_bloc():
     def formatage(var):
         """ retourne la valeur mais formatée"""
         if isinstance(var, bool):
-            if var: return "True"
-            else: return "False"
+            if var: return PARAM_ICONE_TRUE #"True"
+            else: return PARAM_ICONE_FALSE #"False"
         elif isinstance(var, float):
             return f"{var:8.3f}"
         else:
