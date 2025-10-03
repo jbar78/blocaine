@@ -290,6 +290,26 @@ class c_bloc:
             if esubloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:
                 if 'event_id' in esubloc.header:
                     del esubloc.header['event_id']
+
+
+    def c_bloc_delete_lien (self, event):
+        """ suprime le lien qui se trouve sous le curseur """
+        proc_name = "c_bloc_delete_lien: "
+        items = canvas.find_closest(event.x, event.y)
+        id_lien = items[0]
+        #print(proc_name, f"   items[0]={id_lien}")
+        tags = canvas.find_withtag(id_lien)
+        #print(proc_name, f",  tags={tags}")
+        for elem in self.sublocs:
+            #print (proc_name, f"elem name={elem.header['name']}")
+            for io in elem.ios:
+                #print (proc_name, f"    io name={io['name']}  id({io['id']})")
+                if 'id_lien' in io:
+                    if io['id_lien']==id_lien:
+                        print (proc_name, f"    id_lien={id_lien} == id({io['id_lien']})  ==> delete le lien de cette io")
+                        del_lien(io)
+
+
 class c_sublocs:
     def __init__(self, pbloc_name):
         global bloc
@@ -1154,6 +1174,7 @@ def del_lien(io):
     if 'lien' in io:
         canvas.delete(io['id_lien'])
         del io['lien']
+        del io['id_lien']
     txt = io_text(io)
     print (proc_name, f"txt={txt}")
     canvas.itemconfig(io['id_texte'], text=txt)
@@ -1684,13 +1705,16 @@ def event_clic_droit(event):
         items = canvas.find_withtag(CURRENT)
         #print("items len() =<{}>".format(len(items)))
         tags_list = canvas.gettags(items)
-        #print ("dans menu, items<{}>   tags<{}".format(items, tags_list))
+        print (f"dans menu, items<{items}>   tags<{tags_list}") #
         menu_contextuel = Menu(master, tearoff=0)
-        menu_contextuel.add_command(label = "Add input", command = lambda: bloc.c_bloc_add(event, "in"), background = PARAM_COLOR_BG_HEADER_INPUT, activebackground = PARAM_COLOR_BG_HEADER_INPUT )
-        menu_contextuel.add_command(label = "Add output", command = lambda: bloc.c_bloc_add(event, "out"), background = PARAM_COLOR_BG_HEADER_OUTPUT, activebackground = PARAM_COLOR_BG_HEADER_OUTPUT)
-        menu_contextuel.add_separator()
-        menu_contextuel.add_command(label = "Add system bloc", command = lambda: bloc.c_bloc_add(event, "system"), background = PARAM_COLOR_BG_HEADER_SYSTEM, activebackground = PARAM_COLOR_BG_HEADER_SYSTEM)
-        menu_contextuel.add_command(label = "Add user bloc", command = lambda: bloc.c_bloc_add(event, "user"), background = PARAM_COLOR_BG_HEADER_USER, activebackground = PARAM_COLOR_BG_HEADER_USER)
+        if 'lien' in tags_list:
+            menu_contextuel.add_command(label = "Delete link", command = lambda: bloc.c_bloc_delete_lien(event), foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER )
+        else:
+            menu_contextuel.add_command(label = "Add input", command = lambda: bloc.c_bloc_add(event, "in"), background = PARAM_COLOR_BG_HEADER_INPUT, activebackground = PARAM_COLOR_BG_HEADER_INPUT )
+            menu_contextuel.add_command(label = "Add output", command = lambda: bloc.c_bloc_add(event, "out"), background = PARAM_COLOR_BG_HEADER_OUTPUT, activebackground = PARAM_COLOR_BG_HEADER_OUTPUT)
+            menu_contextuel.add_separator()
+            menu_contextuel.add_command(label = "Add system bloc", command = lambda: bloc.c_bloc_add(event, "system"), background = PARAM_COLOR_BG_HEADER_SYSTEM, activebackground = PARAM_COLOR_BG_HEADER_SYSTEM)
+            menu_contextuel.add_command(label = "Add user bloc", command = lambda: bloc.c_bloc_add(event, "user"), background = PARAM_COLOR_BG_HEADER_USER, activebackground = PARAM_COLOR_BG_HEADER_USER)
         menu_contextuel.post(event.x_root, event.y_root)
     memo_event_clic_droit = FALSE
 def event_clic_molette(event):
@@ -1725,16 +1749,6 @@ def event_molette(event):
         else:
             zoom_increment = 1/PARAM_ZOOM_INCREMENT
     zoom(zoom_increment, event.x, event.y)
-#def event_molette_poussee(event):
-    #"""callback: sur evenement"""
-    ##print ("molette pousée: position x={},  y={}".format(event.x, event.y))
-    #event_deplacement_souris(event)
-    #zoom(PARAM_ZOOM_INCREMENT, event.x, event.y)
-#def event_molette_tiree(event):
-    #"""callback: sur evenement"""
-    ##print ("molette tirée: position x={},  y={}".format(event.x, event.y))
-    #event_deplacement_souris(event)
-    #zoom(1/PARAM_ZOOM_INCREMENT, event.x, event.y)
 def event_key_space(event):
     """callback: sur evenement"""
     global flag_monitoring
