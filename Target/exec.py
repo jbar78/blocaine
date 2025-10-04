@@ -6,6 +6,7 @@ import sys
 import math
 from PARAM_NAME_BLOC import *
 from c_exebloc import *
+from sharedata import list_threads
 
 
 PARAM_TEXT_EXCEPTION = " EXCEPTION: so output(s) become unvalid"
@@ -41,6 +42,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_DIFFERENCIAL: procedure= c_exesubloc_differencial
     elif psubloc.header['name'] == PARAM_NAME_BLOC_INTEGRATOR:   procedure= c_exesubloc_integrator
     elif psubloc.header['name'] == PARAM_NAME_BLOC_FILTER_FO:    procedure= c_exesubloc_filter_FO
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT_OUTPUT: procedure= c_exesubloc_input_output
     else:
         print (proc_name, " ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -767,9 +769,52 @@ def c_exesubloc_filter_FO (pebloc, pieb, pio, pthread):
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
             cesubloc.c_exesubloc_overwriting_outputs()
         except:
-            #print ("<EDGE>", PARAM_TEXT_EXCEPTION)
+            #print ("<FILTER_FO>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-    #print ("<PULSE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<FILTER_FO> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+def c_exesubloc_input_output (pebloc, pieb, pio, pthread):
+    """ exécution du bloc de récupération d'output d'un autre bloc exécutable (dans la boucle récurcive)"""
+    # les index des IO
+    #I_BLOC_NAME = 0
+    #I_OUTPUT_ID = 1 # time constant
+    #O_out = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<INPUT_OUTPUT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<INPUT_OUTPUT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            #print ("<INPUT_OUTPUT>", f" inputs[0]=bloc_name={cesubloc.inputs[0]['var']},  inputs[1]=output_id={cesubloc.inputs[1]['var']}")
+            cesubloc.c_exesubloc_validation_standard()
+            find = False
+            for thread in list_threads:
+                for exe in thread['list_exe']:
+                    if exe['run']:
+                        #print ("<INPUT_OUTPUT>", f"bloc_name={cesubloc.inputs[0]['var']}, exe['exebloc'].header['name']{exe['exebloc'].header['name']}")
+                        if cesubloc.inputs[0]['var'] == exe['exebloc'].header['name']:               # nom du bloc exécuté
+                            AB   = exe['exebloc'].header['AB']                      # version du bloc exécuté
+                            ibo  = exe['iesubloc']                                  # index du subloc "output"
+                            ido  = exe['exebloc'].sublocs[ibo].header['id']         # ID du subloc "output"
+                            #print ("<INPUT_OUTPUT>", f"output_id={cesubloc.inputs[1]['var']},  exe['exebloc'].sublocs[ibo].header['id']{ido}")
+                            if cesubloc.inputs[1]['var'] == ido:               # nom du bloc exécuté
+                                #print ("<INPUT_OUTPUT>", f"trouvé")
+                                find = True
+                                cesubloc.outputs[0]['var'] = exe['exebloc'].sublocs[ibo].outputs[0]['var'] 
+                                cesubloc.outputs[0]['valide'] = exe['exebloc'].sublocs[ibo].outputs[0]['valide'] and cesubloc.outputs[0]['valide']
+
+            if not find:
+                #print ("<INPUT_OUTPUT>", f"pas trouvé")
+                cesubloc.outputs[0]['valide'] = False
+            cesubloc.c_exesubloc_overwriting_outputs()
+        except:
+            #print ("<INPUT_OUTPUT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+    #print ("<INPUT_OUTPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 
