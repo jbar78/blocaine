@@ -32,13 +32,13 @@ class c_exebloc:
     def c_exebloc_find_index_exebloc (self, pid, pparent_ids):
         """ retourne l'index du sous-bloc executable correspondant à l'id du sous-bloc et aux id des parents"""
         proc_name = "c_exebloc_find_index_exebloc: "
-        print (proc_name, "début: paramètres: pid=", pid, ",   pparent_ids[]=", pparent_ids)
+        #print (proc_name, "début: paramètres: pid=", pid, ",   pparent_ids[]=", pparent_ids)
         for i, esubloc in enumerate(self.sublocs):
             #print (proc_name, "boucle esubloc["+str(i)+"]=    name<"+esubloc.header['name']+">  id<"+str(esubloc.header['id'])+">")
             if pparent_ids == esubloc.parent_ids:
                 #print (proc_name, " id lites équivalentes:    pparent_ids="+str(pparent_ids)+",   esubloc.parent_ids="+str(esubloc.parent_ids))
                 if esubloc.header['id'] == pid:
-                    print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
+                    #print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                     return i
         print (proc_name, f"ERROR: id not found in exebloc,  id={pid}, ids={pparent_ids}")
     def c_exebloc_recup_input (self, pieb, pthread, piei):

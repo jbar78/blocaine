@@ -257,13 +257,6 @@ class MyServer(BaseHTTPRequestHandler):
                         txt_status = "Running"
                         txt_value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
                         txt_validity, txt_style = return_validity (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide'])
-
-                        #if exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide']:
-                        #    txt_validity = "😊"
-                        #    txt_style = ""
-                        #else:
-                        #    txt_validity = "☠ "
-                        #    txt_style = f"""style="font-size: 200%;" """
                     else:
                         txt_status = "Down"
                         txt_value = txt_validity = "..."
@@ -294,9 +287,9 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<table>"
 
 
-            html += f"""<tr><th colspan="11">Overwriting list</th></tr>"""
-            html += f"""<tr><th colspan="3">bloc</th><th colspan="5">io</th><th rowspan="2">status</th><th colspan="2">task</th></tr>"""
-            html += f"""<tr><th>main</th><th>shift</th><th>path/name</th><th>name</th><th>type</th><th>id</th><th>value</th><th>validity</th><th>name</th><th>id</th></tr>"""
+            html += f"""<tr><th colspan="8">Overwriting list</th></tr>"""
+            html += f"""<tr><th colspan="3">bloc</th><th colspan="5">io</th></tr>"""
+            html += f"""<tr><th>main</th><th>shift</th><th>path/name</th><th>name</th><th>type</th><th>id</th><th>value</th><th>validity</th></tr>"""
             forced_io_list = compiled_forced_io_list()
             for forced_io in forced_io_list:
                 html += "<tr>"
@@ -311,8 +304,6 @@ class MyServer(BaseHTTPRequestHandler):
                     txt_style = f"""style="font-size: 200%;" """
                 #html += f"<td>{txt_value}</td><td{txt_style}>{txt_validity}</td>"""
                 html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
-                html += f"<td>txt_status</td>"
-                html += f"<td>task name</td><td>task id</td>"
                 html += "</tr>"
 
 

@@ -63,10 +63,10 @@ def read_bloc(fname):
     except FileNotFoundError:
         print (proc_name, "ERROR-----------file <", fname, ">can't be open")
         return None
-    for i, elem in enumerate(bloc.sublocs):
-        print ("{}     bloc[{}]= {}, id={}, --elem.header={}".format (proc_name, i, elem.header['name'], elem.header['id'], elem.header))
-        for j, io in enumerate(elem.ios):
-            print ( "{}                              ios[{}]= --{}".format (proc_name, j, io))
+    #for i, elem in enumerate(bloc.sublocs):
+    #    print ("{}     bloc[{}]= {}, id={}, --elem.header={}".format (proc_name, i, elem.header['name'], elem.header['id'], elem.header))
+    #    for j, io in enumerate(elem.ios):
+    #        print ( "{}                              ios[{}]= --{}".format (proc_name, j, io))
     file_name_with_extension = os.path.basename(fname) ###
     file = os.path.splitext(file_name_with_extension)
     name = file[0]

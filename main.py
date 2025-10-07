@@ -158,7 +158,7 @@ class c_bloc:
     def c_bloc_position(self, raz=True):
         """trouve le position de chaque BLOC et l'\écrit dans la structure"""
         proc_name = "c_bloc_position: "
-        print (proc_name, "début")
+        #print (proc_name, "début")
         i_index=0
         o_index=0
         for i, elem in enumerate(self.sublocs):
@@ -195,7 +195,7 @@ class c_bloc:
 
         self.sublocs.append (c_sublocs(bloc_name))
         if self.sublocs[-1].header['name'] == PARAM_NAME_BLOC_OUTPUT:
-            print (proc_name, "ajout d'un evenement par défaut ")
+            #print (proc_name, "ajout d'un evenement par défaut ")
             self.sublocs[-1].header['event_id'] = PARAM_DEFAUT_THREAD_ID
         self.sublocs[-1].c_sublocs_draw_bloc(event, scale_factor)
     def c_bloc_draw(self, master, canvas, mire):
@@ -246,8 +246,8 @@ class c_bloc:
         " deepcopy d'une donnée structuré"
         proc_name= "c_bloc_copy:"
         destination =pickle.loads(pickle.dumps(self))
-        print (proc_name, "bloc source     :", self)
-        print (proc_name, "bloc destination:", destination)
+        #print (proc_name, "bloc source     :", self)
+        #print (proc_name, "bloc destination:", destination)
         return destination
     def c_bloc_comp(self, other):
         proc_name= inspect.currentframe().f_code.co_name
@@ -262,16 +262,16 @@ class c_bloc:
             if len(self_copy.sublocs) == len(other_copy.sublocs):
                 for ssb, osb in zip(self_copy.sublocs, other_copy.sublocs):
                     if not ssb.c_sublocs_comp(osb):
-                        print (proc_name, "io diférent:    bloc<", ssb.header['name'])
+                        #print (proc_name, "io diférent:    bloc<", ssb.header['name'])
                         égalité = False
                         break
             else:
-                print (proc_name, "nb subloc diférent:    bloc<", self_copy.header['name'], ">    self=", len(self_copy.sublocs), ">    other=", len(other_copy.sublocs))
+                #print (proc_name, "nb subloc diférent:    bloc<", self_copy.header['name'], ">    self=", len(self_copy.sublocs), ">    other=", len(other_copy.sublocs))
                 égalité = False
         else:
-            print (proc_name, "headers diférent:")
-            print (proc_name, "headers diférent:   self=", self_copy.header)
-            print (proc_name, "headers diférent:  other=", other_copy.header)
+            #print (proc_name, "headers diférent:")
+            #print (proc_name, "headers diférent:   self=", self_copy.header)
+            #print (proc_name, "headers diférent:  other=", other_copy.header)
             égalité = False
         return égalité
     def c_bloc_print(self):
@@ -306,7 +306,7 @@ class c_bloc:
                 #print (proc_name, f"    io name={io['name']}  id({io['id']})")
                 if 'id_lien' in io:
                     if io['id_lien']==id_lien:
-                        print (proc_name, f"    id_lien={id_lien} == id({io['id_lien']})  ==> delete le lien de cette io")
+                        #print (proc_name, f"    id_lien={id_lien} == id({io['id_lien']})  ==> delete le lien de cette io")
                         del_lien(io)
 
 
@@ -329,11 +329,11 @@ class c_sublocs:
         header['id'] = id_generateur()
         for i, elem in enumerate(bloc_lu.sublocs):
             if (elem.header['name']==PARAM_NAME_BLOC_INPUT) or (elem.header['name']==PARAM_NAME_BLOC_OUTPUT):
-                print (proc_name, ": elem.header['name]=", elem.header['name'])
+                #print (proc_name, ": elem.header['name]=", elem.header['name'])
                 for j, io in enumerate(elem.ios):
-                    print (proc_name, ": elem.ios[", j, "]=", io)
+                    #print (proc_name, ": elem.ios[", j, "]=", io)
                     if ( (io['type']=="in") or (io['type']=="out") ):
-                        print (proc_name, ": IO('TYPE']=IN OU OUT,  TYPE=", io['type'])
+                        #print (proc_name, ": IO('TYPE']=IN OU OUT,  TYPE=", io['type'])
                         # inversion des Entrées / Sorties
                         if io['type']== "in": typ = "out"
                         elif io['type']== "out": typ = "in"
@@ -344,15 +344,17 @@ class c_sublocs:
                         elif (bloc_lu.header['name']==PARAM_NAME_BLOC_OUTPUT): io_nbr = last_io (PARAM_NAME_BLOC_OUTPUT)
                         else: io_nbr=""
                         sub_obj['name']= io['name']+io_nbr
+                        if 'comment' in io: ####
+                            sub_obj['comment'] = io['comment'] ####
                         sub_obj['id']= elem.header['id']
                         if 'defaut_value' in io:
-                            print(proc_name, ": récupération de la valeur par défaut: defaut_value")
+                            #print(proc_name, ": récupération de la valeur par défaut: defaut_value")
                             sub_obj['defaut_value']= io['defaut_value']
                         if 'memory' in io:
-                            print(proc_name, ": récupération de memory")
+                            #print(proc_name, ": récupération de memory")
                             sub_obj['memory']= io['memory']
                         if 'initial_value' in io:
-                            print(proc_name, ": récupération de initial_value")
+                            #print(proc_name, ": récupération de initial_value")
                             sub_obj['initial_value']= io['initial_value']
                         ios.append(sub_obj)
         self.header = header
@@ -1007,6 +1009,7 @@ def update_bloc(elem):
     mem_liens_in = []
     mem_liens_out = []
     mem_local_names = []
+    #mem_comments = []
     mem_local_comments = []
     mem_defaut_values = []
     mem_initial_values = []
@@ -1029,7 +1032,7 @@ def update_bloc(elem):
             couple['id'] = elem.header['id']
             couple['event_id'] = elem.header['event_id']
             mem_events.append(couple)
-            print (proc_name, "memo event: couple=", couple)
+            #print (proc_name, "memo event: couple=", couple)
     for io in elem.ios:
         couple = {}
         if io['type']=='in':
@@ -1038,50 +1041,50 @@ def update_bloc(elem):
                 couple['id'] = io['id']
                 couple['lien'] = io['lien']
                 mem_liens_in.append(couple)
-                print (proc_name, "memo Couple id/lien \"in\"=id=(", io['id'], ")", couple)
+                #print (proc_name, "memo Couple id/lien \"in\"=id=(", io['id'], ")", couple)
         if io['type']=='out':
             list_out = find_liens(io)
             #print (proc_name, "id de l' io de type out", io['id'])
             #print (proc_name, "liste de io de type out pointés par des liens", list_out)
             if len(list_out) > 0:
-                print (proc_name, "liste liens de\"out\"id=(", io['id'], ") liens=", list_out)
+                #print (proc_name, "liste liens de\"out\"id=(", io['id'], ") liens=", list_out)
                 couple['id'] = io['id']
                 couple['list_out'] = list_out
                 mem_liens_out.append(couple)
-                print (proc_name, "memo list_out: couple=", couple)
+                #print (proc_name, "memo list_out: couple=", couple)
         if (elem.header['name'] == PARAM_NAME_BLOC_OUTPUT and io['type'] == 'in')\
         or (elem.header['name'] == PARAM_NAME_BLOC_INPUT  and io['type'] == 'out'):
             couple['id'] = io['id']
             couple['xput_name'] = io['name']
             mem_local_names.append(couple)
-            print (proc_name, "memo OUTPUT Name: couple=", couple)
+            #print (proc_name, "memo OUTPUT Name: couple=", couple)
         if 'defaut_value' in io and io['type']=='in':###
                 couple['id'] = io['id']
                 couple['defaut_value'] = io['defaut_value']
                 mem_defaut_values.append(couple)
-                print (proc_name, "memo defaut_value: couple=", couple)
+                #print (proc_name, "memo defaut_value: couple=", couple)
         if 'local_name' in io:
                 couple['id'] = io['id']
                 couple['local_name'] = io['local_name']
                 mem_local_names.append(couple)
-                print (proc_name, "memo Local Name: couple=", couple)
+                #print (proc_name, "memo Local Name: couple=", couple)
         if 'local_comment' in io:
                 couple['id'] = io['id']
                 couple['local_comment'] = io['local_comment']
                 mem_local_comments.append(couple)
-                print (proc_name, "memo Local Comment: couple=", couple)
+                #print (proc_name, "memo Local Comment: couple=", couple)
         if 'initial_value' in io and io['type']=='out':###
                 couple['id'] = io['id']
                 couple['initial_value'] = io['initial_value']
                 mem_initial_values.append(couple)
-                print (proc_name, "memo initial_value: couple=", couple)
+                #print (proc_name, "memo initial_value: couple=", couple)
 
-    print (proc_name, f"liste des liens_in={mem_liens_in}")
-    print (proc_name, f"liste des liens_out={mem_liens_out}")
-    print (proc_name, f"liste des local_names={mem_local_names}")
-    print (proc_name, f"liste des local_comments={mem_local_comments}")
-    print (proc_name, f"liste des defaut_values={mem_defaut_values}")
-    print (proc_name, f"liste des initial_values={mem_initial_values}")
+    #print (proc_name, f"liste des liens_in={mem_liens_in}")
+    #print (proc_name, f"liste des liens_out={mem_liens_out}")
+    #print (proc_name, f"liste des local_names={mem_local_names}")
+    #print (proc_name, f"liste des local_comments={mem_local_comments}")
+    #print (proc_name, f"liste des defaut_values={mem_defaut_values}")
+    #print (proc_name, f"liste des initial_values={mem_initial_values}")
 
     updated_elem.header['id']= bloc_id
     bloc.header['last_id'] -= 1 #pas de nouvel id
@@ -1096,7 +1099,7 @@ def update_bloc(elem):
 
     #refaire les liens mémorisés
     for i, io in enumerate(elem.ios):
-        print (proc_name, f"io boucle[{i}] reconstruction liens: id={io['id']},  type={io['type']},  io={io}")
+        #print (proc_name, f"io boucle[{i}] reconstruction liens: id={io['id']},  type={io['type']},  io={io}")
         if io['type']=='in':
             for lien in mem_liens_in:
                 if io['id'] == lien['id']:
@@ -1138,12 +1141,12 @@ def update_bloc(elem):
                 if io['id'] == elc['id']:
                     io['local_comment']=elc['local_comment']
         for dv in mem_defaut_values:
-            print (proc_name, "Défaut Value dans boucle defaut_value, value=", dv)
+            #print (proc_name, "Défaut Value dans boucle defaut_value, value=", dv)
             for i, io in enumerate(elem.ios):
                 if io['id'] == dv['id']:
                     io['defaut_value']=dv['defaut_value']
         for di in mem_initial_values:
-            print (proc_name, "Initial Value dans boucle initial_value, value=", di)
+            #print (proc_name, "Initial Value dans boucle initial_value, value=", di)
             for i, io in enumerate(elem.ios):
                 if io['id'] == di['id']:
                     io['initial_value']=di['initial_value']
@@ -1241,19 +1244,37 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
             print (proc_name, "   message envoyé à la cible:", message)
             clientTCP.send_message(message)
     print (proc_name, "fin: io=<{}>".format(io))
-def rename_io(px, py, io):
+def modif_io(px, py, io, rename, comment, local ):
     """renome une entrée ou une sortie"""
     global bloc
-    proc_name = "rename_io: "
+    proc_name = "rename_comment_io: "
     #print (proc_name, "début")
     def proc_null():
         return
     def validation():
-        io['name'] = io_name.get()
+        if rename and not local:
+            io['name'] = io_modif.get()
+        if comment and not local:
+            io['comment'] = io_modif.get()
+        if rename and local:
+            io['local_name'] = io_modif.get()
+        if comment and local:
+            io['local_comment'] = io_modif.get()
         pop.popup.destroy()
         bloc.c_bloc_redraw()
-    pop = c_popup("io rename", 25+px, 75+py)
-    io_name = pop.c_popup_add_une_propriete("Name:", io['name'], proc_null)
+    titre = "io"
+    item  = ""
+    if local:
+        item += "local_"
+    if rename:
+        item += "name"
+    if comment:
+        item += "comment"
+    pop = c_popup(titre, 25+px, 75+py)
+    if comment:
+        if not 'comment' in io:
+            io['comment']="no comment"
+    io_modif = pop.c_popup_add_une_propriete(item+":", io[item], proc_null)
     BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
     BP_escape.grid(row = pop.ligne, column = 0)
     BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
@@ -1481,6 +1502,8 @@ def properties_io(px, py, io):
     io_id = pop.c_popup_add_une_propriete("ID:", io['id'], proc_null)
     io_index = pop.c_popup_add_une_propriete("index:", find_index_io(find_parent(io),io['id']), proc_null)
     io_name = pop.c_popup_add_une_propriete("Name:", io['name'], proc_null)
+    if 'comment' in io:
+        io_comment = pop.c_popup_add_une_propriete("Comment:", io['comment'], proc_null)
     if 'local_name' in io:
         io_local_name = pop.c_popup_add_une_propriete("Local Name:", io['local_name'], proc_null)
     if 'local_comment' in io:
@@ -2098,7 +2121,8 @@ def menu_io(event, io):
 
     if (elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT) or (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT): #rename
         #if (io['type'] == 'in') or (io['type'] == 'out'):
-        menu_contextuel.add_command(label = "Rename", command = lambda: rename_io(event.x_root, event.y_root, io))
+        menu_contextuel.add_command(label = "Rename", command = lambda: modif_io(event.x_root, event.y_root, io, rename=True, comment=False, local=False))
+        menu_contextuel.add_command(label = "Change comment", command = lambda: modif_io(event.x_root, event.y_root, io, rename= False, comment=True, local=False))
 
     try:
         io['local_name']
@@ -2186,7 +2210,7 @@ def open_file(pf_name, decal):
     else:
         messagebox.showinfo("ERROR", "file reading error")
     menu_target()
-    print (proc_name, "fin")
+    #print (proc_name, "fin")
 def save_file(save_as):
     """sauvegarde dun bloc en cours d'édition"""
     global bloc, memo_bloc
@@ -2204,7 +2228,7 @@ def save_file(save_as):
         bloc.c_bloc_position(raz=True) #False
     else:
         print (proc_name, "Ce n'est pas une version 2.0")
-    bloc_a_sauver.c_bloc_print()
+    #bloc_a_sauver.c_bloc_print()
     write_bloc (bloc_a_sauver)
     if not save_as:
         memo_bloc = bloc.c_bloc_copy()
@@ -2213,7 +2237,7 @@ def save_file(save_as):
 def update_blocs():
     global bloc
     proc_name = "update_blocs: "
-    print (proc_name, "début")
+    #print (proc_name, "début")
     print (proc_name, "calcule la position de tous les blocs")
     bloc.c_bloc_position(raz=False)
     update_error = False

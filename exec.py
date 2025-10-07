@@ -789,26 +789,26 @@ def c_exesubloc_input_output (pebloc, pieb, pio, pthread):
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            print ("<INPUT_OUTPUT>", f" inputs[0]=bloc_name={cesubloc.inputs[0]['var']},  inputs[1]=output_id={cesubloc.inputs[1]['var']}")
+            #print ("<INPUT_OUTPUT>", f" inputs[0]=bloc_name={cesubloc.inputs[0]['var']},  inputs[1]=output_id={cesubloc.inputs[1]['var']}")
             cesubloc.c_exesubloc_validation_standard()
             find = False
             for thread in list_threads:
                 for exe in thread['list_exe']:
                     if exe['run']:
-                        print ("<INPUT_OUTPUT>", f"bloc_name={cesubloc.inputs[0]['var']}, exe['exebloc'].header['name']{exe['exebloc'].header['name']}")
+                        #print ("<INPUT_OUTPUT>", f"bloc_name={cesubloc.inputs[0]['var']}, exe['exebloc'].header['name']{exe['exebloc'].header['name']}")
                         if cesubloc.inputs[0]['var'] == exe['exebloc'].header['name']:               # nom du bloc exécuté
                             AB   = exe['exebloc'].header['AB']                      # version du bloc exécuté
                             ibo  = exe['iesubloc']                                  # index du subloc "output"
                             ido  = exe['exebloc'].sublocs[ibo].header['id']         # ID du subloc "output"
-                            print ("<INPUT_OUTPUT>", f"output_id={cesubloc.inputs[1]['var']},  exe['exebloc'].sublocs[ibo].header['id']{ido}")
+                            #print ("<INPUT_OUTPUT>", f"output_id={cesubloc.inputs[1]['var']},  exe['exebloc'].sublocs[ibo].header['id']{ido}")
                             if cesubloc.inputs[1]['var'] == ido:               # nom du bloc exécuté
-                                print ("<INPUT_OUTPUT>", f"trouvé")
+                                #print ("<INPUT_OUTPUT>", f"trouvé")
                                 find = True
                                 cesubloc.outputs[0]['var'] = exe['exebloc'].sublocs[ibo].outputs[0]['var'] 
                                 cesubloc.outputs[0]['valide'] = exe['exebloc'].sublocs[ibo].outputs[0]['valide'] and cesubloc.outputs[0]['valide']
 
             if not find:
-                print ("<INPUT_OUTPUT>", f"pas trouvé")
+                #print ("<INPUT_OUTPUT>", f"pas trouvé")
                 cesubloc.outputs[0]['valide'] = False
             cesubloc.c_exesubloc_overwriting_outputs()
         except:
