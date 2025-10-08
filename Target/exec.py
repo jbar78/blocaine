@@ -14,8 +14,8 @@ PARAM_TEXT_EXCEPTION = " EXCEPTION: so output(s) become unvalid"
 def recup_procedure(psubloc):
     proc_name = "recupe_procedure"
     """ ajout l'adresse de la procédure qui correspond au nom du bloc"""
-    if   psubloc.header['name'] == PARAM_NAME_BLOC_DT:           procedure= c_exesubloc_dt
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_DT_TASK:      procedure= c_exesubloc_dt_task
+    if   psubloc.header['name'] == PARAM_NAME_BLOC_TIME:         procedure= c_exesubloc_time
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_DT:           procedure= c_exesubloc_dt
     elif psubloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:       procedure= c_exesubloc_output
     elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT:        procedure= c_exesubloc_input
     elif psubloc.header['name'] == PARAM_NAME_BLOC_PREVIOUS:     procedure= c_exesubloc_previous
@@ -184,38 +184,32 @@ def c_exesubloc_validWrite (pebloc, pieb, pio, pthread):
                 output['valide'] = False
     #print ("<VALIDWRITE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+def c_exesubloc_time (pebloc, pieb, pio, pthread):
+    """ exécution du bloc TIME retourne le temps de cycle (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<TIME> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<TIME>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            cesubloc.outputs[0]['var'] = time.time()
+            cesubloc.outputs[0]['valide'] = True
+            cesubloc.c_exesubloc_overwriting_outputs()
+        except:
+            #print ("<TIME>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+    #print ("<TIME> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_dt (pebloc, pieb, pio, pthread):
-    """ exécution du bloc DT retourne le temps de cycle (dans la boucler écurcive)"""
+    """ exécution du bloc DT retourne le temps de cycle téhorique et mesurée de la tâche qui exécute ce bloc (dans la boucler écurcive)"""
     cesubloc = pebloc.sublocs[pieb]
     #print ("<DT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
         #print ("<DT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            #print ("<DT>", "dt=", cesubloc.outputs[0]['var'])
-            #print ("<DT>", "t(n-1)=", cesubloc.outputs[1]['var'])
-            cesubloc.outputs[0]['valide'] = cesubloc.outputs[1]['valide']
-            cesubloc.outputs[1]['valide'] = True
-            actual = time.time()
-            dt = actual - cesubloc.outputs[1]['var']
-            cesubloc.outputs[0]['var'] = dt
-            cesubloc.outputs[1]['var'] = actual
-            cesubloc.c_exesubloc_overwriting_outputs()
-        except:
-            #print ("<DT>", PARAM_TEXT_EXCEPTION)
-            for output in cesubloc.outputs:
-                output['valide'] = False
-    #print ("<DT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
-def c_exesubloc_dt_task (pebloc, pieb, pio, pthread):
-    """ exécution du bloc DT_TASK retourne le temps de cycle téhorique et mesurée de la tâche qui exécute ce bloc (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<DT_TASK> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<DT_TASK>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
@@ -225,10 +219,10 @@ def c_exesubloc_dt_task (pebloc, pieb, pio, pthread):
             cesubloc.outputs[1]['var'] = pthread['cycle_time']
             cesubloc.c_exesubloc_overwriting_outputs()
         except:
-            #print ("<DT_TASK>", PARAM_TEXT_EXCEPTION)
+            #print ("<DT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-    #print ("<DT_TASK> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<DT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_comp (pebloc, pieb, pio, pthread):
     """ exécution du bloc COMPARE (dans la boucler écurcive)"""
