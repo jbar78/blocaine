@@ -1184,7 +1184,37 @@ def del_lien(io):
     #elem = find_parent (io)
     #print (proc_name, f"parent (elem.header)={elem.header}")
     #update_bloc(elem)
-def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
+def overwriting_bool(io, pmonitored_sublocs):
+    """retourne VRAI si io est de type bool"""
+    proc_name = "overwriting_bool: "
+    bloc_parent_de_io = find_parent (io)
+    print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+    for ii, msb in enumerate(pmonitored_sublocs):
+        print(proc_name, f" :boucle msb[{ii}].header['name']=<{msb.header['name']}>")
+        if msb.header['id'] == bloc_parent_de_io.header['id']:
+            print(proc_name, f"bloc id==id:  monitored_subloc[{ii}].header['name']=<{msb.header['name']}>,   bloc.subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+            if io['type'] == 'in':
+                print(proc_name, f"type='in'")
+                for minput in msb.inputs:
+                    print(proc_name, f"boucle type='in' ' minput{minput}]")
+                    if minput['id'] == io['id']:
+                        print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
+                        if type(minput['forced_value']).__name__ == "bool":
+                            print (proc_name, f"l'io est de type bool")
+                            return True
+                        #forced_value = minput['forced_value']
+            elif io['type'] == 'out':
+                print(proc_name, f"type='out'")
+                for moutput in msb.outputs:
+                    print(proc_name, f"boucle type='out' ' moutput{moutput}]")
+                    if moutput['id'] == io['id']:
+                        print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
+                        if type(moutput['forced_value']).__name__ == "bool":
+                            print (proc_name, f"l'io est de type bool")
+                            return True
+                        #forced_value = moutput['forced_value']
+    return False
+def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange, pbool):
     """Forçage/déforçage d'une entrée ou d'une sortie"""
     def proc(val, pmessage):
         proc_name = "proc: "
@@ -1206,7 +1236,7 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
             message=b"overwriting_start:"
         elif ptoggle:
             message=b"overwriting_validity:"
-        elif pchange:
+        elif pchange or pbool:
             message=b"overwriting_value:"
         else:
             message=b"overwriting_stop:"
@@ -1214,7 +1244,7 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
         message += str(int(find_parent (io).header['id'])).encode()
         message += b":io_id="
         message += str(int(io['id'])).encode()
-        if pchange:
+        if pchange or pbool:
             bloc_parent_de_io = find_parent (io)
             print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
             for ii, msb in enumerate(pmonitored_sublocs):
@@ -1228,7 +1258,7 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
                             print(proc_name, f"boucle type='in' ' minput{minput}]")
                             if minput['id'] == io['id']:
                                 print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
-                                set_value_io(pos_x, pos_y, minput, 'forced_value', message, proc)
+                                set_value_io(pos_x, pos_y, minput, 'forced_value', message, pbool, proc)
                                 print(proc_name, f"après set_value_io() minput['forced_value']={minput['forced_value']}")
                                 forced_value = minput['forced_value']
                     elif io['type'] == 'out':
@@ -1237,7 +1267,7 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange):
                             print(proc_name, f"boucle type='out' ' moutput{moutput}]")
                             if moutput['id'] == io['id']:
                                 print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
-                                set_value_io(pos_x, pos_y, moutput, 'forced_value', message, proc)
+                                set_value_io(pos_x, pos_y, moutput, 'forced_value', message, pbool, proc)
                                 print(proc_name, f"après set_value_io() moutput['forced_value']={moutput['forced_value']}")
                                 forced_value = moutput['forced_value']
         else:
@@ -1365,14 +1395,14 @@ def change_initial_value_io(px, py, io):
         print ("-------procc initial_value------------val=", val, ",   txt=", txt)
     proc_name = "change_initial_value_io: "
     print (proc_name, "début")
-    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", proc_nul)
+    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", False, proc_nul)
 def change_defaut_value_io(px, py, io):
     """pour definir la valeur par défaut d'une entrée de l'instance"""
     def proc_nul(val, txt):
         print ("-------procc defaut_value------------val=", val, ",   txt=", txt)
     proc_name = "change_defaut_value_io: "
     print (proc_name, "début")
-    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", proc_nul)
+    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", False, proc_nul)
 def delete_initial_value_io(px, py, io):
     """ supprime la valeur par défaut d'une sortie d'une instance"""
     global bloc
@@ -1440,7 +1470,7 @@ def set_defaut_value_io_old(px, py, io, pdic):
     pop.entry[0].focus()
     pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
     pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
-def set_value_io(px, py, io, pdic, pmsg, pproc):
+def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
     """pour definir la valeur par défaut d'une entrée"""
     global PARAM_TYPE_LIST
     proc_name = "set_value_io: "
@@ -1459,38 +1489,46 @@ def set_value_io(px, py, io, pdic, pmsg, pproc):
         pproc(io[pdic], pmsg)
         pop.popup.destroy()
         bloc.c_bloc_redraw()
-    pop = c_popup(pdic, 25+px, 75+py)
-    print(proc_name, f"io={io}")
-    if not pdic in io: io[pdic]=0
-    io_defaut_value = pop.c_popup_add_une_propriete("Défaut io[pdic]:", io[pdic], proc_null)
-    label_type = Label(pop.popup, text="type:")
-    label_type.grid(row = pop.ligne, column = 0)
-    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
-    print (proc_name, f"existing type={type(io[pdic])}")
-    print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
-    index_type = 0
-    for i, typ in enumerate(PARAM_TYPE_LIST):
-        print (proc_name, f"loop type={typ}")
-        if type(io[pdic]).__name__ == typ:
-            print (proc_name, f"io([pdic]==typ")
-            index_type = i
-            break
-    combox_type.set(PARAM_TYPE_LIST[index_type])
-    combox_type.grid(row = pop.ligne, column = 1)
-    pop.ligne += 1
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
-    BP_escape.grid(row = pop.ligne, column = 0)
-    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
-    BP_validation.grid(row = pop.ligne, column = 1)
-    #BP_escape.focus()
-    BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
-    BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
-    BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
-    BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
+    if pbool:
+        if type(io[pdic]).__name__ == "bool":
+            print (proc_name, f"io([pdic] est de type bool")
+        io[pdic] = not io[pdic]
+        pproc(io[pdic], pmsg)
+        bloc.c_bloc_redraw()
+    else:
+        pop = c_popup(pdic, 25+px, 75+py)
+        print(proc_name, f"io={io}")
+        if not pdic in io: io[pdic]=0
+        io_defaut_value = pop.c_popup_add_une_propriete("Défaut io[pdic]:", io[pdic], proc_null)
+        label_type = Label(pop.popup, text="type:")
+        label_type.grid(row = pop.ligne, column = 0)
+        combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+        print (proc_name, f"existing type={type(io[pdic])}")
+        print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
+        index_type = 0
+        for i, typ in enumerate(PARAM_TYPE_LIST):
+            print (proc_name, f"loop type={typ}")
+            if type(io[pdic]).__name__ == typ:
+                print (proc_name, f"io([pdic]==typ")
+                index_type = i
+                break
 
-    pop.entry[0].focus()
-    pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
-    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
+        combox_type.set(PARAM_TYPE_LIST[index_type])
+        combox_type.grid(row = pop.ligne, column = 1)
+        pop.ligne += 1
+        BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+        BP_escape.grid(row = pop.ligne, column = 0)
+        BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+        BP_validation.grid(row = pop.ligne, column = 1)
+        #BP_escape.focus()
+        BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
+        BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
+        BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
+        BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
+
+        pop.entry[0].focus()
+        pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
+        pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
 def properties_io(px, py, io):
     """affiche les propriété d'un io"""
     global bloc, PARAM_TYPE_LIST
@@ -2167,11 +2205,13 @@ def menu_io(event, io):
     menu_contextuel.add_separator()
     if flag_monitoring:
         if io_forced(monitored_sublocs):
-            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False))
-            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=True))
-            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=True, pchange=False))
+            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=False))
+            if overwriting_bool(io, monitored_sublocs):
+                menu_contextuel.add_command(label = "OverWriting: toggle bool value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=True))
+            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=True, pbool=False))
+            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=True, pchange=False, pbool=False))
         else:
-            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=True, ptoggle=False, pchange=False))
+            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=True, ptoggle=False, pchange=False, pbool=False))
 
         menu_contextuel.add_separator()
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io))
@@ -2476,7 +2516,7 @@ def compile_bloc(pbloc, porder):
                     input['valide'] = True
                 if 'local_name' in io:
                     print (proc_name, f"   local_name trouvée,   valu={io['local_name']}")
-                    output['local_name'] = io['local_name']
+                    input['local_name'] = io['local_name']
                 if 'lien' in io:
                     print (proc_name, "   lien trouvé,    lien={io['lien']}")
                     input['lien'] = io['lien']
