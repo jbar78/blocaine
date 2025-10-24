@@ -62,10 +62,10 @@ def c_exesubloc_output (pebloc, pieb, pio, pthread):
             cesubloc.c_exesubloc_validation_standard()
 
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-            cesubloc.c_exesubloc_overwriting_outputs()
         except:
             #print ("<OUTPUT>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<OUTPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_input (pebloc, pieb, pio, pthread):
@@ -80,12 +80,12 @@ def c_exesubloc_input (pebloc, pieb, pio, pthread):
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             #cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['valide'] = True
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] #True
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-            cesubloc.c_exesubloc_overwriting_outputs()
         except:
             #print ("<INPUT>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<INPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
 def c_exesubloc_previous (pebloc, pieb, pio, pthread):
