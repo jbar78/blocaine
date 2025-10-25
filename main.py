@@ -2908,7 +2908,7 @@ def monitoring_bloc():
             messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={pio}")
     def show_normal_io(pio):
         proc_name = "show_normal_io: "
-        print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
+        #print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
         if pio['type'] == 'in':
             color = PARAM_COLOR_BG_INPUT
         elif pio['type'] == 'out':

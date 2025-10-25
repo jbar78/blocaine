@@ -66,10 +66,10 @@ class c_exebloc:
             #print ("  il n'y a pas de lien pour cette input[" + str(piei) + "]:  name<" + input['name'] + ">")
             defaut_value_found = c_exebloc_recup_defaut (input)
             if not defaut_value_found:
-                print (": ERROR: input[", piei, "] can not be found")
+                print (": ERROR: bloc[", pieb, "],    input[", piei, "] can not be found")
                 input['valide'] = False
         if 'forced' in input:
-            print (": input[", piei, "], input['forced_value']=", input['forced_value'], "input['forced_valide']=", input['valide'])
+            #print (": input[", piei, "], input['forced_value']=", input['forced_value'], "input['forced_valide']=", input['valide'])
             input['var'] = input['forced_value']
             input['valide'] = input['forced_valide']
         #print (": input[", piei, "], récupérée: var=", input['var'], "val=", input['valide'])
@@ -144,10 +144,10 @@ class c_exesubloc:
 
     def c_exesubloc_overwriting_outputs(self):
         """ affecte les sorties en fonction des forcages"""
-        print ("c_exesubloc_overwriting_outputs: name=", self.header['name'])
+        #print ("c_exesubloc_overwriting_outputs: name=", self.header['name'])
         for output in self.outputs:
-            print ("c_exesubloc_overwriting_outputs: output=", output)
+            #print ("c_exesubloc_overwriting_outputs: output=", output)
             if 'forced' in output:
-                print ("c_exesubloc_overwriting_outputs: forced: ", "value=", output['forced_value'], "valide=", output['forced_valide'])
+                #print ("c_exesubloc_overwriting_outputs: forced: ", "value=", output['forced_value'], "valide=", output['forced_valide'])
                 output['var'] = output['forced_value']
                 output['valide'] = output['forced_valide']
