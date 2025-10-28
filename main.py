@@ -1188,29 +1188,29 @@ def overwriting_bool(io, pmonitored_sublocs):
     """retourne VRAI si io est de type bool"""
     proc_name = "overwriting_bool: "
     bloc_parent_de_io = find_parent (io)
-    print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+    #print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
     for ii, msb in enumerate(pmonitored_sublocs):
-        print(proc_name, f" :boucle msb[{ii}].header['name']=<{msb.header['name']}>")
+        #print(proc_name, f" :boucle msb[{ii}].header['name']=<{msb.header['name']}>")
         if msb.header['id'] == bloc_parent_de_io.header['id']:
-            print(proc_name, f"bloc id==id:  monitored_subloc[{ii}].header['name']=<{msb.header['name']}>,   bloc.subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+            #print(proc_name, f"bloc id==id:  monitored_subloc[{ii}].header['name']=<{msb.header['name']}>,   bloc.subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
             if io['type'] == 'in':
-                print(proc_name, f"type='in'")
+                #print(proc_name, f"type='in'")
                 for minput in msb.inputs:
-                    print(proc_name, f"boucle type='in' ' minput{minput}]")
+                    #print(proc_name, f"boucle type='in' ' minput{minput}]")
                     if minput['id'] == io['id']:
-                        print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
+                        #print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
                         if type(minput['forced_value']).__name__ == "bool":
                             print (proc_name, f"l'io est de type bool")
                             return True
                         #forced_value = minput['forced_value']
             elif io['type'] == 'out':
-                print(proc_name, f"type='out'")
+                #print(proc_name, f"type='out'")
                 for moutput in msb.outputs:
-                    print(proc_name, f"boucle type='out' ' moutput{moutput}]")
+                    #print(proc_name, f"boucle type='out' ' moutput{moutput}]")
                     if moutput['id'] == io['id']:
-                        print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
+                        #print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
                         if type(moutput['forced_value']).__name__ == "bool":
-                            print (proc_name, f"l'io est de type bool")
+                            #print (proc_name, f"l'io est de type bool")
                             return True
                         #forced_value = moutput['forced_value']
     return False
@@ -1218,16 +1218,17 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange, 
     """Forçage/déforçage d'une entrée ou d'une sortie"""
     def proc(val, pmessage):
         proc_name = "proc: "
-        print (proc_name, "---fin-----proc---------")
-        print(proc_name, f">>>>>>>>>>>>>msessage={pmessage}")
+        #print (proc_name, "---fin-----proc---------")
+        #print(proc_name, f">>>>>>>>>>>>>msessage={pmessage}")
         pmessage += b":value="
         pmessage += pickle.dumps(val)
         #pmessage += str(int(val)).encode()
-        print (proc_name, "   message envoyé à la cible:", pmessage)
+        #print (proc_name, "   message envoyé à la cible:", pmessage)
         clientTCP.send_message(pmessage)
-        print (proc_name, "---fin-----proc---------")
+        #print (proc_name, "---fin-----proc---------")
     proc_name = "overwriting: "
-    print (proc_name, "debut: io=<{}>".format(io))
+    #print (proc_name, "debut: io=<{}>".format(io))
+    #print (proc_name, f"param: pos_xy={pos_x}, {pos_y}, start={pstart}, toggle={ptoggle}, change={pchange}, bool={pbool}")
     bloc_parent = find_parent (io)
     if not 'system' in bloc_parent.header['key_word']:
         messagebox.showinfo("Warning", "IO overwriting from a USER bloc interface is not yet available, please open the USER bloc and then overwrite the desired IO inside it.")
@@ -1246,34 +1247,35 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange, 
         message += str(int(io['id'])).encode()
         if pchange or pbool:
             bloc_parent_de_io = find_parent (io)
-            print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+            #print(proc_name, f"bloc parent: subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
             for ii, msb in enumerate(pmonitored_sublocs):
-                print(proc_name, f" :boucle msb[{ii}].header['name']=<{msb.header['name']}>")
+                #print(proc_name, f" :boucle msb[{ii}].header['name']=<{msb.header['name']}>")
                 if msb.header['id'] == bloc_parent_de_io.header['id']:
                     msg1=""
-                    print(proc_name, f"bloc id==id:  monitored_subloc[{ii}].header['name']=<{msb.header['name']}>,   bloc.subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
+                    #print(proc_name, f"bloc id==id:  monitored_subloc[{ii}].header['name']=<{msb.header['name']}>,   bloc.subloc[{i}].header['name']=<{bloc_parent_de_io.header['name']}>")
                     if io['type'] == 'in':
-                        print(proc_name, f"type='in'")
+                        #print(proc_name, f"type='in'")
                         for minput in msb.inputs:
-                            print(proc_name, f"boucle type='in' ' minput{minput}]")
+                            #print(proc_name, f"boucle type='in' ' minput{minput}]")
                             if minput['id'] == io['id']:
-                                print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
+                                #print(proc_name, f"minput['id']==io['id'], minput['forced_value']={minput['forced_value']} --> set_value()")
                                 set_value_io(pos_x, pos_y, minput, 'forced_value', message, pbool, proc)
-                                print(proc_name, f"après set_value_io() minput['forced_value']={minput['forced_value']}")
-                                forced_value = minput['forced_value']
+                                #print(proc_name, f"après set_value_io() minput['forced_value']={minput['forced_value']}")
+                                #forced_value = minput['forced_value']
                     elif io['type'] == 'out':
-                        print(proc_name, f"type='out'")
+                        #print(proc_name, f"type='out'")
                         for moutput in msb.outputs:
-                            print(proc_name, f"boucle type='out' ' moutput{moutput}]")
+                            #print(proc_name, f"boucle type='out' ' moutput{moutput}]")
                             if moutput['id'] == io['id']:
-                                print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
+                                #print(proc_name, f"moutput['id']==io['id'], moutput['forced_value']={moutput['forced_value']}------> set_value()")
                                 set_value_io(pos_x, pos_y, moutput, 'forced_value', message, pbool, proc)
-                                print(proc_name, f"après set_value_io() moutput['forced_value']={moutput['forced_value']}")
-                                forced_value = moutput['forced_value']
+                                #print(proc_name, f"après set_value_io() moutput['forced_value']={moutput['forced_value']}")
+                                #forced_value = moutput['forced_value']
         else:
+            #bloc.c_bloc_redraw()#########
             print (proc_name, "   message envoyé à la cible:", message)
             clientTCP.send_message(message)
-    print (proc_name, "fin: io=<{}>".format(io))
+    #print (proc_name, "fin: io=<{}>".format(io))
 def modif_io(px, py, io, rename, comment, local ):
     """renome une entrée ou une sortie"""
     global bloc
@@ -2926,7 +2928,7 @@ def monitoring_bloc():
     monitoring = {}
     arbo_ids = []
     proc_name = "monitoring_bloc: "
-    #print(proc_name, "début")
+    print(proc_name, "début")
     #print(proc_name, "décodage arborescence du nom du bloc à monitorer")
     lignée=master.title()
     list_blocs = lignée.split("/")
@@ -2977,8 +2979,7 @@ def monitoring_bloc():
             #print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
             show_normal_io (io)
     #bloc.c_bloc_redraw()
-    #print(proc_name, "EXECPTION: début remplacementde bloc.c_bloc_redraw()")
-    #print(proc_name, "fin")
+    print(proc_name, "fin")
 
 
 #  début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début ---

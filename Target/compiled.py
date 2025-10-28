@@ -1,7 +1,7 @@
 from c_exebloc import *
 from PARAM_NAME_BLOC import *
 from sharedata import list_compiled, list_threads
-PARAM_FORCED_SHIFTS_LINKED = False
+PARAM_OVERWRITE_SHIFTS_LINKED = True
 
 def compiled_find_master(bloc_name, master):
     """retourne index du master ou non master"""
@@ -238,7 +238,7 @@ def swaping(pname, pAB):
                             #print (proc_name, "  omemo=", omemo, "récup var=", omemo['var'], "dans /",ebloc.header['AB'])
                             list_omemos.append(omemo)
 
-    if PARAM_FORCED_SHIFTS_LINKED: #____________________________récup des façages du bloc NON pAB
+    if PARAM_OVERWRITE_SHIFTS_LINKED: #____________________________récup des façages du bloc NON pAB
         for ebloc in list_compiled:
             if pname == ebloc.header['name'] and pAB != ebloc.header['AB']:
                 #print (proc_name, " boucle récup: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
@@ -301,7 +301,7 @@ def swaping(pname, pAB):
                         subloc.outputs[index_output]['valide'] = omemo['valide']
                         print (proc_name, "  omemo=", omemo, "copié var=", omemo['var'], " dans /",ebloc.header['AB'])
 
-    if PARAM_FORCED_SHIFTS_LINKED: #____________________________copie les forcages vers le shift pAB
+    if PARAM_OVERWRITE_SHIFTS_LINKED: #____________________________copie les forcages vers le shift pAB
         for ebloc in list_compiled:
             if pname == ebloc.header['name'] and pAB == ebloc.header['AB']:
                 print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])

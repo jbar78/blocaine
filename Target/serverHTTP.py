@@ -249,8 +249,9 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<br>"
             html +="<table>"
             html += f"""<tr><th colspan="10">bloc output list</th></tr>"""
-            html += f"""<tr><th colspan="3">bloc</th><th colspan="4">output</th><th rowspan="2">status</th><th colspan="2">task</th></tr>"""
-            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>name</th><th>id</th><th>value</th><th>validity</th><th>name</th><th>id</th></tr>"""
+            #html += f"""<tr><th colspan="3">bloc</th><th colspan="4">output</th><th rowspan="2">status</th><th colspan="2">task</th></tr>"""
+            html += f"""<tr><th colspan="4">bloc</th><th colspan="4">output</th><th colspan="2">task</th></tr>"""
+            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>value</th><th>validity</th><th>name</th><th>id</th></tr>"""
             for thread in list_threads:
                 for exe in thread['list_exe']:
                     if exe['run']:
@@ -264,9 +265,10 @@ class MyServer(BaseHTTPRequestHandler):
                     txt_building= exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
                     html += "<tr>"
                     html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
+                    html += f"<td>{txt_status}</td>"
                     html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
                     html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
-                    html += f"<td>{txt_status}</td>"
+                    #html += f"<td>{txt_status}</td>"
                     html += f"<td>{thread['name']}</td><td>{thread['id']}</td>"
                     html += "</tr>"
             html +="</table>"

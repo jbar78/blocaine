@@ -50,6 +50,7 @@ def handle_clientTCP(client_socket, addr):
                 elif cas == b"overwriting_validity":
                     print(proc_name, f"validity 'forced' in __put['id']={ioput['id']}")
                     ioput['forced_valide']= not ioput['forced_valide']
+                    ioput['valide']= ioput['forced_valide'] ###
                 elif cas == b"overwriting_start":
                     print(proc_name, f"add 'forced' in __put['id']={ioput['id']}")
                     ioput['forced_value']= ioput['var']
@@ -86,23 +87,23 @@ def handle_clientTCP(client_socket, addr):
 
                 bloc_name = curant_exebloc.header['name']
                 print(proc_name, f"cas reconnu  (transfer ou exécute),     cas: {cas}")
-                print(proc_name, f"ebloc reçu={bloc_name}")
+                #print(proc_name, f"ebloc reçu={bloc_name}")
                 #print(proc_name, f"curant_exebloc={curant_exebloc}")
                 compiled_load(curant_exebloc)
                 if cas == b"execute":
-                    print(proc_name, f"début d'exécution")
+                    #print(proc_name, f"début d'exécution")
                     status = compiled_status()
                     for st in status:
                         if st['name'] == bloc_name:
-                            print(proc_name, f"status de  <{bloc_name}> trouvé:  status={st}")
+                            #print(proc_name, f"status de  <{bloc_name}> trouvé:  status={st}")
                             if "HotSwap" in st['orders']:
-                                print(proc_name, f"HotSwap: trouvé")
+                                #print(proc_name, f"HotSwap: trouvé")
                                 hot_swap_exebloc(bloc_name)
                             elif "Run" in st['orders']:
                                 if "ColdSwap" in st['orders']:
-                                    print(proc_name, f"ColdSwap: trouvé")
+                                    #print(proc_name, f"ColdSwap: trouvé")
                                     cold_swap_exebloc(bloc_name)
-                                print(proc_name, f"Run: trouvé")
+                                #print(proc_name, f"Run: trouvé")
                                 run_exebloc(bloc_name)
                             else:
                                 print(proc_name, f"ERREUR: ni HotSwap, ni Run contenu dans status['orders']")
@@ -131,42 +132,42 @@ def handle_clientTCP(client_socket, addr):
                     response = b"monitoring:not_found"
                 client_socket.send(response)
             elif (cas == b"overwriting_start" or cas == b"overwriting_stop" or cas == b"overwriting_validity" or cas == b"overwriting_value") and index!= -1:
-                print(proc_name, f"cas N°3 reconnu  OVERWRITING  cas: {cas}")
-                print(proc_name, f"texte brut: {request}")
-                print(proc_name, "-----------------------------------")
+                #print(proc_name, f"cas N°3 reconnu  OVERWRITING  cas: {cas}")
+                #print(proc_name, f"texte brut: {request}")
+                #print(proc_name, "-----------------------------------")
                 textes = request.split(b':')
-                print(proc_name, "textes=", textes)
-                print(proc_name, "commande=textes[0]=", textes[0])
+                #print(proc_name, "textes=", textes)
+                #print(proc_name, "commande=textes[0]=", textes[0])
                 tab_bloc_id = textes[1].split(b'=')
-                print(proc_name, "txt bloc_id=tab_bloc_id[0]=", tab_bloc_id[0])
-                print(proc_name, "txt bloc_id=tab_bloc_id[1]=", tab_bloc_id[1])
+                #print(proc_name, "txt bloc_id=tab_bloc_id[0]=", tab_bloc_id[0])
+                #print(proc_name, "txt bloc_id=tab_bloc_id[1]=", tab_bloc_id[1])
                 bloc_id = int(tab_bloc_id[1])
-                print(proc_name, f"bloc_id={bloc_id}")
+                #print(proc_name, f"bloc_id={bloc_id}")
                 tab_io_id = textes[2].split(b'=')
-                print(proc_name, "txt io_id=tab_io_id[0]=", tab_io_id[0])
-                print(proc_name, "txt io_id=tab_io_id[1]=", tab_io_id[1])
+                #print(proc_name, "txt io_id=tab_io_id[0]=", tab_io_id[0])
+                #print(proc_name, "txt io_id=tab_io_id[1]=", tab_io_id[1])
                 io_id = int(tab_io_id[1])
                 if cas == b"overwriting_value":
                     tab_io_value = textes[3].split(b'=')
-                    print(proc_name, "txt value=tab_io_value[0]=", tab_io_value[0])
-                    print(proc_name, "txt value=tab_io_value[1]=", tab_io_value[1])
+                    #print(proc_name, "txt value=tab_io_value[0]=", tab_io_value[0])
+                    #print(proc_name, "txt value=tab_io_value[1]=", tab_io_value[1])
                     io_value = pickle.loads(tab_io_value[1])
-                    print (proc_name, f" io_value={io_value}")
+                    #print (proc_name, f" io_value={io_value}")
                     #io_value = int(tab_io_value[1])
 
-                print(proc_name, f"io_id={io_id}")
-                print(proc_name, "-----------------------------------")
+                #print(proc_name, f"io_id={io_id}")
+                #print(proc_name, "-----------------------------------")
                 for ic, comp in enumerate(list_compiled):
-                    print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']}")
+                    #print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']}")
                     if comp.header['name'] == monitoring['name'] and comp.header['master']: # ne pas appliquer aux 2 shift A&B
                         #monitoring_user_bloc (comp)
-                        print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
+                        #print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
                         for subloc in comp.sublocs:
-                            print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
+                            #print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
                             if subloc.parent_ids == monitoring['arbo_ids']:
-                                print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
+                                #print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
                                 if subloc.header['id'] == bloc_id:
-                                    print(proc_name, f"==bloc_id  {subloc.header['id']}")
+                                    #print(proc_name, f"==bloc_id  {subloc.header['id']}")
                                     maj_forced_io(subloc.inputs)
                                     maj_forced_io(subloc.outputs)
 
