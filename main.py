@@ -1018,7 +1018,7 @@ def update_bloc(elem):
     # lecture du fichier
     bloc_name = add_point_bloc_to_file_name(elem.header['name'])
     bloc_id = elem.header['id']
-    #print (proc_name, "bloc_name=<{}>".format(bloc_name))
+    print (proc_name, "bloc_name=<{}>".format(bloc_name))
     if "system" in elem.header['key_word']: chemin = PARAM_CHEMIN_SYSTEM
     else: chemin= PARAM_CHEMIN_USER
     try:
@@ -2247,8 +2247,8 @@ def open_file(pf_name, decal):
         print (proc_name, "avant décalage, decalage=", decal)
         canvas.move (ALL, scale_factor * decalage.x, scale_factor * decalage.y)
         routage()
-        if not 'system' in bloc.header['key_word']:
-            update_blocs()
+        #if not 'system' in bloc.header['key_word']:
+        #    update_blocs()
     else:
         messagebox.showinfo("ERROR", "file reading error")
     menu_target()
