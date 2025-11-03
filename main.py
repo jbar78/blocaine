@@ -440,6 +440,8 @@ class c_sublocs:
                 canvas.tag_bind (elem_io, "<B1-Motion>", lambda event, io= self.ios[i]: self.c_sublocs_event_glisser_gauche_io (event, io))
                 canvas.tag_bind (elem_io, "<ButtonRelease-1>", lambda event, io= self.ios[i]: self.c_sublocs_event_release_gauche_io (event, io))
                 canvas.tag_bind (elem_io, "<Double-Button-1>", lambda event, io= self.ios[i]: self.c_sublocs_event_double_clic_gauche_io (event, io))
+                canvas.tag_bind (elem_io, "<Enter>", lambda event, io= self.ios[i]: self.c_sublocs_event_enter_leave_io (event, io, over=True))
+                canvas.tag_bind (elem_io, "<Leave>", lambda event, io= self.ios[i]: self.c_sublocs_event_enter_leave_io (event, io, over=False))
     def c_sublocs_event_clic_droit_header (self, event):
         """call_back: sur evenement"""
         global memo_event_clic_droit
@@ -550,6 +552,19 @@ class c_sublocs:
             canvas.delete(self.id_lien_provisoire)
         except: pass
         self.id_lien_provisoire  = canvas.create_line(lien_origine['event'].x, lien_origine['event'].y, event.x, event.y, tag=["lien"], fill="red", width=PARAM_LIEN_WIDTH)
+    def c_sublocs_event_enter_leave_io (self, event, io, over):
+        """call_back: sur evenement"""
+        global popup_properties
+        proc_name = "c_sublocs_event_enter_leave_io: "
+        print (proc_name, f"event={event}, over={over}")
+        if over:
+            print (proc_name, f"ouvrir le popup")
+            popup_properties = properties_io(event.x_root, event.y_root, io, all=False)
+        else:
+            print (proc_name, f"fermer le popup")
+            popup_properties.popup.destroy()
+            #del popup_properties
+        #print (proc_name, "event_glisser_droit_io: a=<{}>".format(io))
     def c_sublocs_set_name(self, name):
         self.header['name']=name
     def c_sublocs_set_id(self, id):
@@ -1534,7 +1549,7 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         pop.entry[0].focus()
         pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
         pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
-def properties_io(px, py, io):
+def properties_io(px, py, io, all):
     """affiche les propriété d'un io"""
     global bloc, PARAM_TYPE_LIST
     def proc_null():
@@ -1542,8 +1557,8 @@ def properties_io(px, py, io):
     proc_name = "proterties_io: "
     #print (proc_name, "début")
     pop = c_popup("io info", 25+px, 75+py)
-    io_id = pop.c_popup_add_une_propriete("ID:", io['id'], proc_null)
-    io_index = pop.c_popup_add_une_propriete("index:", find_index_io(find_parent(io),io['id']), proc_null)
+    if all: io_id = pop.c_popup_add_une_propriete("ID:", io['id'], proc_null)
+    if all: io_index = pop.c_popup_add_une_propriete("index:", find_index_io(find_parent(io),io['id']), proc_null)
     io_name = pop.c_popup_add_une_propriete("Name:", io['name'], proc_null)
     if 'comment' in io:
         io_comment = pop.c_popup_add_une_propriete("Comment:", io['comment'], proc_null)
@@ -1551,39 +1566,41 @@ def properties_io(px, py, io):
         io_local_name = pop.c_popup_add_une_propriete("Local Name:", io['local_name'], proc_null)
     if 'local_comment' in io:
         io_local_comment = pop.c_popup_add_une_propriete("Local Comment:", io['local_comment'], proc_null)
-    io_type = pop.c_popup_add_une_propriete("Type:", io['type'], proc_null)
-    if 'defaut_value' in io:
-        #print (proc_name, "defaut-value type=", type(io['defaut_value']))
-        str_type = " ("+PARAM_TYPE_LIST[type_index(io['defaut_value'])]+")"
-        io_type = pop.c_popup_add_une_propriete("Defaut value:"+str_type, io['defaut_value'], proc_null)
-    if 'local_defaut_value' in io:
-        #print (proc_name, "local_defaut-value type=", type(io['local_defaut_value']))
-        str_type = " ("+PARAM_TYPE_LIST[type_index(io['local_defaut_value'])]+")"
-        io_local_defaut_value = pop.c_popup_add_une_propriete("Local Default Value:"+str_type, io['local_defaut_value'], proc_null)
-    if 'memory' in io:
-        print (proc_name, "memory=", type(io['memory']))
-        str_type = " ("+PARAM_TYPE_LIST[type_index(io['memory'])]+")"
-        io_memory = pop.c_popup_add_une_propriete("Memory:"+str_type, io['memory'], proc_null)
-    if 'initial_value' in io:
-        print (proc_name, "initial value=", type(io['initial_value']))
-        str_type = " ("+PARAM_TYPE_LIST[type_index(io['initial_value'])]+")"
-        io_init = pop.c_popup_add_une_propriete("Initial:"+str_type, io['initial_value'], proc_null)
-    if "lien" in io:
-        id_parent = io['lien']['id_parent']
-        #print (proc_name, " id parent=:", id_parent)
-        id_io = io['lien']['id_io']
-        #print (proc_name, " id io=:", id_io)
-        index_parent= find_index_bloc(bloc, id_parent)
-        parent_header_name = bloc.sublocs[index_parent].header['name']
-        parent_header_id = bloc.sublocs[index_parent].header['id']
-        parent = find_parent (io['lien'])
-        lien_io_id = io['lien']['id_io']
-        lien_io_index = find_index_io (bloc.sublocs[index_parent], lien_io_id)
-        lien_io_name = bloc.sublocs[index_parent].ios[lien_io_index]['name']
-        texte = parent_header_name + "(" + str(parent_header_id) + ") / " + str(lien_io_name) + "(" + str(lien_io_id)+ ")"
-        io_lien = pop.c_popup_add_une_propriete("link: (bloc / output)", texte, proc_null)
+    if all:
+        io_type = pop.c_popup_add_une_propriete("Type:", io['type'], proc_null)
+        if 'defaut_value' in io:
+            #print (proc_name, "defaut-value type=", type(io['defaut_value']))
+            str_type = " ("+PARAM_TYPE_LIST[type_index(io['defaut_value'])]+")"
+            io_type = pop.c_popup_add_une_propriete("Defaut value:"+str_type, io['defaut_value'], proc_null)
+        if 'local_defaut_value' in io:
+            #print (proc_name, "local_defaut-value type=", type(io['local_defaut_value']))
+            str_type = " ("+PARAM_TYPE_LIST[type_index(io['local_defaut_value'])]+")"
+            io_local_defaut_value = pop.c_popup_add_une_propriete("Local Default Value:"+str_type, io['local_defaut_value'], proc_null)
+        if 'memory' in io:
+            print (proc_name, "memory=", type(io['memory']))
+            str_type = " ("+PARAM_TYPE_LIST[type_index(io['memory'])]+")"
+            io_memory = pop.c_popup_add_une_propriete("Memory:"+str_type, io['memory'], proc_null)
+        if 'initial_value' in io:
+            print (proc_name, "initial value=", type(io['initial_value']))
+            str_type = " ("+PARAM_TYPE_LIST[type_index(io['initial_value'])]+")"
+            io_init = pop.c_popup_add_une_propriete("Initial:"+str_type, io['initial_value'], proc_null)
+        if "lien" in io:
+            id_parent = io['lien']['id_parent']
+            #print (proc_name, " id parent=:", id_parent)
+            id_io = io['lien']['id_io']
+            #print (proc_name, " id io=:", id_io)
+            index_parent= find_index_bloc(bloc, id_parent)
+            parent_header_name = bloc.sublocs[index_parent].header['name']
+            parent_header_id = bloc.sublocs[index_parent].header['id']
+            parent = find_parent (io['lien'])
+            lien_io_id = io['lien']['id_io']
+            lien_io_index = find_index_io (bloc.sublocs[index_parent], lien_io_id)
+            lien_io_name = bloc.sublocs[index_parent].ios[lien_io_index]['name']
+            texte = parent_header_name + "(" + str(parent_header_id) + ") / " + str(lien_io_name) + "(" + str(lien_io_id)+ ")"
+            io_lien = pop.c_popup_add_une_propriete("link: (bloc / output)", texte, proc_null)
     BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
     BP_escape.grid(row = pop.ligne, column = 0)
+    return pop
 def memory_io(add_supp, io):
     """pour definir si une sortie est mémorisable"""
     proc_name= "memory_io: "
@@ -2219,7 +2236,7 @@ def menu_io(event, io):
             menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=True, ptoggle=False, pchange=False, pbool=False))
 
         menu_contextuel.add_separator()
-    menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io))
+    menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io, all=True))
     menu_contextuel.post(event.x_root, event.y_root)
 
 def open_file(pf_name, decal):
