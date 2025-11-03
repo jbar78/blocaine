@@ -1488,9 +1488,12 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
             #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
             io[pdic] = bool(io_defaut_value.get() == "True" or io_defaut_value.get() == "1")
         if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
+
         pproc(io[pdic], pmsg)
         pop.popup.destroy()
         bloc.c_bloc_redraw()
+    #if io[pdic] == None:
+    #    io[pdic] = 1
     if pbool:
         if type(io[pdic]).__name__ == "bool":
             print (proc_name, f"io([pdic] est de type bool")
