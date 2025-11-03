@@ -646,11 +646,14 @@ class c_popup:
     def c_popup_add_une_propriete(self, texte, param, set_proc):
         proc_name = "c_popup_add_une_propriete: "
         self.label.append (Label(self.popup, text = texte))
-        self.entry.append (Entry(self.popup))
+        if type(param).__name__ == "str":
+            largeur = len(param)
+        else: largeur = 10
+        self.entry.append (Entry(self.popup, width=largeur)) ####
         self.entry[self.ligne].delete(0, END)
         self.entry[self.ligne].insert(0, param)
-        self.label[self.ligne].grid(row = self.ligne, column = 0)
-        self.entry[self.ligne].grid(row = self.ligne, column = 1)
+        self.label[self.ligne].grid(row = self.ligne, column = 0, sticky="e")
+        self.entry[self.ligne].grid(row = self.ligne, column = 1, sticky="w")
         self.set_proc.append(set_proc)
         retour = self.entry[self.ligne]
         self.ligne += 1
@@ -1322,10 +1325,10 @@ def modif_io(px, py, io, rename, comment, local ):
         if not 'comment' in io:
             io['comment']="no comment"
     io_modif = pop.c_popup_add_une_propriete(item+":", io[item], proc_null)
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
-    BP_escape.grid(row = pop.ligne, column = 0)
-    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
-    BP_validation.grid(row = pop.ligne, column = 1)
+    BP_escape = Button(pop.popup, text = 'Escape', command = pop.popup.destroy) #### width = 25,
+    BP_escape.grid(row = pop.ligne, column = 0, sticky="w")
+    BP_validation = Button(pop.popup, text='Validation', command = validation) ####  width = 25,
+    BP_validation.grid(row = pop.ligne, column = 1, sticky="e")
     #BP_escape.focus()
     BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
     BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
@@ -1519,9 +1522,9 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         pop = c_popup(pdic, 25+px, 75+py)
         print(proc_name, f"io={io}")
         if not pdic in io: io[pdic]=0
-        io_defaut_value = pop.c_popup_add_une_propriete("Défaut io[pdic]:", io[pdic], proc_null)
+        io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
         label_type = Label(pop.popup, text="type:")
-        label_type.grid(row = pop.ligne, column = 0)
+        label_type.grid(row = pop.ligne, column = 0, sticky="e")
         combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
         print (proc_name, f"existing type={type(io[pdic])}")
         print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
@@ -1534,7 +1537,7 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
                 break
 
         combox_type.set(PARAM_TYPE_LIST[index_type])
-        combox_type.grid(row = pop.ligne, column = 1)
+        combox_type.grid(row = pop.ligne, column = 1, sticky="w")
         pop.ligne += 1
         BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
         BP_escape.grid(row = pop.ligne, column = 0)
@@ -1598,8 +1601,8 @@ def properties_io(px, py, io, all):
             lien_io_name = bloc.sublocs[index_parent].ios[lien_io_index]['name']
             texte = parent_header_name + "(" + str(parent_header_id) + ") / " + str(lien_io_name) + "(" + str(lien_io_id)+ ")"
             io_lien = pop.c_popup_add_une_propriete("link: (bloc / output)", texte, proc_null)
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
-    BP_escape.grid(row = pop.ligne, column = 0)
+        BP_escape = Button(pop.popup, text = 'Escape', command = pop.popup.destroy) ####  width = 25,
+        BP_escape.grid(row = pop.ligne, column = 0)
     return pop
 def memory_io(add_supp, io):
     """pour definir si une sortie est mémorisable"""
