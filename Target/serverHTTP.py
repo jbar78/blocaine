@@ -46,15 +46,20 @@ html_style ="""<style>
 menu = """<table>
         <tr><th>Menu</th></tr>
         <tr><td>
-        <a href='/threads'>Task list</a><br>
-        <a href='/blocs'>Bloc & Output list</a><br>
-        <a href='/overwriting'>Overwriting list</a><br>
-        <a href='/connexion'>Connexions</a><br>
-        <a href='/list_compiled:print_list_compiled:'>print list_compiled</a><br>
-        <a href='/list_threads:print_thread_list:'>print list_threads</a>
+        <span title="List of tasks"><a href='/threads'>Task</a></span><br>
+        <span title="List of blocs"><a href='/blocs'>Bloc</a></span><br>
+        <span title="List of outputs"><a href='/outputs'>Output</a></span><br>
+        <span title="List of overwriting"><a href='/overwriting'>Overwriting</a></span><br>
+        <span title="List of connexions"><a href='/connexion'>Connexion</a></span><br>
+        <span title="To print the list of compiled blocs"><a href='/list_compiled:print_list_compiled:'>print list_compiled</a></span><br>
+        <span title="To print the list of threads"><a href='/list_threads:print_thread_list:'>print list_threads</a></span>
         </td></tr>
         </table>
         <br>"""
+
+
+
+
 
 html_debut = """<html>
             <head>        
@@ -245,15 +250,27 @@ class MyServer(BaseHTTPRequestHandler):
                 html += f"<td>{lb['name']}</td><td>{lb['status_A']}</td><td>{lb['status_B']}</td><td>{lb['orders']}</td>"
                 html += "</tr>"
             html +="</table>"
+            html +="<a href='/blocs'>Refresh</a>"
+            html += html_fin
+            self.wfile.write(html.encode("utf-8"))
 
-            html +="<br>"
+        elif self.path == "/outputs": #____________________________liste des outputs
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            #self.send_header("Connection", "keep-alive")
+            #self.send_header("Keep-Alive", "timeout=5, max=100")
+            self.end_headers()
+            # page: thread list
+            html = html_debut
+            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html += menu
             html +="<table>"
-            html += f"""<tr><th colspan="10">bloc output list</th></tr>"""
+            html += f"""<tr><th colspan="11">bloc output list</th></tr>"""
             #html += f"""<tr><th colspan="3">bloc</th><th colspan="4">output</th><th rowspan="2">status</th><th colspan="2">task</th></tr>"""
-            html += f"""<tr><th colspan="4">bloc</th><th colspan="4">output</th><th colspan="2">task</th></tr>"""
-            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>value</th><th>validity</th><th>name</th><th>id</th></tr>"""
+            html += f"""<tr><th colspan="4">bloc</th><th colspan="4">output</th><th colspan="3">task</th></tr>"""
+            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>value</th><th>validity</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th></tr>"""
             for thread in list_threads:
-                for exe in thread['list_exe']:
+                for iexe, exe in enumerate(thread['list_exe']):
                     if exe['run']:
                         txt_status = "Running"
                         txt_value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
@@ -267,14 +284,18 @@ class MyServer(BaseHTTPRequestHandler):
                     html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
                     html += f"<td>{txt_status}</td>"
                     html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
-                    html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
+                    #html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
+                    html += f"<td>{txt_value}</td><td"+txt_style+f">{txt_validity}</td>"
                     #html += f"<td>{txt_status}</td>"
-                    html += f"<td>{thread['name']}</td><td>{thread['id']}</td>"
+                    html += f"<td>{iexe}</td><td>{thread['name']}</td><td>{thread['id']}</td>"
                     html += "</tr>"
             html +="</table>"
-            html +="<a href='/blocs'>Refresh</a>"
+            html +="<a href='/outputs'>Refresh</a>"
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
+
+
+
 
         elif self.path == "/overwriting": #____________________________liste des forçages
             self.send_response(200)
@@ -287,8 +308,6 @@ class MyServer(BaseHTTPRequestHandler):
             html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
             html += menu
             html +="<table>"
-
-
             html += f"""<tr><th colspan="8">Overwriting list</th></tr>"""
             html += f"""<tr><th colspan="3">bloc</th><th colspan="5">io</th></tr>"""
             html += f"""<tr><th>main</th><th>shift</th><th>path/name</th><th>name</th><th>type</th><th>id</th><th>value</th><th>validity</th></tr>"""

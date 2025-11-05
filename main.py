@@ -556,12 +556,12 @@ class c_sublocs:
         """call_back: sur evenement"""
         global popup_properties
         proc_name = "c_sublocs_event_enter_leave_io: "
-        print (proc_name, f"event={event}, over={over}")
+        #print (proc_name, f"event={event}, over={over}")
         if over:
-            print (proc_name, f"ouvrir le popup")
+            #print (proc_name, f"ouvrir le popup")
             popup_properties = properties_io(event.x_root, event.y_root, io, all=False)
         else:
-            print (proc_name, f"fermer le popup")
+            #print (proc_name, f"fermer le popup")
             popup_properties.popup.destroy()
             #del popup_properties
         #print (proc_name, "event_glisser_droit_io: a=<{}>".format(io))
