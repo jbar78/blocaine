@@ -46,10 +46,10 @@ html_style ="""<style>
 menu = """<table>
         <tr><th>Menu</th></tr>
         <tr><td>
-        <span title="List of tasks"><a href='/threads'>Task</a></span><br>
         <span title="List of blocs"><a href='/blocs'>Bloc</a></span><br>
         <span title="List of outputs"><a href='/outputs'>Output</a></span><br>
         <span title="List of overwriting"><a href='/overwriting'>Overwriting</a></span><br>
+        <span title="List of tasks and CPU load"><a href='/threads'>Task & Load</a></span><br>
         <span title="List of connexions"><a href='/connexion'>Connexion</a></span><br>
         <span title="To print the list of compiled blocs"><a href='/list_compiled:print_list_compiled:'>print list_compiled</a></span><br>
         <span title="To print the list of threads"><a href='/list_threads:print_thread_list:'>print list_threads</a></span>
