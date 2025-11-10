@@ -284,8 +284,8 @@ class MyServer(BaseHTTPRequestHandler):
                     html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
                     html += f"<td>{txt_status}</td>"
                     html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
-                    #html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
-                    html += f"<td>{txt_value}</td><td"+txt_style+f">{txt_validity}</td>"
+                    html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
+                    #html += f"<td>{txt_value}</td><td"+txt_style+f">{txt_validity}</td>"
                     #html += f"<td>{txt_status}</td>"
                     html += f"<td>{iexe}</td><td>{thread['name']}</td><td>{thread['id']}</td>"
                     html += "</tr>"
@@ -317,12 +317,13 @@ class MyServer(BaseHTTPRequestHandler):
                 html += f"<td>{forced_io['main']}</td><td>{forced_io['shift']}</td><td>{forced_io['path']}</td>"
                 html += f"<td>{forced_io['io_name']}</td><td>{forced_io['io_type']}</td><td>{forced_io['io_id']}</td>"
                 txt_value = forced_io['io_value']
-                if forced_io['io_validity']:
-                    txt_validity = "😊"
-                    txt_style = ""
-                else:
-                    txt_validity = "☠ "
-                    txt_style = f"""style="font-size: 200%;" """
+                #if forced_io['io_validity']:
+                #    txt_validity = "😊"
+                #    txt_style = ""
+                #else:
+                #    txt_validity = "☠ "
+                #    txt_style = f"""style="font-size: 200%;" """
+                txt_validity, txt_style = return_validity (forced_io['io_validity'])
                 #html += f"<td>{txt_value}</td><td{txt_style}>{txt_validity}</td>"""
                 html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
                 html += "</tr>"
