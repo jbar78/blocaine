@@ -1,7 +1,7 @@
 # ATTENTION: la source de ce fichier ce trouve dans le répertoire "Target"
 
-PARAM_VAL_INIT_INPUT= 555
-PARAM_VAL_INIT_OUTPUT= 666
+PARAM_VAL_INIT_INPUT= None #555
+PARAM_VAL_INIT_OUTPUT= None #666
 PARAM_CHEMIN_SYSTEM = "blocs/system/"
 PARAM_CHEMIN_USER = "blocs/user/"
 

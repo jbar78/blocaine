@@ -2591,7 +2591,7 @@ def compile_bloc(pbloc, porder):
             pesubloc.inputs.append(pickle.loads(pickle.dumps(output)))
             input = pesubloc.inputs[-1]
             input['id'] += 1
-            input['var'] = PARAM_VAL_INIT_INPUT+1
+            input['var'] = PARAM_VAL_INIT_INPUT #+1
             input['valide'] = True
             #if 'defaut_value' in ouput:
             #input['var'] = output['defaut_value']
@@ -2602,7 +2602,7 @@ def compile_bloc(pbloc, porder):
             pesubloc.outputs.append(pickle.loads(pickle.dumps(input)))
             output = pesubloc.outputs[-1]
             output['id'] += 1
-            output['var'] = PARAM_VAL_INIT_OUTPUT+1
+            output['var'] = PARAM_VAL_INIT_OUTPUT #+1
             output['valide'] = False
             if 'lien' in input:
                 del pesubloc.outputs[-1]['lien']
@@ -2913,6 +2913,8 @@ def monitoring_bloc():
             else: return PARAM_ICONE_FALSE #"False"
         elif isinstance(var, float):
             return f"{var:8.3f}"
+        elif var==None:
+            return f"None"
         else:
             return var
     def show_monitored_io(ptype, pio, pmsb, pid):
@@ -2931,7 +2933,7 @@ def monitoring_bloc():
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
                     canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
         else:
-            messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
     def show_normal_io(pio):
         proc_name = "show_normal_io: "
         #print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
