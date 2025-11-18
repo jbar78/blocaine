@@ -669,7 +669,10 @@ def c_exesubloc_differencial (pebloc, pieb, pio, pthread):
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_input (pieb, pthread, 0)
-            cesubloc.outputs[0]['var'] = (cesubloc.inputs[0]['var'] - cesubloc.outputs[1]['var']) / pthread['cycle_time']
+            if cesubloc.outputs[1]['valide']:
+                cesubloc.outputs[0]['var'] = (cesubloc.inputs[0]['var'] - cesubloc.outputs[1]['var']) / pthread['cycle_time']
+            else:
+                cesubloc.outputs[0]['var'] = 0               
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.outputs[1]['valide'] 
             cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
             cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
@@ -702,7 +705,10 @@ def c_exesubloc_integrator (pebloc, pieb, pio, pthread):
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
-            delta = (cesubloc.inputs[I_IN]['var'] * pthread['cycle_time']) / cesubloc.inputs[I_TAU]['var']
+            if cesubloc.inputs[I_TAU]['var'] > 0:
+                delta = (cesubloc.inputs[I_IN]['var'] * pthread['cycle_time']) / cesubloc.inputs[I_TAU]['var']
+            else:
+                delta = cesubloc.inputs[I_IN]['var']
             if cesubloc.inputs[I_SET]['var']:
                 integrator = cesubloc.inputs[I_PRESET]['var']
             else:
