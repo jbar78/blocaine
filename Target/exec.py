@@ -789,7 +789,6 @@ def c_exesubloc_input_output (pebloc, pieb, pio, pthread):
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             #print ("<INPUT_OUTPUT>", f" inputs[0]=bloc_name={cesubloc.inputs[0]['var']},  inputs[1]=output_id={cesubloc.inputs[1]['var']}")
-            cesubloc.c_exesubloc_validation_standard()
             find = False
             for thread in list_threads:
                 for exe in thread['list_exe']:
@@ -803,9 +802,11 @@ def c_exesubloc_input_output (pebloc, pieb, pio, pthread):
                             if cesubloc.inputs[1]['var'] == ido:               # nom du bloc exécuté
                                 #print ("<INPUT_OUTPUT>", f"trouvé")
                                 find = True
-                                cesubloc.outputs[0]['var'] = exe['exebloc'].sublocs[ibo].outputs[0]['var'] 
-                                cesubloc.outputs[0]['valide'] = exe['exebloc'].sublocs[ibo].outputs[0]['valide'] and cesubloc.outputs[0]['valide']
-
+                                cesubloc.outputs[0]['var'] = exe['exebloc'].sublocs[ibo].outputs[0]['var']
+                                if cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']:
+                                    cesubloc.outputs[0]['valide'] = exe['exebloc'].sublocs[ibo].outputs[0]['valide']
+                                else: 
+                                    cesubloc.outputs[0]['valide'] = False
             if not find:
                 #print ("<INPUT_OUTPUT>", f"pas trouvé")
                 cesubloc.outputs[0]['valide'] = False
