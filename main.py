@@ -1511,8 +1511,11 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         pproc(io[pdic], pmsg)
         pop.popup.destroy()
         bloc.c_bloc_redraw()
-    if io[pdic] == None:
-        io[pdic] = 1
+    try:
+        if io[pdic] == None:
+            io[pdic] = 1
+    except:
+        io['defaut_value'] =1
     if pbool:
         if type(io[pdic]).__name__ == "bool":
             print (proc_name, f"io([pdic] est de type bool")

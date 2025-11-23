@@ -86,6 +86,29 @@ def get_local_ip():
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
+        def return_value(value):
+            def wires_counter (val):
+                proc_name = "wires_counter: "
+                print (proc_name, f"Paramètres: val={val},")
+                if isinstance(val, tuple):
+                    print (proc_name, f" avant call wires_counter(): incrémentation")
+                    return_value =  wires_counter(val[0])+1
+                    print (proc_name, f" retourne ={return_value}")
+                    return return_value
+                return 1
+            proc_name = "return_value: "
+            print (proc_name, f"Paramètres: val={value}")
+            wires =0
+            wires = wires_counter(value)
+            print (proc_name, f"aprés wires_counter(): wires={wires}")
+            #if isinstance(value, tuple):
+            if wires>1:
+                txt_value = "cable: nbr of wires=" + str(wires) 
+                txt_style =  f"""style="font-style: italic; color: blue;" """
+            else:
+                txt_value = value
+                txt_style = ""
+            return txt_value, txt_style
         def return_validity(valide):
             if valide:
                 txt_validity = "😊"
@@ -165,7 +188,6 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<table>"
             html += f"""<tr><th colspan="3";>TCP/IP protocol</th></tr>"""
             html += f"""<tr><th>...</th><th>@ip</th><th>port</th></tr>"""
-            #html += f"""<tr><th>server</th><td>{PARAM_TCP_HOST_IP}</td><td>{PARAM_TCP_HOST_PORT}</td></tr>"""
             html += f"""<tr><th>server</th><td>{local_ip}</td><td>{PARAM_TCP_HOST_PORT}</td></tr>"""
             for i, client in enumerate(clientsTCP):
                 html += f"""<tr><th>client[{i}]</th><td>{client[0]}</td><td>{client[1]}</td></tr>"""
@@ -266,27 +288,36 @@ class MyServer(BaseHTTPRequestHandler):
             html += menu
             html +="<table>"
             html += f"""<tr><th colspan="11">bloc output list</th></tr>"""
-            #html += f"""<tr><th colspan="3">bloc</th><th colspan="4">output</th><th rowspan="2">status</th><th colspan="2">task</th></tr>"""
             html += f"""<tr><th colspan="4">bloc</th><th colspan="4">output</th><th colspan="3">task</th></tr>"""
             html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>value</th><th>validity</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th></tr>"""
             for thread in list_threads:
                 for iexe, exe in enumerate(thread['list_exe']):
                     if exe['run']:
                         txt_status = "Running"
-                        txt_value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
-                        txt_validity, txt_style = return_validity (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide'])
+                        txt_value, txt_value_style = return_value (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'])
+                        print (proc_name, f" aprés retun_value txt_value={txt_value}, txt_value_sytle={txt_value_style}")
+                        #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'], tuple):
+                            #nbr_wire = 2
+                            #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'][0], tuple):
+                            #    nbr_wire += 1
+                            #    if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'][0][0], tuple):
+                            #        nbr_wire += 1
+                            #txt_value = "<<<nbr wires =" + str(nbr_wire) + ">>>"
+                        #else:   
+                        #    txt_value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
+                        txt_validity, txt_validity_style = return_validity (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide'])
                     else:
                         txt_status = "Down"
                         txt_value = txt_validity = "..."
-                        txt_style = ""
+                        txt_validity_style = ""
+                        txt_value_style    = ""
                     txt_building= exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
                     html += "<tr>"
                     html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
                     html += f"<td>{txt_status}</td>"
                     html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
-                    html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
-                    #html += f"<td>{txt_value}</td><td"+txt_style+f">{txt_validity}</td>"
-                    #html += f"<td>{txt_status}</td>"
+                   #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
+                    html += "<td "+txt_value_style+f""">{txt_value}</td><td """+txt_validity_style+">"+txt_validity+"</td>"
                     html += f"<td>{iexe}</td><td>{thread['name']}</td><td>{thread['id']}</td>"
                     html += "</tr>"
             html +="</table>"
@@ -317,15 +348,8 @@ class MyServer(BaseHTTPRequestHandler):
                 html += f"<td>{forced_io['main']}</td><td>{forced_io['shift']}</td><td>{forced_io['path']}</td>"
                 html += f"<td>{forced_io['io_name']}</td><td>{forced_io['io_type']}</td><td>{forced_io['io_id']}</td>"
                 txt_value = forced_io['io_value']
-                #if forced_io['io_validity']:
-                #    txt_validity = "😊"
-                #    txt_style = ""
-                #else:
-                #    txt_validity = "☠ "
-                #    txt_style = f"""style="font-size: 200%;" """
-                txt_validity, txt_style = return_validity (forced_io['io_validity'])
-                #html += f"<td>{txt_value}</td><td{txt_style}>{txt_validity}</td>"""
-                html += f"""<td>{txt_value}</td><td """+txt_style+f""">{txt_validity}</td>"""
+                txt_validity, txt_validity_style = return_validity (forced_io['io_validity'])
+                html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
                 html += "</tr>"
 
 
