@@ -86,7 +86,7 @@ def get_local_ip():
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
-        def return_value(value):
+        def return_type_and_value(value):
             def wires_counter (val):
                 proc_name = "wires_counter: "
                 print (proc_name, f"Paramètres: val={val},")
@@ -103,12 +103,12 @@ class MyServer(BaseHTTPRequestHandler):
             print (proc_name, f"aprés wires_counter(): wires={wires}")
             #if isinstance(value, tuple):
             if wires>1:
-                txt_value = "cable: nbr of wires=" + str(wires) 
-                txt_style =  f"""style="font-style: italic; color: blue;" """
+                txt_value = "too long to display" 
+                txt_type = str(wires)+" core cable" 
             else:
                 txt_value = value
-                txt_style = ""
-            return txt_value, txt_style
+                txt_type = type(value).__name__
+            return txt_type, txt_value
         def return_validity(valide):
             if valide:
                 txt_validity = "😊"
@@ -287,15 +287,15 @@ class MyServer(BaseHTTPRequestHandler):
             html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
             html += menu
             html +="<table>"
-            html += f"""<tr><th colspan="11">bloc output list</th></tr>"""
-            html += f"""<tr><th colspan="4">bloc</th><th colspan="4">output</th><th colspan="3">task</th></tr>"""
-            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>value</th><th>validity</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th></tr>"""
+            html += f"""<tr><th colspan="12">bloc output list</th></tr>"""
+            html += f"""<tr><th colspan="4">bloc</th><th colspan="5">output</th><th colspan="3">task</th></tr>"""
+            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>type</th><th>value</th><th>validity</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th></tr>"""
             for thread in list_threads:
                 for iexe, exe in enumerate(thread['list_exe']):
                     if exe['run']:
                         txt_status = "Running"
-                        txt_value, txt_value_style = return_value (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'])
-                        print (proc_name, f" aprés retun_value txt_value={txt_value}, txt_value_sytle={txt_value_style}")
+                        txt_type, txt_value = return_type_and_value (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'])
+                        print (proc_name, f"txt_type={txt_type},  txt_value={txt_value}")
                         #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'], tuple):
                             #nbr_wire = 2
                             #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'][0], tuple):
@@ -310,14 +310,14 @@ class MyServer(BaseHTTPRequestHandler):
                         txt_status = "Down"
                         txt_value = txt_validity = "..."
                         txt_validity_style = ""
-                        txt_value_style    = ""
+                        txt_type    = "..."
                     txt_building= exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
                     html += "<tr>"
                     html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
                     html += f"<td>{txt_status}</td>"
                     html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
                    #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
-                    html += "<td "+txt_value_style+f""">{txt_value}</td><td """+txt_validity_style+">"+txt_validity+"</td>"
+                    html += f"""<td>{txt_type}<td>{txt_value}</td><td """+txt_validity_style+">"+txt_validity+"</td>"
                     html += f"<td>{iexe}</td><td>{thread['name']}</td><td>{thread['id']}</td>"
                     html += "</tr>"
             html +="</table>"
