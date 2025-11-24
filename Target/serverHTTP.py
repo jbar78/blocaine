@@ -4,6 +4,7 @@ import socketserver
 from PARAM_NETWORK import *
 from sharedata import clientsTCP
 from compiled import *
+from exec import cable_wires_counter
 
 html_style ="""<style>
         th,
@@ -87,20 +88,11 @@ def get_local_ip():
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         def return_type_and_value(value):
-            def wires_counter (val):
-                proc_name = "wires_counter: "
-                print (proc_name, f"Paramètres: val={val},")
-                if isinstance(val, tuple):
-                    print (proc_name, f" avant call wires_counter(): incrémentation")
-                    return_value =  wires_counter(val[0])+1
-                    print (proc_name, f" retourne ={return_value}")
-                    return return_value
-                return 1
             proc_name = "return_value: "
             print (proc_name, f"Paramètres: val={value}")
             wires =0
-            wires = wires_counter(value)
-            print (proc_name, f"aprés wires_counter(): wires={wires}")
+            wires = cable_wires_counter(value)
+            print (proc_name, f"aprés cable_wires_counter(): wires={wires}")
             #if isinstance(value, tuple):
             if wires>1:
                 txt_value = "too long to display" 

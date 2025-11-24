@@ -17,7 +17,7 @@ import socket
 from datetime import datetime
 
 from module_bloc_file import *
-from exec import *
+from exec import recup_procedure, cable_wires_counter
 from c_exebloc import *
 from PARAM import *
 from PARAM_NAME_BLOC import *
@@ -2916,6 +2916,9 @@ def monitoring_bloc():
             else: return PARAM_ICONE_FALSE #"False"
         elif isinstance(var, float):
             return f"{var:8.3f}"
+        elif isinstance(var, tuple):
+            wires = cable_wires_counter(var)
+            return f"cores={wires}"
         elif var==None:
             return f"None"
         else:
