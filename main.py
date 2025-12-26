@@ -884,9 +884,10 @@ def routage ():
     def routage_pass1(elem, pos):
         """Récurcif: position les elements par rapport à l'element aval"""
         global bloc, routage_level
+        proc_name = "routage_pass1: "
         routage_level += 1
         if PARAM_DEBUG_ROUTAGE:
-            trace_txt = trace_proc(elem, inspect.currentframe().f_code.co_name, routage_level)
+            trace_txt = "{proc_name} level:{routage_level}, name=<{elem.header['name']}>, id={elem.header['id']}"
             print (trace_txt, "début:----paramètres reçus:  elem=<<<", elem.header['name'], ">>>  (id=", elem.header['id'], "),  position=(", (pos.x, pos.y), ")")
         elem.header['position'] = (pos.x, pos.y)
         if PARAM_DEBUG_ROUTAGE: print (trace_txt, ">>> affectation de header['position']=",elem.header['position'])
@@ -2985,6 +2986,7 @@ def monitoring_bloc():
     while flag_monitoring:
         if True: #try:
             clientTCP.send_message(message)
+            #print(proc_name, "Attente message")
             buff = clientTCP.receive_message()
             if buff == b"monitoring:not_found":
                 messagebox.showinfo("ERROR", f"Monitoring not allowed, because the target does not contain bloc <{monitoring['name']}>")

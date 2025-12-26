@@ -11,11 +11,11 @@ PARAM_TEXT_EXCEPTION = " EXCEPTION: so output(s) become unvalid"
 
 def cable_wires_counter (val):
     proc_name = "cable_wires_counter: "
-    print (proc_name, f"Paramètres: val={val},")
+    #print (proc_name, f"Paramètres: val={val},")
     if isinstance(val, tuple):
-        print (proc_name, f" avant call cable_wires_counter(): incrémentation")
+        #print (proc_name, f" avant call cable_wires_counter(): incrémentation")
         return_value =  cable_wires_counter(val[0])+1
-        print (proc_name, f" retourne ={return_value}")
+        #print (proc_name, f" retourne ={return_value}")
         return return_value
     return 1
 
