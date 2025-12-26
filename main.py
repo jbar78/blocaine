@@ -17,7 +17,8 @@ import socket
 from datetime import datetime
 
 from module_bloc_file import *
-from exec import recup_procedure, cable_wires_counter
+from exec import recup_procedure
+from utile import cable_wires_counter
 from c_exebloc import *
 from PARAM import *
 from PARAM_NAME_BLOC import *

@@ -4,7 +4,7 @@ import socketserver
 from PARAM_NETWORK import *
 from sharedata import clientsTCP
 from compiled import *
-from exec import cable_wires_counter
+from utile import cable_wires_counter
 
 html_style ="""<style>
         th,
