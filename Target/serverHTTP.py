@@ -95,8 +95,8 @@ class MyServer(BaseHTTPRequestHandler):
             print (proc_name, f"aprés cable_wires_counter(): wires={wires}")
             #if isinstance(value, tuple):
             if wires>1:
-                txt_value = "too long to display" 
-                txt_type = str(wires)+" core cable" 
+                txt_value = "cores="+str(wires) 
+                txt_type = "cable"   
             else:
                 txt_value = value
                 txt_type = type(value).__name__

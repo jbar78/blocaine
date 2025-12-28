@@ -2515,6 +2515,19 @@ def compile_bloc(pbloc, porder):
     """ Comfpilation du bloc et de ses sous-blocs """
     #global exeblocA, exeblocB
     global list_compiled, compile_level
+
+
+    def copy_io_name_comment (source, dest):
+        """ copie les NAME et COMMENT (et local_ si il y en a)"""
+        dest['name'] = source['name']
+        if 'local_name' in source:
+            dest['loacl_name'] = source['local_name']
+        dest['comment'] = source['comment']
+        if 'local_comment' in source:
+            dest['local_comment'] = source['local_comment']
+
+
+
     def edit_to_exe_blocs(pbloc, pexebloc, pparent_ids):
         """crée un bloc exécutables pour chaque bloc éditable (même les 'user')"""
         proc_name = "edit_to_exe_blocs: "
@@ -2537,21 +2550,28 @@ def compile_bloc(pbloc, porder):
             print (proc_name, f" ios 1er boucle: ois[{i}]  (io_name={io['name']},  io_type={io['type']},   id={io['id']})")
             if io['type']=='in':
                 input = {}
-                input['name'] = io['name']
+                copy_io_name_comment (io, input)
+                #input['name'] = io['name']
+                #if 'local_name' in io:
+                #    input['loacl_name'] = io['local_name']
+                #input['comment'] = io['comment']
+                #if 'local_comment' in io:
+                #    input['local_comment'] = io['local_comment']
+
                 input['id'] = io['id']
                 input['var'] = PARAM_VAL_INIT_INPUT
                 input['valide'] = False
                 if 'defaut_value' in io:
                     print (proc_name, f"   defaut_value trouvée,   valu={io['defaut_value']}")
                     input['defaut_value'] = input['var'] = io['defaut_value']
-                    input['valide'] = True
+                    input['valide'] = False
                 if 'local_name' in io:
                     print (proc_name, f"   local_name trouvée,   valu={io['local_name']}")
                     input['local_name'] = io['local_name']
                 if 'lien' in io:
                     print (proc_name, "   lien trouvé,    lien={io['lien']}")
                     input['lien'] = io['lien']
-                    input['valide'] = True
+                    input['valide'] = False
                 inputs.append(input) #########
                 #print (proc_name, " pour 'in'[", i,"]  aprés.append(input)     memio['ieo']=", memio['ieo'])
         print (proc_name, f"Retourne les inputs[]={inputs}")
@@ -2564,7 +2584,15 @@ def compile_bloc(pbloc, porder):
             print (proc_name, f" ios 1er boucle: ois[{i}]  (io_name={io['name']},  io_type={io['type']},   id={io['id']})")
             if io['type']=='out':
                 output = {}
-                output['name'] = io['name']
+
+                copy_io_name_comment (io, output)
+                #output['name'] = io['name']
+                #if 'local_name' in io:
+                #    output['loacl_name'] = io['local_name']
+                #output['comment'] = io['comment']
+                #if 'local_comment' in io:
+                #    output['local_comment'] = io['local_comment']
+
                 output['id'] = io['id']
                 if 'local_name' in io:
                     output['local_name'] = io['local_name']
@@ -2595,6 +2623,8 @@ def compile_bloc(pbloc, porder):
             output = pesubloc.outputs[0]
             pesubloc.inputs.append(pickle.loads(pickle.dumps(output)))
             input = pesubloc.inputs[-1]
+            #copy_io_name_comment (output, input)
+
             input['id'] += 1
             input['var'] = PARAM_VAL_INIT_INPUT #+1
             input['valide'] = True
@@ -2606,6 +2636,7 @@ def compile_bloc(pbloc, porder):
             input = pesubloc.inputs[0]
             pesubloc.outputs.append(pickle.loads(pickle.dumps(input)))
             output = pesubloc.outputs[-1]
+            #copy_io_name_comment (input, output)
             output['id'] += 1
             output['var'] = PARAM_VAL_INIT_OUTPUT #+1
             output['valide'] = False
@@ -2754,6 +2785,9 @@ def compile_bloc(pbloc, porder):
                             print (proc_name, f"   defaut_value trouvée, dans USER input: defaut value={user_bloc_input['defaut_value']}")
                             input_bloc.inputs[0]['defaut_value'] = user_bloc_input['defaut_value']
                             input_bloc.inputs[0]['valide'] = True 
+                            user_bloc_input['monitoring_type'] = "out"
+                            user_bloc_input['monitoring_bloc_index'] = index_input_bloc
+                            user_bloc_input['monitoring_io_index'] =  0
                         else:
                             print (proc_name, f"ERROR: USER bloc input do not have link or defaut_value")
                     if not find:
@@ -2883,7 +2917,9 @@ def compile_bloc(pbloc, porder):
             #exebloc_str = pickle.dumps(exebloc).decode('utf-8')
             #print(trace_txt, "   str(exebloc_str):", str(exebloc_str))
             #print(trace_txt, "   exebloc_str:", exebloc_str)
-            clientTCP.send_message(porder.encode('utf-8')+b":"+exebloc_dump)
+            message = porder.encode('utf-8')+b":"+exebloc_dump
+            print (f"send message: len={len(message)}")
+            clientTCP.send_message(message)
         else:
             print(proc_name, "L'utilisateur a choisi Non")
     menu_target()
@@ -2983,7 +3019,7 @@ def monitoring_bloc():
     msg_dump = pickle.dumps(monitoring)
     #print (proc_name, "   msg_dump:", msg_dump)
     message=b"monitoring:"+msg_dump
-    #print (proc_name, "   message envoyé à la cible:", message)
+    print (proc_name, f"   message envoyé à la cible: len{len(message)}")
     while flag_monitoring:
         if True: #try:
             clientTCP.send_message(message)

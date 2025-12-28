@@ -73,8 +73,8 @@ def handle_clientTCP(client_socket, addr):
         while True:
             # receive and print client messages
             #print(proc_name, f"en attente d'un message")
-            request = client_socket.recv(32768)
-            #print(proc_name, f"réception d'un message!")
+            request = client_socket.recv(PARAM_TCP_BUFFER_SIZE)
+            print(proc_name, f"réception d'un message!   len={len(request)}")
             #print(proc_name, f"Received: {request}")
             index =request.find(b':')
             #print(proc_name, f"index des deux points: {index}")

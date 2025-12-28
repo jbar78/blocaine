@@ -45,34 +45,40 @@ class c_exebloc:
         """affecte un input en appelant le bloc parent (dans la boucle récurcive)"""
         def c_exebloc_recup_defaut (pinput):
             """affecte un input avec les valeurs par défaut"""
-            pinput['valide'] = True
             if 'local_defaut_value' in pinput:
                 #print ("récupération; local_defaut_value=", pinput['local_defaut_value'])
                 pinput['var'] = pinput['local_defaut_value']
+                pinput['valide'] = True
             elif 'defaut_value' in pinput:
                 #print ("récupération; defaut_value=", pinput['defaut_value'])
                 pinput['var'] = pinput['defaut_value']
+                pinput['valide'] = True
             else:
+                pinput['valide'] = False
                 return False
             return True
         cesubloc = self.sublocs[pieb]
         input = cesubloc.inputs[piei]
-            #print (f"RECUP_INPUT les paramètres sont:   piei={piei},   counter={pthread['counter']}")
+        #print (f"RECUP_INPUT les paramètres sont:   piei={piei},   counter={pthread['counter']}")
         if 'lien_bloc_index' in input and 'lien_output_index' in input:
             #print ("  il y a un lien pour cette input[", piei, "]:  name<", input['name'], ">")
             nesubloc = self.sublocs[input['lien_bloc_index']]
-            input['var'], input['valide'] = nesubloc.header['procedure'](self, input['lien_bloc_index'], input['lien_output_index'], pthread) #### appel procédure liée au bloc ####
+            #input['var'], input['valide'] = nesubloc.header['procedure'](self, input['lien_bloc_index'], input['lien_output_index'], pthread) #### appel procédure liée au bloc ####
+            prevout = nesubloc.header['procedure'](self, input['lien_bloc_index'], input['lien_output_index'], pthread) #### appel procédure liée au bloc ####
+            input['var']   =prevout['var']
+            input['valide']=prevout['valide']
         else:
             #print ("  il n'y a pas de lien pour cette input[" + str(piei) + "]:  name<" + input['name'] + ">")
             defaut_value_found = c_exebloc_recup_defaut (input)
             if not defaut_value_found:
                 print (": ERROR: bloc[", pieb, "],    input[", piei, "] can not be found")
-                input['valide'] = False
+            prevout=input
         if 'forced' in input:
             #print (": input[", piei, "], input['forced_value']=", input['forced_value'], "input['forced_valide']=", input['valide'])
             input['var'] = input['forced_value']
             input['valide'] = input['forced_valide']
         #print (": input[", piei, "], récupérée: var=", input['var'], "val=", input['valide'])
+        return prevout
     def c_exebloc_recup_inputs (self, pieb, pthread):
         """affecte les inputs en appelant les blocs parents (dans la boucle récurcive)"""
         cesubloc = self.sublocs[pieb]
@@ -104,9 +110,9 @@ class c_exesubloc:
         chaine = chaine  + ")\n" #"   (levels="+str(len(self.parent_ids))+")\n"
         chaine = chaine  + "        header=" + str(self.header) + "\n"
         for i, elem in enumerate(self.inputs):
-            chaine= chaine + "        inputs=" + str(self.inputs[i]) + "\n"
+            chaine= chaine + "        input["+str(i)+"]=" + str(self.inputs[i]) + "\n"
         for i, elem in enumerate(self.outputs):
-            chaine= chaine + "        outputs=" + str(self.outputs[i]) + "\n"
+            chaine= chaine + "        output["+str(i)+"]=" + str(self.outputs[i]) + "\n"
         return chaine  #+ "\n"
     def c_exesubloc_find_index_exeinput (self, pid):
         """ retourne l'index d'un input du sous-bloc executable correspondant à l'id de l'input"""
