@@ -1,6 +1,7 @@
 import socket
 import threading
 import pickle
+import struct
 from PARAM_NETWORK import *
 from sharedata import clientsTCP
 from c_exebloc import *
@@ -8,7 +9,46 @@ from exec import *
 from compiled import *
 
 
+def send_message(socket, data):
+    proc_name = "send_message: "
+    form = "!Q"+str(len(data))+"s"
+    #print (proc_name, f"format=<{form}>")
+    header = len(data)
+    print(proc_name, f"header<{header}>,     data<{data}>\n")
+    mess = struct.pack(form, header, data)
+    #print(proc_name, f"mess <{mess}>         envoyé à {socket.host}:{socket.port}")
+    send_all(socket, mess)
+
+def send_all(socket, data):
+    proc_name = "clientTCP.send_all: "
+    if socket:
+        socket.sendall(data)
+        #print(proc_name, f"message <{data}> envoyé à {socket.host}:{socket.port}")
+    #else:
+        #print(proc_name, f"Erreur : Connexion non établie avec {socket.host}:{socket.port}")
+
+
+
 def handle_clientTCP(client_socket, addr):
+
+    def receive_message(): ########
+        proc_name = "receive_message: "
+        header = client_socket.recv(8)
+        print(proc_name, f"réception de l'entête={header}")
+        (length,) = struct.unpack("!Q", header)
+        print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
+        remaining = length
+        mess_reçu =b""
+        while remaining > 0:
+            reçu = client_socket.recv(min(length, PARAM_TCP_BUFFER_SIZE))
+            print(proc_name, f"réception du message utile, len(reçu)={len(reçu)}")
+            if not reçu:
+                print(proc_name, "Connexion fermée avant réception complète.")
+            mess_reçu += reçu
+            remaining -= len(reçu)
+        return mess_reçu
+
+
     def monitoring_user_bloc(pexebloc):
         def monitoring_user_bloc_io(pio):
             proc_name = "monitoring_user_bloc_io"
@@ -73,7 +113,7 @@ def handle_clientTCP(client_socket, addr):
         while True:
             # receive and print client messages
             #print(proc_name, f"en attente d'un message")
-            request = client_socket.recv(PARAM_TCP_BUFFER_SIZE)
+            request = receive_message()
             print(proc_name, f"réception d'un message!   len={len(request)}")
             #print(proc_name, f"Received: {request}")
             index =request.find(b':')
@@ -130,7 +170,8 @@ def handle_clientTCP(client_socket, addr):
                     response = pickle.dumps(list_monitor)
                 else:
                     response = b"monitoring:not_found"
-                client_socket.send(response)
+                #client_socket.send(response)
+                send_message(client_socket, response)
             elif (cas == b"overwriting_start" or cas == b"overwriting_stop" or cas == b"overwriting_validity" or cas == b"overwriting_value") and index!= -1:
                 #print(proc_name, f"cas N°3 reconnu  OVERWRITING  cas: {cas}")
                 #print(proc_name, f"texte brut: {request}")
@@ -177,10 +218,8 @@ def handle_clientTCP(client_socket, addr):
             else:
                 print(proc_name, f"Unknow Message Received: {request}")
                 response = b"?"
-                client_socket.send(response)
-            # convert and send accept response to the client
-            #response = "accepted"
-            #client_socket.send(response)
+                #client_socket.send(response)
+                send_message(client_socket, response)
     except Exception as e:
         print(proc_name, f"Error when hanlding client: {e}")
     finally:

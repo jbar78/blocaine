@@ -824,13 +824,11 @@ def c_exesubloc_information (pebloc, pieb, pio, pthread):
     """ exécution du bloc INFORMATION: lecture des infos d'une variable"""
     # les index des IO
     #I_IN = 0
-    #O_value = 0
-    #O_valide = 1
-    #O_id = 2
-    #O_name = 3
-    #O_comment = 4
-    #O_local_name = 5
-    #O_local_comment = 6
+    #O_id = 0
+    #O_name = 1
+    #O_comment = 2
+    #O_local_name = 3
+    #O_local_comment = 4
     cesubloc = pebloc.sublocs[pieb]
     #print ("<INFORMATION> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
@@ -840,30 +838,22 @@ def c_exesubloc_information (pebloc, pieb, pio, pthread):
         cesubloc.header['counter'] = pthread['counter']
         try:
             prevout = pebloc.c_exebloc_recup_input (pieb, pthread, 0)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = prevout['var']
-            cesubloc.outputs[1]['var'] = prevout['valide']
-            cesubloc.outputs[2]['var'] = prevout['id']
-            cesubloc.outputs[3]['var'] = prevout['name']
-            cesubloc.outputs[4]['var'] = prevout['comment']
+            cesubloc.outputs[0]['var'] = prevout['id']
+            cesubloc.outputs[1]['var'] = prevout['name']
+            cesubloc.outputs[2]['var'] = prevout['comment']
             if 'local_name' in prevout:
-                cesubloc.outputs[5]['var'] = prevout['local_name']
+                cesubloc.outputs[3]['var'] = prevout['local_name']
             if 'local_comment' in prevout:
-                cesubloc.outputs[6]['var'] = prevout['local_comment']
-            #cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-            #cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['valide']
-            #cesubloc.outputs[2]['var'] = cesubloc.inputs[0]['id']
-            #cesubloc.outputs[3]['var'] = cesubloc.inputs[0]['name']
-            #cesubloc.outputs[4]['var'] = cesubloc.inputs[0]['comment']
-            #if 'local_name' in cesubloc.inputs[0]:
-            #    cesubloc.outputs[5]['var'] = cesubloc.inputs[0]['local_name']
-            #if 'local_comment' in cesubloc.inputs[0]:
-            #    cesubloc.outputs[6]['var'] = cesubloc.inputs[0]['local_comment']
+                cesubloc.outputs[4]['var'] = prevout['local_comment']
+            cesubloc.outputs[0]['valide'] = True
+            cesubloc.outputs[1]['valide'] = True
+            cesubloc.outputs[2]['valide'] = True
+            cesubloc.outputs[3]['valide'] = 'local_name' in prevout
+            cesubloc.outputs[4]['valide'] = 'local_comment' in prevout
         except:
             print ("<DIFF>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<INFORMATION> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    #return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
     return cesubloc.outputs[pio]

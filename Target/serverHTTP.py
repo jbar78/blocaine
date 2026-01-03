@@ -281,7 +281,7 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<table>"
             html += f"""<tr><th colspan="12">bloc output list</th></tr>"""
             html += f"""<tr><th colspan="4">bloc</th><th colspan="5">output</th><th colspan="3">task</th></tr>"""
-            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>type</th><th>value</th><th>validity</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th></tr>"""
+            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th>type</th><th>value</th><th>validity</th><th>name</th><th>id</th><th><span title="ouput execution rank">exec order</span></th></tr>"""
             for thread in list_threads:
                 for iexe, exe in enumerate(thread['list_exe']):
                     if exe['run']:
@@ -310,7 +310,7 @@ class MyServer(BaseHTTPRequestHandler):
                     html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
                    #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
                     html += f"""<td>{txt_type}<td>{txt_value}</td><td """+txt_validity_style+">"+txt_validity+"</td>"
-                    html += f"<td>{iexe}</td><td>{thread['name']}</td><td>{thread['id']}</td>"
+                    html += f"<td>{thread['name']}</td><td>{thread['id']}</td><td>{iexe}</td>"
                     html += "</tr>"
             html +="</table>"
             html +="<a href='/outputs'>Refresh</a>"

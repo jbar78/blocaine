@@ -2074,7 +2074,7 @@ def menu_target():
             color_foreground = PARAM_COLOR_MENU_TEXTE_DANGER
             color_activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER
         #print (proc_name, f"connection/disconnect: {clientTCP.socket}")
-        target_menubar.add_command(label = texteTCP,  foreground = color_foreground, activeforeground = color_activeforeground, command = lambda: TCPconnect(clientTCP))
+        target_menubar.add_command(label = texteTCP,  foreground = color_foreground, activeforeground = color_activeforeground, command = lambda: TCPconnect())
         #print (proc_name, "ajout Vérification")
         target_menubar.add_command(label = "Check <"+bloc.header['name']+">", command = lambda: set_compile_thread("verif"))
         if clientTCP.socket != None:
@@ -2403,8 +2403,8 @@ def print_threads():
             print (proc_name, ":   - thread["+str(ith)+"]: list_exe["+str(i)+"]   iesbloc="+str(exe['iesubloc']))
             print (proc_name, ":   - thread["+str(ith)+"]: list_exe["+str(i)+"]   run="+str(exe['run']))
 def print_connection():
-    proc_name = "print_connection"
-    print (proc_name, f"clientTCP.socket={clientTCP.socket}")
+    proc_name = "print_connection: "
+    print (proc_name, f" clientTCP.socket={clientTCP.socket}")
 
 def on_closing():
     """callback: sur evenement"""
@@ -2462,17 +2462,17 @@ def debug2():
     proc_name = "debug2"
     print (proc_name, "pas de code")
 
-def TCPconnect(pclientTCP):
+def TCPconnect():
     proc_name = "TCPconnect: "
-    print (proc_name, f"socket={pclientTCP.socket}")
-    if pclientTCP.socket == None:
-        print (proc_name, "cpclientTCP.connect")
-        pclientTCP.connect()
-        if pclientTCP.socket == None:
+    print (proc_name, f"clientTCP.socket={clientTCP.socket}")
+    if clientTCP.socket == None:
+        print (proc_name, "clientTCP.connect")
+        clientTCP.connect(PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT)
+        if clientTCP.socket == None:
             messagebox.showinfo("ERROR",  f"Target (@IP:{PARAM_TCP_HOST_IP}) not reachable")
     else:
-        print (proc_name, "pclientTCP.close")
-        pclientTCP.close()
+        print (proc_name, "clientTCP.close")
+        clientTCP.close()
     menu_target()
     TCPstatus()
 def TCPstatus():
@@ -2486,11 +2486,11 @@ def TCPstatus():
         #print (proc_name, " socket!=None")
         conn_status= "Connected"
     bar_connexion.config(text = "Target :"+conn_status)
-def sendTCP(pcas):
-    global clientTCP
-    proc_name = "sendTCP: "
-    print (proc_name, f"cas N°:{pcas}")
-    clientTCP.send_message(pcas)
+#def sendTCP(pcas):
+#    global clientTCP
+#    proc_name = "sendTCP: "
+#    print (proc_name, f"cas N°:{pcas}")
+#    clientTCP.send_message(pcas)
 def set_running(pmonitoring_state):
     global bloc, canvas, config_window
     #global rt_menubar
@@ -2918,7 +2918,7 @@ def compile_bloc(pbloc, porder):
             #print(trace_txt, "   str(exebloc_str):", str(exebloc_str))
             #print(trace_txt, "   exebloc_str:", exebloc_str)
             message = porder.encode('utf-8')+b":"+exebloc_dump
-            print (f"send message: len={len(message)}")
+            print (proc_name, f"send message: len={len(message)}")
             clientTCP.send_message(message)
         else:
             print(proc_name, "L'utilisateur a choisi Non")
@@ -3154,8 +3154,8 @@ master.bind("<KeyPress-Delete>", event_key_delete)
 
 master.protocol("WM_DELETE_WINDOW", on_closing)
 
-clientTCP = TCPClient()
-TCPconnect(clientTCP) # connexion automatique
+clientTCP = clientTCP()
+clientTCP.connect(PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT) # connexion automatique
 
 # création du menu static
 menu_bar()
@@ -3181,18 +3181,5 @@ if len(sys.argv) > PARAM_ARG_NBR_SECOND:
         flip_monitoring()
 
 
-#run_clientTCP()
-# Exemple d'utilisation
-
-    #clientTCP = TCPClient()
-    #clientTCP.connect()
-    # Pause de 3.5 secondes
-    #time.sleep(0.2)
-    #clientTCP.send_message("Hello, server!")
-    #response = clientTCP.receive_message()
-    #print(f"Réponse0 du serveur : {response}")
-    #response = clientTCP.receive_message()
-    #print(f"Réponse1 du serveur : {response}")
-    #clientTCP.close()
 master.mainloop()
 
