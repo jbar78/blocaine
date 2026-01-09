@@ -14,7 +14,7 @@ def send_message(socket, data):
     form = "!Q"+str(len(data))+"s"
     #print (proc_name, f"format=<{form}>")
     header = len(data)
-    print(proc_name, f"header<{header}>,     data<{data}>\n")
+    #print(proc_name, f"header<{header}>,     data<{data}>\n")
     mess = struct.pack(form, header, data)
     #print(proc_name, f"mess <{mess}>         envoyé à {socket.host}:{socket.port}")
     send_all(socket, mess)
@@ -34,14 +34,14 @@ def handle_clientTCP(client_socket, addr):
     def receive_message(): ########
         proc_name = "receive_message: "
         header = client_socket.recv(8)
-        print(proc_name, f"réception de l'entête={header}")
+        #print(proc_name, f"réception de l'entête={header}")
         (length,) = struct.unpack("!Q", header)
-        print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
+        #print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
         remaining = length
         mess_reçu =b""
         while remaining > 0:
             reçu = client_socket.recv(min(length, PARAM_TCP_BUFFER_SIZE))
-            print(proc_name, f"réception du message utile, len(reçu)={len(reçu)}")
+            #print(proc_name, f"réception du message utile, len(reçu)={len(reçu)}")
             if not reçu:
                 print(proc_name, "Connexion fermée avant réception complète.")
             mess_reçu += reçu
@@ -104,7 +104,7 @@ def handle_clientTCP(client_socket, addr):
     global clientsTCP, list_compiled
     monitoring = None
     proc_name = "handle_clientTCP: "
-    print ("clintsTCP.append")
+    print ("clientsTCP.append")
     clientsTCP.append(addr)
     i=len(clientsTCP)-1
     txt_client = f" client[{i}] ({clientsTCP[i][0]}/{clientsTCP[i][1]}): "
@@ -114,7 +114,7 @@ def handle_clientTCP(client_socket, addr):
             # receive and print client messages
             #print(proc_name, f"en attente d'un message")
             request = receive_message()
-            print(proc_name, f"réception d'un message!   len={len(request)}")
+            #print(proc_name, f"réception d'un message!   len={len(request)}")
             #print(proc_name, f"Received: {request}")
             index =request.find(b':')
             #print(proc_name, f"index des deux points: {index}")

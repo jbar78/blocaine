@@ -3181,5 +3181,8 @@ if len(sys.argv) > PARAM_ARG_NBR_SECOND:
         flip_monitoring()
 
 
+
+
+
 master.mainloop()
 

@@ -119,7 +119,7 @@ class c_exesubloc:
         proc_name = 'find_index_exeinput'
         for i, input in enumerate(self.inputs):
             if input['id'] == pid:
-                print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
+                #print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                 return i
         print (proc_name, f"ERROR: id not found in exesubbloc: id={pid}")
     def c_exesubloc_find_index_exeoutput (self, pid):
@@ -127,7 +127,7 @@ class c_exesubloc:
         proc_name = 'find_index_exeoutput'
         for i, output in enumerate(self.outputs):
             if output['id'] == pid:
-                print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
+                #print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                 return i
         print (proc_name, f"ERROR: id not found in exesubbloc: id={pid}")
     def c_exesubloc_user_type (self):

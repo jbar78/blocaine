@@ -43,6 +43,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_FILTER_FO:    procedure= c_exesubloc_filter_FO
     elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT_OUTPUT: procedure= c_exesubloc_input_output
     elif psubloc.header['name'] == PARAM_NAME_BLOC_INFORMATION:  procedure= c_exesubloc_information
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_TYPE:         procedure= c_exesubloc_type
     else:
         print (proc_name, " ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -856,4 +857,41 @@ def c_exesubloc_information (pebloc, pieb, pio, pthread):
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<INFORMATION> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_type (pebloc, pieb, pio, pthread):
+    """ exécution du bloc type: typage explicite d'une variable (dans la boucle récurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<TYPE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<TYPE>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            if cesubloc.inputs[1]['var'] == 1:
+                cesubloc.outputs[0]['var'] = int(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 2:
+                cesubloc.outputs[0]['var'] = float(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 3:
+                cesubloc.outputs[0]['var'] = bool(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 4:
+                cesubloc.outputs[0]['var'] = str(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 5:
+                cesubloc.outputs[0]['var'] = list(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 6:
+                cesubloc.outputs[0]['var'] = tuple(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 7:
+                cesubloc.outputs[0]['var'] = set(cesubloc.inputs[0]['var'])
+            elif cesubloc.inputs[1]['var'] == 8:
+                cesubloc.outputs[0]['var'] = dict(cesubloc.inputs[0]['var'])
+            else:
+                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
+        except:
+            print ("<TYPE>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<TYPE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
