@@ -867,9 +867,11 @@ def c_exesubloc_type (pebloc, pieb, pio, pthread):
         #print ("<TYPE>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
-        try:
+        if 1: #try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
+            print (f"<TYPE> I0:{cesubloc.inputs[0]['var']}, I1:{cesubloc.inputs[1]['var']}")
+            print(f"<TYPE>0: O0:{cesubloc.outputs[0]['var']}")
             if cesubloc.inputs[1]['var'] == 1:
                 cesubloc.outputs[0]['var'] = int(cesubloc.inputs[0]['var'])
             elif cesubloc.inputs[1]['var'] == 2:
@@ -879,19 +881,37 @@ def c_exesubloc_type (pebloc, pieb, pio, pthread):
             elif cesubloc.inputs[1]['var'] == 4:
                 cesubloc.outputs[0]['var'] = str(cesubloc.inputs[0]['var'])
             elif cesubloc.inputs[1]['var'] == 5:
-                cesubloc.outputs[0]['var'] = list(cesubloc.inputs[0]['var'])
+                if cesubloc.inputs[0]['var'] == None:
+                    cesubloc.outputs[0]['var'] = list()
+                    print ("<TYPE>1.5 if: O0:{cesubloc.outputs[0]['var']}")
+                else:
+                    cesubloc.outputs[0]['var'] = list(cesubloc.inputs[0]['var'])
+                    print ("<TYPE>1.5 else: O0:{cesubloc.outputs[0]['var']}")
             elif cesubloc.inputs[1]['var'] == 6:
-                cesubloc.outputs[0]['var'] = tuple(cesubloc.inputs[0]['var'])
+                if cesubloc.inputs[0]['var'] == None:
+                    cesubloc.outputs[0]['var'] = tuple()
+                    print ("<TYPE>1.6 if: O0:{cesubloc.outputs[0]['var']}")
+                else:
+                    cesubloc.outputs[0]['var'] = tuple(cesubloc.inputs[0]['var'])
+                    print ("<TYPE>1.6 else: O0:{cesubloc.outputs[0]['var']}")
             elif cesubloc.inputs[1]['var'] == 7:
-                cesubloc.outputs[0]['var'] = set(cesubloc.inputs[0]['var'])
+                if cesubloc.inputs[0]['var'] == None:
+                    cesubloc.outputs[0]['var'] = set()
+                else:
+                    cesubloc.outputs[0]['var'] = set(cesubloc.inputs[0]['var'])
             elif cesubloc.inputs[1]['var'] == 8:
-                cesubloc.outputs[0]['var'] = dict(cesubloc.inputs[0]['var'])
+                if cesubloc.inputs[0]['var'] == None:
+                    cesubloc.outputs[0]['var'] = dict()
+                else:
+                    cesubloc.outputs[0]['var'] = dict(cesubloc.inputs[0]['var'])
             else:
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-        except:
-            print ("<TYPE>", PARAM_TEXT_EXCEPTION)
+            print(f"<TYPE>2 O0:{cesubloc.outputs[0]['var']}")
+        else: #except:
+            print ("<TYPE>3:", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<TYPE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    print(f"<TYPE>4: O0:{cesubloc.outputs[0]['var']}")
     return cesubloc.outputs[pio]

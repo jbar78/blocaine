@@ -2952,11 +2952,20 @@ def monitoring_bloc():
         if isinstance(var, bool):
             if var: return PARAM_ICONE_TRUE #"True"
             else: return PARAM_ICONE_FALSE #"False"
+        elif isinstance(var, str):
+            return f'"{var}"'
         elif isinstance(var, float):
-            return f"{var:8.3f}"
+            if 0.001 < abs(var) and abs(var) > 999999:
+                return f"{var:.5E}"
+            else:
+                return f"{var:8.3f}"
+        elif isinstance(var, list):
+            return f"...list..."
         elif isinstance(var, tuple):
             wires = cable_wires_counter(var)
-            return f"cores={wires}"
+            return f"...tuple..."
+        elif isinstance(var, dict):
+            return f"...dict..."
         elif var==None:
             return f"None"
         else:
