@@ -82,7 +82,7 @@ PARAM_FONT_SIZE = 25
 PARAM_HEADER_HAUTEUR = 50
 PARAM_HEADER_LARGEUR = 380 #420
 
-PARAM_TYPE_LIST = ["int", "float", "bool", "str", "NoneType"]
+PARAM_TYPE_LIST = ["bool", "int", "float", "str", "NoneType", "list", "tuple", "dict", "set"]
 
 PARAM_COMPIL_ERROR_FUNCTION_NOT_DEFINED_FOR_THIS_BLOC = 1
 PARAM_COMPIL_ERROR_OUT_NOT_FOUND_IN_USER_BLOC = 2

@@ -89,10 +89,10 @@ class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         def return_type_and_value(value):
             proc_name = "return_value: "
-            print (proc_name, f"Paramètres: val={value}")
+            #print (proc_name, f"Paramètres: val={value}")
             wires =0
             wires = cable_wires_counter(value)
-            print (proc_name, f"aprés cable_wires_counter(): wires={wires}")
+            #print (proc_name, f"aprés cable_wires_counter(): wires={wires}")
             #if isinstance(value, tuple):
             if wires>1:
                 txt_value = "cores="+str(wires) 
@@ -290,7 +290,7 @@ class MyServer(BaseHTTPRequestHandler):
                         value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
                         txt_value = value
                         txt_type = type(value).__name__
-                        print (proc_name, f"txt_type={txt_type},  txt_value={txt_value}")
+                        #print (proc_name, f"txt_type={txt_type},  txt_value={txt_value}")
                         #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'], tuple):
                             #nbr_wire = 2
                             #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'][0], tuple):

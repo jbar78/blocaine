@@ -192,7 +192,7 @@ class c_bloc:
             bloc_name = PARAM_CHEMIN_SYSTEM+PARAM_NAME_BLOC_OUTPUT+".bloc"
         else:
             #print (proc_name, "type==out<{}>".format(type_bloc))
-            bloc_name = filedialog.askopenfilename(initialdir= "blocs/"+type_bloc, filetypes = [("Fichiers Bloc", "*.bloc")])
+            bloc_name = filedialog.askopenfilename(initialdir= "blocs/"+type_bloc, filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
 
         self.sublocs.append (c_sublocs(bloc_name))
         if self.sublocs[-1].header['name'] == PARAM_NAME_BLOC_OUTPUT:
@@ -1509,6 +1509,11 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
             #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
             io[pdic] = bool(io_defaut_value.get() == "True" or io_defaut_value.get() == "1")
         if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
+        if combox_type.get() == "NoneType": io[pdic] = None
+        if combox_type.get() == "list": io[pdic] = list(io_defaut_value.get())
+        if combox_type.get() == "tuple": io[pdic] = tuple(io_defaut_value.get())
+        if combox_type.get() == "dict": io[pdic] = dict(io_defaut_value.get())
+        if combox_type.get() == "set": io[pdic] = set(io_defaut_value.get())
 
         pproc(io[pdic], pmsg)
         pop.popup.destroy()
@@ -2254,7 +2259,7 @@ def open_file(pf_name, decal):
     proc_name = "open_file: "
     #mire = c_mire(canvas)
     if pf_name==None:
-        fname = filedialog.askopenfilename(initialdir= PARAM_CHEMIN_USER, title="Please select bloc", filetypes = [("Fichiers Bloc", "*.bloc")])
+        fname = filedialog.askopenfilename(initialdir= PARAM_CHEMIN_USER, title="Please select bloc", filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
         print (proc_name, "file name=", fname)
         if not fname: return
     else:
@@ -2486,11 +2491,6 @@ def TCPstatus():
         #print (proc_name, " socket!=None")
         conn_status= "Connected"
     bar_connexion.config(text = "Target :"+conn_status)
-#def sendTCP(pcas):
-#    global clientTCP
-#    proc_name = "sendTCP: "
-#    print (proc_name, f"cas N°:{pcas}")
-#    clientTCP.send_message(pcas)
 def set_running(pmonitoring_state):
     global bloc, canvas, config_window
     #global rt_menubar
