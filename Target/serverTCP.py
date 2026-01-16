@@ -81,23 +81,23 @@ def handle_clientTCP(client_socket, addr):
     def maj_forced_io (inputs_or_outputs):
         """ mise à jour de forced des inputs ou outputs """
         for ioput in inputs_or_outputs:
-            print (proc_name, f"boucle sublocs/__puts: subloc_name={subloc.header['name']}  __put_name={ioput['name']}")
+            #print (proc_name, f"boucle sublocs/__puts: subloc_name={subloc.header['name']}  __put_name={ioput['name']}")
             if ioput['id'] == io_id:
-                print(proc_name, f"input['id']==io_id  {ioput['id']}")
+                #print(proc_name, f"input['id']==io_id  {ioput['id']}")
                 if  cas == b"overwriting_value":
                     ioput['forced_value']= io_value
                     ioput['var']= io_value # on force aussi la variable
                 elif cas == b"overwriting_validity":
-                    print(proc_name, f"validity 'forced' in __put['id']={ioput['id']}")
+                    #print(proc_name, f"validity 'forced' in __put['id']={ioput['id']}")
                     ioput['forced_valide']= not ioput['forced_valide']
                     ioput['valide']= ioput['forced_valide'] ###
                 elif cas == b"overwriting_start":
-                    print(proc_name, f"add 'forced' in __put['id']={ioput['id']}")
+                    #print(proc_name, f"add 'forced' in __put['id']={ioput['id']}")
                     ioput['forced_value']= ioput['var']
                     ioput['forced_valide']= ioput['valide']
                     ioput['forced']= True
                 elif cas == b"overwriting_stop":
-                    print(proc_name, f"del 'forced in __put['id']={ioput['id']}")
+                    #print(proc_name, f"del 'forced in __put['id']={ioput['id']}")
                     del ioput['forced']
                 else: print (proc_name, "ERREUR: not start and no stop")
 
