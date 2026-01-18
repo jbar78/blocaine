@@ -13,246 +13,68 @@ PARAM_TEXT_EXCEPTION = " EXCEPTION: so output(s) become unvalid"
 def recup_procedure(psubloc):
     proc_name = "recupe_procedure"
     """ ajout l'adresse de la procédure qui correspond au nom du bloc"""
-    if   psubloc.header['name'] == PARAM_NAME_BLOC_TIME:         procedure= c_exesubloc_time
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_DT:           procedure= c_exesubloc_dt
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:       procedure= c_exesubloc_output
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT:        procedure= c_exesubloc_input
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_PREVIOUS:     procedure= c_exesubloc_previous
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_SELECT:       procedure= c_exesubloc_select
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_VALIDREAD:    procedure= c_exesubloc_validRead
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_VALIDWRITE:   procedure= c_exesubloc_validWrite
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_COMP:         procedure= c_exesubloc_comp
+    if   psubloc.header['name'] == PARAM_NAME_BLOC_ADD:          procedure= c_exesubloc_add
     elif psubloc.header['name'] == PARAM_NAME_BLOC_AND:          procedure= c_exesubloc_and
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OR:           procedure= c_exesubloc_or
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_NOT:          procedure= c_exesubloc_not
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_EDGE:         procedure= c_exesubloc_edge
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_APPEND:       procedure= c_exesubloc_append
     elif psubloc.header['name'] == PARAM_NAME_BLOC_CABLIN:       procedure= c_exesubloc_cablin
     elif psubloc.header['name'] == PARAM_NAME_BLOC_CABLOUT:      procedure= c_exesubloc_cablout
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_ADD:          procedure= c_exesubloc_add
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_SUB:          procedure= c_exesubloc_sub
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_MULT:         procedure= c_exesubloc_mult
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_DIV:          procedure= c_exesubloc_div
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_MINMAX:       procedure= c_exesubloc_minmax
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_CONST_PI:     procedure= c_exesubloc_const_pi
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_MEMORY:       procedure= c_exesubloc_memory
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_DELAY:        procedure= c_exesubloc_delay
     elif psubloc.header['name'] == PARAM_NAME_BLOC_CLOCK:        procedure= c_exesubloc_clock
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_LIMIT:        procedure= c_exesubloc_limit
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_COMP:         procedure= c_exesubloc_comp
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_CONST_PI:     procedure= c_exesubloc_const_pi
     elif psubloc.header['name'] == PARAM_NAME_BLOC_DIFFERENCIAL: procedure= c_exesubloc_differencial
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_INTEGRATOR:   procedure= c_exesubloc_integrator
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_DELAY:        procedure= c_exesubloc_delay
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_DIV:          procedure= c_exesubloc_div
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_DT:           procedure= c_exesubloc_dt
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_EDGE:         procedure= c_exesubloc_edge
     elif psubloc.header['name'] == PARAM_NAME_BLOC_FILTER_FO:    procedure= c_exesubloc_filter_FO
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT_OUTPUT: procedure= c_exesubloc_input_output
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_INFORMATION:  procedure= c_exesubloc_information
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_TYPE:         procedure= c_exesubloc_type
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_LEN:          procedure= c_exesubloc_len
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_RANGE:        procedure= c_exesubloc_range
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_APPEND:       procedure= c_exesubloc_append
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_INSERT:       procedure= c_exesubloc_insert
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_POP:          procedure= c_exesubloc_pop
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GETI:         procedure= c_exesubloc_geti
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_INFORMATION:  procedure= c_exesubloc_information
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT:        procedure= c_exesubloc_input
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_INPUT_OUTPUT: procedure= c_exesubloc_input_output
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_INSERT:       procedure= c_exesubloc_insert
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_INTEGRATOR:   procedure= c_exesubloc_integrator
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_LEN:          procedure= c_exesubloc_len
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_LIMIT:        procedure= c_exesubloc_limit
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_MEMORY:       procedure= c_exesubloc_memory
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_MINMAX:       procedure= c_exesubloc_minmax
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_MULT:         procedure= c_exesubloc_mult
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_NOT:          procedure= c_exesubloc_not
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OR:           procedure= c_exesubloc_or
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:       procedure= c_exesubloc_output
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_PREVIOUS:     procedure= c_exesubloc_previous
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_POP:          procedure= c_exesubloc_pop
     elif psubloc.header['name'] == PARAM_NAME_BLOC_PUTI:         procedure= c_exesubloc_puti
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_RANGE:        procedure= c_exesubloc_range
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_SELECT:       procedure= c_exesubloc_select
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_SUB:          procedure= c_exesubloc_sub
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_TIME:         procedure= c_exesubloc_time
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_TYPE:         procedure= c_exesubloc_type
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_VALIDREAD:    procedure= c_exesubloc_validRead
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_VALIDWRITE:   procedure= c_exesubloc_validWrite
     else:
         print (proc_name, " ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
 
 
-def c_exesubloc_output (pebloc, pieb, pio, pthread):
-    """ exécution du bloc OUTPUT (dans la boucler écurcive)"""
+def c_exesubloc_add (pebloc, pieb, pio, pthread):
+    """ exécution du bloc ADDITION (dans la boucler écurcive)"""
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<OUTPUT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<ADD> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<ADD>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
-            #cesubloc.c_exesubloc_validation_standard()
-
-            cesubloc.outputs[0]['var']    = cesubloc.inputs[0]['var']
-            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
-        except ValueError as e:
-            print ("<OUTPUT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}", f"ERROR: {e}")
-            cesubloc.outputs[0]['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<OUTPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    #return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
-    return cesubloc.outputs[pio]
-def c_exesubloc_input (pebloc, pieb, pio, pthread):
-    """ exécution du bloc INPUT (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("début INPUT les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
-            #cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var']    = cesubloc.inputs[0]['var']
-            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
-        except ValueError as e:
-            print ("<INPUT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}", f"ERROR: {e}")
-            cesubloc.outputs[0]['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<INPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    #return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
-    return cesubloc.outputs[pio]
-def c_exesubloc_previous (pebloc, pieb, pio, pthread):
-    """ exécution du bloc PREVIOUS (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<PREVIOUS> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if pio != 1: # la pate (n-1) est morte! (elle ne gérére pas l'éxecution du bloc)
-        if cesubloc.header['counter'] == pthread['counter']:
-            pass
-            #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-        else:
-            cesubloc.header['counter'] = pthread['counter']
-            try:
-                pebloc.c_exebloc_recup_input(pieb, pthread, 0)
-                cesubloc.c_exesubloc_validation_standard()
-                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] # n
-                cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'] # n-1
-            except ValueError as e:
-                print ("<PREVIOUS>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}", f"ERROR: {e}")
-                for output in cesubloc.outputs:
-                    output['valide'] = False
-            cesubloc.c_exesubloc_overwriting_outputs()
-        #print ("<PREVIOUS> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_select (pebloc, pieb, pio, pthread):
-    """ exécution du bloc SELECTION (dans la boucler écurcive)"""
-    #les index IOs
-    #I_GATE=0
-    #I_IF0=1
-    #I_IF1=2
-    #O_OUT
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<SELECT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_input (pieb, pthread, 0)
-            if cesubloc.inputs[0]['var']: index = 2
-            else:                         index = 1
-            pebloc.c_exebloc_recup_input (pieb, pthread, index)
-            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[index]['valide']
-            cesubloc.outputs[0]['var']    = cesubloc.inputs[index]['var']
-        except ValueError as e:
-            print ("<SELECT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<SELECT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_validRead (pebloc, pieb, pio, pthread):
-    """ exécution du bloc VALIDREAD: lecture de la validité"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<VALIDREAD> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<VALIDREAD>", "cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_input (pieb, pthread, 0)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['valide']
-            cesubloc.outputs[0]['valide'] = True
-        except ValueError as e:
-            print ("<VALIDREAD>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<VALIREAD> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_validWrite (pebloc, pieb, pio, pthread):
-    """ exécution du bloc VALIDWRITE: surcharge la validité"""
-    cesubloc = pebloc.sublocs[pieb]
-
-    #print ("<VALIWRITE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<VALIDWRITE>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
+        if True: #try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-            cesubloc.outputs[0]['valide'] = cesubloc.inputs[1]['var']
-        except ValueError as e:
-            print ("<VALIDWRITE>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] + cesubloc.inputs[1]['var']
+        else: #except:
+            print ("<ADD>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<VALIDWRITE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_time (pebloc, pieb, pio, pthread):
-    """ exécution du bloc TIME retourne le temps de cycle (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<TIME> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<TIME>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            cesubloc.outputs[0]['var'] = time.time()
-            cesubloc.outputs[0]['valide'] = True
-        except ValueError as e:
-            print ("<TIME>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<TIME> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_dt (pebloc, pieb, pio, pthread):
-    """ exécution du bloc DT retourne le temps de cycle téhorique et mesurée de la tâche qui exécute ce bloc (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<DT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<DT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            cesubloc.outputs[0]['valide'] = True
-            cesubloc.outputs[1]['valide'] = True
-            cesubloc.outputs[0]['var'] = pthread['period']
-            cesubloc.outputs[1]['var'] = pthread['cycle_time']
-        except ValueError as e:
-            print ("<DT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<DT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_comp (pebloc, pieb, pio, pthread):
-    """ exécution du bloc COMPARE (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<COMP> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<COMP>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] >  cesubloc.inputs[1]['var']
-            cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'] == cesubloc.inputs[1]['var']
-            cesubloc.outputs[2]['var'] = cesubloc.inputs[0]['var'] <  cesubloc.inputs[1]['var']
-            cesubloc.c_exesubloc_overwriting_outputs()
-        except ValueError as e:
-            print ("<COMP>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-    #print ("<COMP> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<ADD> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 def c_exesubloc_and (pebloc, pieb, pio, pthread):
     """ exécution du bloc a et b (dans la boucle récurcive)"""
@@ -267,82 +89,37 @@ def c_exesubloc_and (pebloc, pieb, pio, pthread):
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] and cesubloc.inputs[1]['var']
-        except ValueError as e:
-            print ("<AND>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<AND>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<AND> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-def c_exesubloc_or (pebloc, pieb, pio, pthread):
-    """ exécution du bloc a ou b (dans la boucle récurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<OR> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<OR>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] or cesubloc.inputs[1]['var']
-        except ValueError as e:
-            print ("<OR>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<OR> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_not (pebloc, pieb, pio, pthread):
-    """ exécution du bloc a = non(b) (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<NOT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<NOT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = not cesubloc.inputs[0]['var']
-        except ValueError as e:
-            print ("<NOT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<NOT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_edge (pebloc, pieb, pio, pthread):
-    """ exécution du bloc détection de fronts (dans la boucle récurcive)"""
+def c_exesubloc_append (pebloc, pieb, pio, pthread):
+    """ exécution de la fonction append() de python (dans la boucle récurcive)"""
     # les index des IOs
-    #I_IN = 0
-    #I_RISE = 1
-    #I_FALL = 2
-    #O_OUT = 0
-    #O_IN_NM1 = 1
+    #I_LIST = 0
+    #I_ELEM = 1
+    #O_LIST = 0
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<EDGE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<append> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<EDGE>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<append>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.outputs[0]['var'] = (cesubloc.inputs[1]['var'] and      cesubloc.inputs[0]['var']  and not cesubloc.outputs[1]['var'])\
-                                      or (cesubloc.inputs[2]['var'] and (not cesubloc.inputs[0]['var']) and     cesubloc.outputs[1]['var'])
-            cesubloc.outputs[0]['valide'] = cesubloc.outputs[1]['valide'] and cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide'] and cesubloc.inputs[2]['valide']
-            cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
-            cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
-            cesubloc.c_exesubloc_overwriting_outputs()
-        except ValueError as e:
-            print ("<EDGE>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.inputs[0]['var'].append(cesubloc.inputs[1]['var'])
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
+        except:
+            print ("<append>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<EDGE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<append> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 def c_exesubloc_cablin (pebloc, pieb, pio, pthread):
     """ exécution du bloc CABLIN (dans la boucle récurcive)"""
@@ -357,8 +134,8 @@ def c_exesubloc_cablin (pebloc, pieb, pio, pthread):
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.outputs[0]['valide'] = (cesubloc.inputs[0]['valide'], cesubloc.inputs[1]['valide'])
             cesubloc.outputs[0]['var']    = (cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
-        except ValueError as e:
-            print ("<CABLIN>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<CABLIN>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -383,113 +160,71 @@ def c_exesubloc_cablout (pebloc, pieb, pio, pthread):
             cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'][1]
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'][0]
             cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide'][1]
-        except ValueError as e:
-            print ("<CABLOUT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<CABLOUT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<CABLOUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-def c_exesubloc_add (pebloc, pieb, pio, pthread):
-    """ exécution du bloc ADDITION (dans la boucler écurcive)"""
+def c_exesubloc_clock (pebloc, pieb, pio, pthread):
+    """ exécution du bloc CLOCK retourne un bool qui reste VRAI n seconde, puis reste FAUX m secondes, puise ainsi de suite (dans la boucler écurcive)"""
+    # les index des IOs
+    I_T_ON = 0
+    I_T_OFF = 1
+    O_CLOCK = 0
+    O_RT = 1
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<ADD> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<CLOCK> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<ADD>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        if True: #try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] + cesubloc.inputs[1]['var']
-        else: #except ValueError as e:
-            print ("<ADD>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<ADD> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_sub (pebloc, pieb, pio, pthread):
-    """ exécution du bloc SOUSTRACTION (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<SUB> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<SUB>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<CLOCK>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] - cesubloc.inputs[1]['var']
-        except ValueError as e:
-            print ("<SUB>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            if 'forced' in cesubloc.outputs[O_RT]:
+                cesubloc.outputs[O_RT]['var']    = cesubloc.outputs[O_RT]['forced_value'] 
+                cesubloc.outputs[O_RT]['valide'] = cesubloc.outputs[O_RT]['forced_valide']
+            else:
+                if cesubloc.outputs[O_RT]['var'] > 0:
+                    cesubloc.outputs[O_RT]['var'] -= pthread['cycle_time']
+                else:
+                    if cesubloc.outputs[O_CLOCK]['var']:
+                        cesubloc.outputs[O_CLOCK]['var'] = False
+                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_OFF]['var']
+                    else:
+                        cesubloc.outputs[O_CLOCK]['var'] = True
+                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_ON]['var']
+        except:
+            print ("<CLOCK>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<SUB> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<CLOCK> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-def c_exesubloc_mult (pebloc, pieb, pio, pthread):
-    """ exécution du bloc MULTIPLICATION (dans la boucler écurcive)"""
+def c_exesubloc_comp (pebloc, pieb, pio, pthread):
+    """ exécution du bloc COMPARE (dans la boucler écurcive)"""
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<MULT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<COMP> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<MULT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<COMP>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] * cesubloc.inputs[1]['var']
-        except ValueError as e:
-            print ("<MULT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] >  cesubloc.inputs[1]['var']
+            cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'] == cesubloc.inputs[1]['var']
+            cesubloc.outputs[2]['var'] = cesubloc.inputs[0]['var'] <  cesubloc.inputs[1]['var']
+            cesubloc.c_exesubloc_overwriting_outputs()
+        except:
+            print ("<COMP>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<MUL> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_div (pebloc, pieb, pio, pthread):
-    """ exécution du bloc DIVISION (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<DIV> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<DIV>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] / cesubloc.inputs[1]['var']
-        except ValueError as e:
-            print ("<DIV>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<DIV> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_minmax (pebloc, pieb, pio, pthread):
-    """ exécution du bloc MINMAX (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<MINMAX> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<MINMAX>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = max(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
-            cesubloc.outputs[1]['var'] = min(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
-        except ValueError as e:
-            print ("<MINMAX>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<MINMAX> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<COMP> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 def c_exesubloc_const_pi (pebloc, pieb, pio, pthread):
     """ exécution du bloc CONST_PI (dans la boucler écurcive)"""
@@ -503,40 +238,12 @@ def c_exesubloc_const_pi (pebloc, pieb, pio, pthread):
         try:
             cesubloc.outputs[0]['var'] =  math.pi
             cesubloc.outputs[0]['valide'] =  True
-        except ValueError as e:
-            print ("<CONST_PI>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<CONST_PI>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<CONST_PI> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_memory (pebloc, pieb, pio, pthread):
-    """ exécution du bloc bascule RS (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_SET = 0
-    #I_RESET = 1
-    #I_RESET_PRIORITAIRE = 2
-    #O_OUT = 0
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<MEMORY> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<MEMORY>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            if cesubloc.inputs[0]['var'] and (not cesubloc.inputs[2]['var'] or not cesubloc.inputs[1]['var']):
-                cesubloc.outputs[0]['var'] = True
-            if cesubloc.inputs[1]['var'] and (cesubloc.inputs[2]['var']  or not cesubloc.inputs[0]['var']):
-                cesubloc.outputs[0]['var'] = False
-        except ValueError as e:
-            print ("<MEMORY>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<MEMORY> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 def c_exesubloc_delay (pebloc, pieb, pio, pthread):
     """ exécution du bloc retard à la montée et à la descente (dans la boucle récurcive)"""
@@ -588,85 +295,12 @@ def c_exesubloc_delay (pebloc, pieb, pio, pthread):
             cesubloc.outputs[O_OUT]['valide'] = cesubloc.outputs[O_IN_NM1]['valide'] and cesubloc.inputs[I_IN]['valide'] and cesubloc.inputs[I_RISE]['valide'] and cesubloc.inputs[I_DELAY]['valide']
             cesubloc.outputs[O_IN_NM1]['var'] = cesubloc.inputs[I_IN]['var']
             cesubloc.outputs[O_IN_NM1]['valide'] = cesubloc.inputs[I_IN]['valide']
-        except ValueError as e:
-            print ("<DELAY>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<DELAY>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<DELAY> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_clock (pebloc, pieb, pio, pthread):
-    """ exécution du bloc CLOCK retourne un bool qui reste VRAI n seconde, puis reste FAUX m secondes, puise ainsi de suite (dans la boucler écurcive)"""
-    # les index des IOs
-    I_T_ON = 0
-    I_T_OFF = 1
-    O_CLOCK = 0
-    O_RT = 1
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<CLOCK> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<CLOCK>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            if 'forced' in cesubloc.outputs[O_RT]:
-                cesubloc.outputs[O_RT]['var']    = cesubloc.outputs[O_RT]['forced_value'] 
-                cesubloc.outputs[O_RT]['valide'] = cesubloc.outputs[O_RT]['forced_valide']
-            else:
-                if cesubloc.outputs[O_RT]['var'] > 0:
-                    cesubloc.outputs[O_RT]['var'] -= pthread['cycle_time']
-                else:
-                    if cesubloc.outputs[O_CLOCK]['var']:
-                        cesubloc.outputs[O_CLOCK]['var'] = False
-                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_OFF]['var']
-                    else:
-                        cesubloc.outputs[O_CLOCK]['var'] = True
-                        cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_ON]['var']
-        except ValueError as e:
-            print ("<CLOCK>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<CLOCK> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-def c_exesubloc_limit (pebloc, pieb, pio, pthread):
-    """ exécution du bloc LIMIT (dans la boucler écurcive)"""
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<LIMIT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<LIMIT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            if cesubloc.inputs[0]['var'] < cesubloc.inputs[2]['var']:
-                cesubloc.outputs[0]['valide'] = False
-                cesubloc.outputs[1]['valide'] = False
-                cesubloc.outputs[2]['valide'] = False
-                cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
-            elif cesubloc.inputs[1]['var'] > cesubloc.inputs[0]['var']:
-                cesubloc.outputs[0]['var'] = True
-                cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
-                cesubloc.outputs[2]['var'] = False
-            elif cesubloc.inputs[1]['var'] < cesubloc.inputs[2]['var']:
-                cesubloc.outputs[0]['var'] = False
-                cesubloc.outputs[1]['var'] = cesubloc.inputs[2]['var']
-                cesubloc.outputs[2]['var'] = True
-            else:
-                cesubloc.outputs[0]['var'] = False
-                cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
-                cesubloc.outputs[2]['var'] = False
-        except ValueError as e:
-            print ("<LIMIT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<LIMIT>", " LIMIT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 def c_exesubloc_differencial (pebloc, pieb, pio, pthread):
     """ exécution du bloc DIFFERENCIAL: lecture de la validité"""
@@ -686,12 +320,264 @@ def c_exesubloc_differencial (pebloc, pieb, pio, pthread):
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.outputs[1]['valide'] 
             cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
             cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
-        except ValueError as e:
-            print ("<DIFF>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<DIFF>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<DIFFERENCIAL> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_div (pebloc, pieb, pio, pthread):
+    """ exécution du bloc DIVISION (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<DIV> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<DIV>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] / cesubloc.inputs[1]['var']
+        except:
+            print ("<DIV>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<DIV> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_dt (pebloc, pieb, pio, pthread):
+    """ exécution du bloc DT retourne le temps de cycle téhorique et mesurée de la tâche qui exécute ce bloc (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<DT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<DT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            cesubloc.outputs[0]['valide'] = True
+            cesubloc.outputs[1]['valide'] = True
+            cesubloc.outputs[0]['var'] = pthread['period']
+            cesubloc.outputs[1]['var'] = pthread['cycle_time']
+        except:
+            print ("<DT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<DT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_edge (pebloc, pieb, pio, pthread):
+    """ exécution du bloc détection de fronts (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_IN = 0
+    #I_RISE = 1
+    #I_FALL = 2
+    #O_OUT = 0
+    #O_IN_NM1 = 1
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<EDGE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<EDGE>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.outputs[0]['var'] = (cesubloc.inputs[1]['var'] and      cesubloc.inputs[0]['var']  and not cesubloc.outputs[1]['var'])\
+                                      or (cesubloc.inputs[2]['var'] and (not cesubloc.inputs[0]['var']) and     cesubloc.outputs[1]['var'])
+            cesubloc.outputs[0]['valide'] = cesubloc.outputs[1]['valide'] and cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide'] and cesubloc.inputs[2]['valide']
+            cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
+            cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
+            cesubloc.c_exesubloc_overwriting_outputs()
+        except:
+            print ("<EDGE>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<EDGE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_filter_FO (pebloc, pieb, pio, pthread):
+    """ exécution du bloc filtre du 1er ordre (dans la boucle récurcive)"""
+    # les index des IO
+    #I_IN = 0
+    #I_TAU = 1 # time constant
+    #O_out = 0
+    #O_in_nm1 = 0 # previous input
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<PULSE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<FILTER_FO>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            #gain = pthread['period']    / cesubloc.inputs[1]['var']
+            gain = pthread['cycle_time'] / cesubloc.inputs[1]['var']
+            if cesubloc.outputs[0]['valide'] and (pthread['cycle_time'] < cesubloc.inputs[1]['var']):
+                cesubloc.outputs[0]['var'] += gain * cesubloc.inputs[0]['var'] - gain * cesubloc.outputs[0]['var']
+            else:
+                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
+        except:
+            print ("<FILTER_FO>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<FILTER_FO> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_geti (pebloc, pieb, pio, pthread):
+    """ exécution de: récupération d'un element d'une liste, string, tuple (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_LIST = 0
+    #I_INDEX =1
+    #O_ELEM = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<geti> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<geti>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'][cesubloc.inputs[1]['var']]
+        except:
+            print ("<geti>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<geti> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_information (pebloc, pieb, pio, pthread):
+    """ exécution du bloc INFORMATION: lecture des infos d'une variable"""
+    # les index des IO
+    #I_IN = 0
+    #O_id = 0
+    #O_name = 1
+    #O_comment = 2
+    #O_local_name = 3
+    #O_local_comment = 4
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<INFORMATION> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<INFORMATION>", "cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            prevout = pebloc.c_exebloc_recup_input (pieb, pthread, 0)
+            cesubloc.outputs[0]['var'] = prevout['id']
+            cesubloc.outputs[1]['var'] = prevout['name']
+            cesubloc.outputs[2]['var'] = prevout['comment']
+            if 'local_name' in prevout:
+                cesubloc.outputs[3]['var'] = prevout['local_name']
+            if 'local_comment' in prevout:
+                cesubloc.outputs[4]['var'] = prevout['local_comment']
+            cesubloc.outputs[0]['valide'] = True
+            cesubloc.outputs[1]['valide'] = True
+            cesubloc.outputs[2]['valide'] = True
+            cesubloc.outputs[3]['valide'] = 'local_name' in prevout
+            cesubloc.outputs[4]['valide'] = 'local_comment' in prevout
+        except:
+            print ("<DIFF>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<INFORMATION> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_input (pebloc, pieb, pio, pthread):
+    """ exécution du bloc INPUT (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("début INPUT les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
+            #cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var']    = cesubloc.inputs[0]['var']
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
+        except:
+            print ("<INPUT>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[0]['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<INPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+    return cesubloc.outputs[pio]
+def c_exesubloc_input_output (pebloc, pieb, pio, pthread):
+    """ exécution du bloc de récupération d'output d'un autre bloc exécutable (dans la boucle récurcive)"""
+    # les index des IO
+    #I_BLOC_NAME = 0
+    #I_OUTPUT_ID = 1 # time constant
+    #O_out = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<INPUT_OUTPUT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<INPUT_OUTPUT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            #print ("<INPUT_OUTPUT>", f" inputs[0]=bloc_name={cesubloc.inputs[0]['var']},  inputs[1]=output_id={cesubloc.inputs[1]['var']}")
+            find = False
+            for thread in list_threads:
+                for exe in thread['list_exe']:
+                    if exe['run']:
+                        #print ("<INPUT_OUTPUT>", f"bloc_name={cesubloc.inputs[0]['var']}, exe['exebloc'].header['name']{exe['exebloc'].header['name']}")
+                        if cesubloc.inputs[0]['var'] == exe['exebloc'].header['name']:               # nom du bloc exécuté
+                            AB   = exe['exebloc'].header['AB']                      # version du bloc exécuté
+                            ibo  = exe['iesubloc']                                  # index du subloc "output"
+                            ido  = exe['exebloc'].sublocs[ibo].header['id']         # ID du subloc "output"
+                            #print ("<INPUT_OUTPUT>", f"output_id={cesubloc.inputs[1]['var']},  exe['exebloc'].sublocs[ibo].header['id']{ido}")
+                            if cesubloc.inputs[1]['var'] == ido:               # nom du bloc exécuté
+                                #print ("<INPUT_OUTPUT>", f"trouvé")
+                                find = True
+                                cesubloc.outputs[0]['var'] = exe['exebloc'].sublocs[ibo].outputs[0]['var']
+                                if cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']:
+                                    cesubloc.outputs[0]['valide'] = exe['exebloc'].sublocs[ibo].outputs[0]['valide']
+                                else: 
+                                    cesubloc.outputs[0]['valide'] = False
+            if not find:
+                #print ("<INPUT_OUTPUT>", f"pas trouvé")
+                cesubloc.outputs[0]['valide'] = False
+        except:
+            print ("<INPUT_OUTPUT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<INPUT_OUTPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_insert (pebloc, pieb, pio, pthread):
+    """ exécution de la fonction insert() de python (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_LIST = 0
+    #I_INDEX =1
+    #I_ELEM = 2
+    #O_LIST = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<insert> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<insert>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'].insert(cesubloc.inputs[1]['var'], cesubloc.inputs[2]['var'])
+        except:
+            print ("<insert>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<insert> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 def c_exesubloc_integrator (pebloc, pieb, pio, pthread):
     """ exécution du bloc DIFF: lecture de la validité"""
@@ -746,126 +632,370 @@ def c_exesubloc_integrator (pebloc, pieb, pio, pthread):
                 cesubloc.outputs[O_H]['var'] = False
                 cesubloc.outputs[O_OUT]['var'] = integrator
                 cesubloc.outputs[O_L]['var'] = False
-        except ValueError as e:
-            print ("<INTEGRATOR>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<INTEGRATOR>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<INTEGRATOR> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-def c_exesubloc_filter_FO (pebloc, pieb, pio, pthread):
-    """ exécution du bloc filtre du 1er ordre (dans la boucle récurcive)"""
-    # les index des IO
+def c_exesubloc_len (pebloc, pieb, pio, pthread):
+    """ exécution de la méthode len() de python (dans la boucle récurcive)"""
+    # les index des IOs
     #I_IN = 0
-    #I_TAU = 1 # time constant
-    #O_out = 0
-    #O_in_nm1 = 0 # previous input
+    #O_LEN = 0
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<PULSE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<len> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<FILTER_FO>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<len>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            #gain = pthread['period']    / cesubloc.inputs[1]['var']
-            gain = pthread['cycle_time'] / cesubloc.inputs[1]['var']
-            if cesubloc.outputs[0]['valide'] and (pthread['cycle_time'] < cesubloc.inputs[1]['var']):
-                cesubloc.outputs[0]['var'] += gain * cesubloc.inputs[0]['var'] - gain * cesubloc.outputs[0]['var']
-            else:
-                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
-        except ValueError as e:
-            print ("<FILTER_FO>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
+            #cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
+            cesubloc.outputs[0]['var'] = len(cesubloc.inputs[0]['var'])
+        except:
+            print ("<len>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<FILTER_FO> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<len> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-def c_exesubloc_input_output (pebloc, pieb, pio, pthread):
-    """ exécution du bloc de récupération d'output d'un autre bloc exécutable (dans la boucle récurcive)"""
-    # les index des IO
-    #I_BLOC_NAME = 0
-    #I_OUTPUT_ID = 1 # time constant
-    #O_out = 0
+def c_exesubloc_limit (pebloc, pieb, pio, pthread):
+    """ exécution du bloc LIMIT (dans la boucler écurcive)"""
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<INPUT_OUTPUT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<LIMIT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<INPUT_OUTPUT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<LIMIT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            #print ("<INPUT_OUTPUT>", f" inputs[0]=bloc_name={cesubloc.inputs[0]['var']},  inputs[1]=output_id={cesubloc.inputs[1]['var']}")
-            find = False
-            for thread in list_threads:
-                for exe in thread['list_exe']:
-                    if exe['run']:
-                        #print ("<INPUT_OUTPUT>", f"bloc_name={cesubloc.inputs[0]['var']}, exe['exebloc'].header['name']{exe['exebloc'].header['name']}")
-                        if cesubloc.inputs[0]['var'] == exe['exebloc'].header['name']:               # nom du bloc exécuté
-                            AB   = exe['exebloc'].header['AB']                      # version du bloc exécuté
-                            ibo  = exe['iesubloc']                                  # index du subloc "output"
-                            ido  = exe['exebloc'].sublocs[ibo].header['id']         # ID du subloc "output"
-                            #print ("<INPUT_OUTPUT>", f"output_id={cesubloc.inputs[1]['var']},  exe['exebloc'].sublocs[ibo].header['id']{ido}")
-                            if cesubloc.inputs[1]['var'] == ido:               # nom du bloc exécuté
-                                #print ("<INPUT_OUTPUT>", f"trouvé")
-                                find = True
-                                cesubloc.outputs[0]['var'] = exe['exebloc'].sublocs[ibo].outputs[0]['var']
-                                if cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']:
-                                    cesubloc.outputs[0]['valide'] = exe['exebloc'].sublocs[ibo].outputs[0]['valide']
-                                else: 
-                                    cesubloc.outputs[0]['valide'] = False
-            if not find:
-                #print ("<INPUT_OUTPUT>", f"pas trouvé")
+            cesubloc.c_exesubloc_validation_standard()
+            if cesubloc.inputs[0]['var'] < cesubloc.inputs[2]['var']:
                 cesubloc.outputs[0]['valide'] = False
-        except ValueError as e:
-            print ("<INPUT_OUTPUT>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+                cesubloc.outputs[1]['valide'] = False
+                cesubloc.outputs[2]['valide'] = False
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
+            elif cesubloc.inputs[1]['var'] > cesubloc.inputs[0]['var']:
+                cesubloc.outputs[0]['var'] = True
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
+                cesubloc.outputs[2]['var'] = False
+            elif cesubloc.inputs[1]['var'] < cesubloc.inputs[2]['var']:
+                cesubloc.outputs[0]['var'] = False
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[2]['var']
+                cesubloc.outputs[2]['var'] = True
+            else:
+                cesubloc.outputs[0]['var'] = False
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
+                cesubloc.outputs[2]['var'] = False
+        except:
+            print ("<LIMIT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<INPUT_OUTPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<LIMIT>", " LIMIT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-
-def c_exesubloc_information (pebloc, pieb, pio, pthread):
-    """ exécution du bloc INFORMATION: lecture des infos d'une variable"""
-    # les index des IO
-    #I_IN = 0
-    #O_id = 0
-    #O_name = 1
-    #O_comment = 2
-    #O_local_name = 3
-    #O_local_comment = 4
+def c_exesubloc_memory (pebloc, pieb, pio, pthread):
+    """ exécution du bloc bascule RS (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_SET = 0
+    #I_RESET = 1
+    #I_RESET_PRIORITAIRE = 2
+    #O_OUT = 0
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<INFORMATION> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<MEMORY> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<INFORMATION>", "cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<MEMORY>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
-            prevout = pebloc.c_exebloc_recup_input (pieb, pthread, 0)
-            cesubloc.outputs[0]['var'] = prevout['id']
-            cesubloc.outputs[1]['var'] = prevout['name']
-            cesubloc.outputs[2]['var'] = prevout['comment']
-            if 'local_name' in prevout:
-                cesubloc.outputs[3]['var'] = prevout['local_name']
-            if 'local_comment' in prevout:
-                cesubloc.outputs[4]['var'] = prevout['local_comment']
-            cesubloc.outputs[0]['valide'] = True
-            cesubloc.outputs[1]['valide'] = True
-            cesubloc.outputs[2]['valide'] = True
-            cesubloc.outputs[3]['valide'] = 'local_name' in prevout
-            cesubloc.outputs[4]['valide'] = 'local_comment' in prevout
-        except ValueError as e:
-            print ("<DIFF>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            if cesubloc.inputs[0]['var'] and (not cesubloc.inputs[2]['var'] or not cesubloc.inputs[1]['var']):
+                cesubloc.outputs[0]['var'] = True
+            if cesubloc.inputs[1]['var'] and (cesubloc.inputs[2]['var']  or not cesubloc.inputs[0]['var']):
+                cesubloc.outputs[0]['var'] = False
+        except:
+            print ("<MEMORY>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<INFORMATION> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #print ("<MEMORY> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-    
+def c_exesubloc_minmax (pebloc, pieb, pio, pthread):
+    """ exécution du bloc MINMAX (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<MINMAX> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<MINMAX>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = max(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
+            cesubloc.outputs[1]['var'] = min(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
+        except:
+            print ("<MINMAX>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<MINMAX> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_mult (pebloc, pieb, pio, pthread):
+    """ exécution du bloc MULTIPLICATION (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<MULT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<MULT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] * cesubloc.inputs[1]['var']
+        except:
+            print ("<MULT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<MUL> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_not (pebloc, pieb, pio, pthread):
+    """ exécution du bloc a = non(b) (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<NOT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<NOT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = not cesubloc.inputs[0]['var']
+        except:
+            print ("<NOT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<NOT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_or (pebloc, pieb, pio, pthread):
+    """ exécution du bloc a ou b (dans la boucle récurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OR> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<OR>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] or cesubloc.inputs[1]['var']
+        except:
+            print ("<OR>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OR> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_output (pebloc, pieb, pio, pthread):
+    """ exécution du bloc OUTPUT (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OUTPUT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
+            #cesubloc.c_exesubloc_validation_standard()
+
+            cesubloc.outputs[0]['var']    = cesubloc.inputs[0]['var']
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
+        except:
+            print ("<OUTPUT>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[0]['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OUTPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    #return cesubloc.outputs[pio]['var'], cesubloc.outputs[pio]['valide']
+    return cesubloc.outputs[pio]
+def c_exesubloc_pop (pebloc, pieb, pio, pthread):
+    """ exécution de la fonction pop() de python (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_LIST = 0
+    #I_INDEX =1
+    #O_LIST = 0
+    #O_ELEM = 1
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<pop> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<pop>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'].pop(cesubloc.inputs[1]['var'])
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
+        except:
+            print ("<pop>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<pop> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_previous (pebloc, pieb, pio, pthread):
+    """ exécution du bloc PREVIOUS (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<PREVIOUS> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if pio != 1: # la pate (n-1) est morte! (elle ne gérére pas l'éxecution du bloc)
+        if cesubloc.header['counter'] == pthread['counter']:
+            pass
+            #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        else:
+            cesubloc.header['counter'] = pthread['counter']
+            try:
+                pebloc.c_exebloc_recup_input(pieb, pthread, 0)
+                cesubloc.c_exesubloc_validation_standard()
+                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] # n
+                cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'] # n-1
+            except:
+                print ("<PREVIOUS>", PARAM_TEXT_EXCEPTION)
+                for output in cesubloc.outputs:
+                    output['valide'] = False
+            cesubloc.c_exesubloc_overwriting_outputs()
+        #print ("<PREVIOUS> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_puti (pebloc, pieb, pio, pthread):
+    """ exécution de la fonction qui affecte un élément d'une liste (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_LIST = 0
+    #I_INDEX =1
+    #I_ELEM = 2
+    #O_LIST = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<puti> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<puti>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.inputs[0]['var'][cesubloc.inputs[1]['var']] = cesubloc.inputs[2]['var']
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
+        except:
+            print ("<puti>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<puti> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_range (pebloc, pieb, pio, pthread):
+    """ exécution de la fonction range() de python (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_START = 0
+    #I_STOP = 1
+    #I_STEP = 2
+    #O_OUT = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<range> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<range>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = range(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'], cesubloc.inputs[2]['var'])
+        except:
+            print ("<range>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        #cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<range> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_select (pebloc, pieb, pio, pthread):
+    """ exécution du bloc SELECTION (dans la boucler écurcive)"""
+    #les index IOs
+    #I_GATE=0
+    #I_IF0=1
+    #I_IF1=2
+    #O_OUT
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<SELECT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_input (pieb, pthread, 0)
+            if cesubloc.inputs[0]['var']: index = 2
+            else:                         index = 1
+            pebloc.c_exebloc_recup_input (pieb, pthread, index)
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[index]['valide']
+            cesubloc.outputs[0]['var']    = cesubloc.inputs[index]['var']
+        except:
+            print ("<SELECT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<SELECT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_sub (pebloc, pieb, pio, pthread):
+    """ exécution du bloc SOUSTRACTION (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<SUB> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<SUB>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            pebloc.c_exebloc_recup_inputs(pieb, pthread)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] - cesubloc.inputs[1]['var']
+        except:
+            print ("<SUB>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<SUB> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+def c_exesubloc_time (pebloc, pieb, pio, pthread):
+    """ exécution du bloc TIME retourne le temps de cycle (dans la boucler écurcive)"""
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<TIME> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<TIME>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        try:
+            cesubloc.outputs[0]['var'] = time.time()
+            cesubloc.outputs[0]['valide'] = True
+        except:
+            print ("<TIME>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<TIME> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
 def c_exesubloc_type (pebloc, pieb, pio, pthread):
     """ exécution du bloc type: typage explicite d'une variable (dans la boucle récurcive)"""
     cesubloc = pebloc.sublocs[pieb]
@@ -931,192 +1061,53 @@ def c_exesubloc_type (pebloc, pieb, pio, pthread):
                 cesubloc.outputs[0]['var'] = i_in
             #print(f"<TYPE>2 O0:{cesubloc.outputs[0]['var']}")
 
-        except ValueError as e:
-            print ("<TYPE>3:", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+        except:
+            print ("<TYPE>3:", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<TYPE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-
-def c_exesubloc_len (pebloc, pieb, pio, pthread):
-    """ exécution de la méthode len() de python (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_IN = 0
-    #O_LEN = 0
+def c_exesubloc_validRead (pebloc, pieb, pio, pthread):
+    """ exécution du bloc VALIDREAD: lecture de la validité"""
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<len> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    #print ("<VALIDREAD> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<len>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<VALIDREAD>", "cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
-            pebloc.c_exebloc_recup_input(pieb, pthread, 0)
-            #cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['valide'] = len(cesubloc.inputs[0]['valide'])
-            cesubloc.outputs[0]['var'] = len(cesubloc.inputs[0]['var'])
-        except ValueError as e:
-            print ("<len>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            pebloc.c_exebloc_recup_input (pieb, pthread, 0)
+            cesubloc.c_exesubloc_validation_standard()
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['valide']
+            cesubloc.outputs[0]['valide'] = True
+        except:
+            print ("<VALIDREAD>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<len> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<VALIREAD> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-
-def c_exesubloc_range (pebloc, pieb, pio, pthread):
-    """ exécution de la fonction range() de python (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_START = 0
-    #I_STOP = 1
-    #I_STEP = 2
-    #O_OUT = 0
+def c_exesubloc_validWrite (pebloc, pieb, pio, pthread):
+    """ exécution du bloc VALIDWRITE: surcharge la validité"""
     cesubloc = pebloc.sublocs[pieb]
-    #print ("<range> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+
+    #print ("<VALIWRITE> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
     if cesubloc.header['counter'] == pthread['counter']:
         pass
-        #print ("<range>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+        #print ("<VALIDWRITE>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
     else:
         cesubloc.header['counter'] = pthread['counter']
         try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = range(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'], cesubloc.inputs[2]['var'])
-        except ValueError as e:
-            print ("<range>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<range> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-
-def c_exesubloc_append (pebloc, pieb, pio, pthread):
-    """ exécution de la fonction append() de python (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_LIST = 0
-    #I_ELEM = 1
-    #O_LIST = 0
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<append> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<append>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.inputs[0]['var'].append(cesubloc.inputs[1]['var'])
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-        except ValueError as e:
-            print ("<append>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[1]['var']
+        except:
+            print ("<VALIDWRITE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<append> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-
-def c_exesubloc_insert (pebloc, pieb, pio, pthread):
-    """ exécution de la fonction insert() de python (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_LIST = 0
-    #I_INDEX =1
-    #I_ELEM = 2
-    #O_LIST = 0
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<insert> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<insert>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'].insert(cesubloc.inputs[1]['var'], cesubloc.inputs[2]['var'])
-        except ValueError as e:
-            print ("<insert>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<insert> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-
-def c_exesubloc_pop (pebloc, pieb, pio, pthread):
-    """ exécution de la fonction pop() de python (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_LIST = 0
-    #I_INDEX =1
-    #O_LIST = 0
-    #O_ELEM = 1
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<pop> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<pop>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'].pop(cesubloc.inputs[1]['var'])
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-        except ValueError as e:
-            print ("<pop>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}", f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<pop> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-
-def c_exesubloc_geti (pebloc, pieb, pio, pthread):
-    """ exécution de: récupération d'un element d'une liste, string, tuple (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_LIST = 0
-    #I_INDEX =1
-    #O_ELEM = 0
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<geti> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<geti>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'][cesubloc.inputs[1]['var']]
-        except ValueError as e:
-            print ("<geti>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<geti> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-
-def c_exesubloc_puti (pebloc, pieb, pio, pthread):
-    """ exécution de la fonction qui affecte un élément d'une liste (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_LIST = 0
-    #I_INDEX =1
-    #I_ELEM = 2
-    #O_LIST = 0
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<puti> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<puti>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        try:
-            pebloc.c_exebloc_recup_inputs(pieb, pthread)
-            cesubloc.c_exesubloc_validation_standard()
-            cesubloc.inputs[0]['var'][cesubloc.inputs[1]['var']] = cesubloc.inputs[2]['var']
-            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
-        except ValueError as e:
-            print ("<puti>", PARAM_TEXT_EXCEPTION, f"ERROR: {e}")
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        #cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<puti> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<VALIDWRITE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
