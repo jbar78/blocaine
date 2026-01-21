@@ -35,7 +35,7 @@ monitored_sublocs = None
 
 lien_origine = {}
 lien_destination = {}
-memo_event_clic_droit=False
+memo_event_clic_droit_io=False
 memo_event_clic_gauche_header=False
 memo_lien_en_cours=False
 
@@ -410,6 +410,7 @@ class c_sublocs:
             canvas.tag_bind(elem_header, "<Button-3>", self.c_sublocs_event_clic_droit_header)
             canvas.tag_bind(elem_header, "<Button-1>", self.c_sublocs_event_clic_gauche_header)
             canvas.tag_bind(elem_header, "<B1-Motion>", self.c_sublocs_event_glisser_gauche_header)
+            canvas.tag_bind(elem_header, "<ButtonRelease-1>", self.c_sublocs_event_release_gauche_header)
             canvas.tag_bind(elem_header, "<Double-Button-1>", self.c_sublocs_event_double_clic_gauche_header)
             #canvas.tag_bind(elem_header, "<F1>", self.c_sublocs_event_key_F1) ###???
             #canvas.tag_bind(elem_header, "<Delete>", self.c_sublocs_event_delete_header)###"<Delete>" ne fonctionne pas?
@@ -445,17 +446,19 @@ class c_sublocs:
                 canvas.tag_bind (elem_io, "<Leave>", lambda event, io= self.ios[i]: self.c_sublocs_event_enter_leave_io (event, io, over=False))
     def c_sublocs_event_clic_droit_header (self, event):
         """call_back: sur evenement"""
-        global memo_event_clic_droit
+        global memo_event_clic_droit_io
         proc_name = "c_sublocs_event_clic_droit_header: "
         #print (proc_name, "event=", event)
         #print (proc_name, "objet=<{}>".format(self))
-        memo_event_clic_droit = TRUE
+        memo_event_clic_droit_io = TRUE
         self.menu_header = menu_header(event, self)
     def c_sublocs_event_clic_gauche_header (self, event):
         """call_back: sur evenement"""
+        global memo_event_clic_gauche_header
         proc_name = "c_sublocs_event_clic_gauche_header: "
         #print (proc_name, "event=", event)
         #print (proc_name, "objet=<{}>".format(self))
+        memo_event_clic_gauche_header = True
         self.x_clic_gauche = event.x
         self.y_clic_gauche = event.y
         #print (proc_name, "position clic; x={}, y={}".format(self.x_clic_gauche, self.y_clic_gauche))
@@ -493,11 +496,13 @@ class c_sublocs:
         self.y_clic_gauche = event.y
         self.header['position']  = conv(canvas, mire, canvas.coords(self.header['id_cadre']), de_canvas_vers_mire=1)
 
-    #def c_sublocs_event_delete_header (self, event):###
-    #    """call_back: sur evenement"""
-    #    proc_name = "c_sublocs_event_delete_header: "###
-    #    del_bloc(self)###
-
+    def c_sublocs_event_release_gauche_header (self, event):
+        """call_back: sur evenement"""
+        global memo_event_clic_gauche_header
+        proc_name = "c_sublocs_event_release_gauche_header: "
+        #print (proc_name, "event=", event)
+        #print (proc_name, "objet=<{}>".format(self))
+        memo_event_clic_gauche_header = False
 
     def c_sublocs_event_double_clic_gauche_header (self, event):
         """call_back: sur evenement"""
@@ -510,10 +515,10 @@ class c_sublocs:
             print (proc_name, "WARNNING: ouverture du bloc (name=", self.header['name'], "impossible, car c'est un bloc <system>")
     def c_sublocs_event_clic_droit_io (self, event, io):
         """call_back: sur evenement"""
-        global memo_event_clic_droit
+        global memo_event_clic_droit_io
         proc_name = "c_sublocs_event_clic_droit_io: "
         #print (proc_name, "event=", event)
-        memo_event_clic_droit = TRUE
+        memo_event_clic_droit_io = TRUE
         menu_io(event, io)
     def c_sublocs_event_clic_gauche_io (self, event, io=4):
         """call_back: sur evenement"""
@@ -1713,19 +1718,16 @@ def event_deplacement_souris(event):
     bar_coeff_zoom.config(text = "Zoom:{:5.3f}".format(scale_factor))
 def event_clic_gauche(event):
     """callback: sur evenement"""
-    global menu_contxtuel, memo_event_clic_gauche_header
+    global menu_contxtuel, x_molette, y_molette
     proc_name = "event_clic_gauche: "
     #print (proc_name, "position event: x={},  y={}".format(event.x, event.y))
     try:
         menu_contextuel.destroy()
     except:
         pass #print (proc_name, "pas de menu contextuel à destroy")
-    if memo_event_clic_gauche_header:
-        id_cadre = find_cadre(event.x, event.y)
-        pos_cadre = canvas.coords(id_cadre)
-        tags= canvas.gettags(id_cadre)
-        #print (proc_name, "item=", id_cadre, " x=", pos_cadre[0], " y=", pos_cadre[1], "<in>trouvé=", tags)
-    memo_event_clic_gauche_header = False
+    x_molette = event.x
+    y_molette = event.y
+    #print ("clic molette: position x={},  y={}".format(event.x, event.y))
 def event_release_gauche(event):
     """callback: sur evenement"""
     global lien_origine, lien_destination
@@ -1786,11 +1788,11 @@ def event_release_gauche(event):
 def event_clic_droit(event):
     """callback: sur evenement"""
     global menu_contextuel
-    global memo_event_clic_droit
+    global memo_event_clic_droit_io
     #print ("event_clic_droit_canvas:")
     #if memo_event_header: print ("memo_event_header=VRAI")
     #else: print ("memo_event_header=FAUX")
-    if memo_event_clic_droit==FALSE:
+    if memo_event_clic_droit_io==FALSE:
         # crée un menu cntextuel
         x = event.x
         y = event.y
@@ -1813,21 +1815,22 @@ def event_clic_droit(event):
             menu_contextuel.add_command(label = "Add system bloc", command = lambda: bloc.c_bloc_add(event, "system"), background = PARAM_COLOR_BG_HEADER_SYSTEM, activebackground = PARAM_COLOR_BG_HEADER_SYSTEM)
             menu_contextuel.add_command(label = "Add user bloc", command = lambda: bloc.c_bloc_add(event, "user"), background = PARAM_COLOR_BG_HEADER_USER, activebackground = PARAM_COLOR_BG_HEADER_USER)
         menu_contextuel.post(event.x_root, event.y_root)
-    memo_event_clic_droit = FALSE
+    memo_event_clic_droit_io = FALSE
 def event_clic_molette(event):
     """callback: sur evenement"""
-    global x_molette, y_molette
-    x_molette = event.x
-    y_molette = event.y
-    #print ("clic molette: position x={},  y={}".format(event.x, event.y))
-def event_deplacement_molette_enfonce(event):
+    proc_name = "event_clic_molette"
+    print (proc_name, f"avant: flip: flag_monitoring={flag_monitoring}")
+    flip_monitoring()
+    print (proc_name, f"aprés: flip: flag_monitoring={flag_monitoring}")
+def event_deplacement_clic_gauche_enfonce(event):
     """callback: sur evenement"""
-    global x_molette, y_molette
-    canvas.move (ALL, event.x-x_molette, event.y-y_molette)
-    #self.canvas.scan_dragto (event.x, event.y, 1)
-    event_deplacement_souris(event)
-    x_molette = event.x
-    y_molette = event.y
+    global memo_event_clic_gauche_header, x_molette, y_molette
+    if not memo_event_clic_gauche_header and not memo_lien_en_cours:
+        canvas.move (ALL, event.x-x_molette, event.y-y_molette)
+        #self.canvas.scan_dragto (event.x, event.y, 1)
+        event_deplacement_souris(event)
+        x_molette = event.x
+        y_molette = event.y
 def event_molette(event):
     """callback: sur evenement"""
     proc_name = "event_molette: "
@@ -2015,10 +2018,10 @@ def menu_bar():
     help_mouse_menubar = Menu(help_menubar)
     help_menubar.add_cascade(label = "Mouse usage", menu = help_mouse_menubar)
     help_mouse_menubar.add_command(label = "[Left click] to select, to use menu")
-    help_mouse_menubar.add_command(label = "[Left held down] to link, to move")
+    help_mouse_menubar.add_command(label = "[Left held down] to scroll within windows, to move bloc, to link I/O")
     help_mouse_menubar.add_command(label = "[Left double-click] to open 'user' bloc")
     help_mouse_menubar.add_command(label = "[Right button] to open the context menu")
-    help_mouse_menubar.add_command(label = "[wheel button held down] to scroll within the window")
+    help_mouse_menubar.add_command(label = "[wheel button] to monitor the target variables (on/off)")
     help_mouse_menubar.add_command(label = "[wheel rotation] to zoom (in/out)")
     help_key_menubar = Menu(help_menubar)
     help_menubar.add_cascade(label = "Key usage", menu = help_key_menubar)
@@ -2028,7 +2031,7 @@ def menu_bar():
     help_key_menubar.add_command(label = "[F5] to update curant bloc")
     help_key_menubar.add_command(label = "[F7] to layout curant bloc")
     help_key_menubar.add_command(label = "[Delete] Delete the bloc whose header is located under the cursor")
-    help_key_menubar.add_command(label = "[Space] to monitor the target variables in real time (on/off)")
+    help_key_menubar.add_command(label = "[Space] to monitor the target variables (on/off)")
     help_key_menubar.add_command(label = "[Escape] to close window")
     #-------------------------
     help_menubar.add_separator()
@@ -3142,9 +3145,7 @@ canvas.bind("<Button-1>", event_clic_gauche)
 canvas.bind("<ButtonRelease-1>", event_release_gauche)
 canvas.bind("<Button-2>", event_clic_molette)
 canvas.bind("<Button-3>", event_clic_droit)
-canvas.bind("<B2-Motion>", event_deplacement_molette_enfonce)
-#canvas.bind("<Button-4>", event_molette_poussee)
-#canvas.bind("<Button-5>", event_molette_tiree)
+canvas.bind("<B1-Motion>", event_deplacement_clic_gauche_enfonce)
 if sys.platform == "linux":
     canvas.bind("<Button-4>", event_molette)
     canvas.bind("<Button-5>", event_molette)
