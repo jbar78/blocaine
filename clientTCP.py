@@ -44,10 +44,39 @@ class clientTCP:
             self.socket.sendall(data)
             #print(proc_name, f"message <{data}> envoyé à {self.host}:{self.port}")
         else:
-            print(proc_name, f"Erreur : Connexion non établie avec {self.host}:{self.port}")
+            print(proc_name, f"❌Error : Connexion not establiched with {self.host}:{self.port}")
 
 
-    def receive_message(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
+    def receive_message(self, buffer_size=PARAM_TCP_BUFFER_SIZE):
+        proc_name = "receive_message: "
+        
+        # ✅ Lecture robuste de l'entête (exactement 8 octets)
+        header = b""
+        while len(header) < 8:
+            chunk = self.socket.recv(8 - len(header))
+            if not chunk:  # Connexion fermée
+                print(proc_name, "Connexion fermée avant entête complet")
+                return None
+            header += chunk
+        
+        print(proc_name, f"entête reçu, len={len(header)}={header.hex()}")
+        (length,) = struct.unpack("!Q", header)  # Maintenant sûr : 8 octets !
+        
+        # Lecture du message utile
+        remaining = length
+        mess_reçu = b""
+        while remaining > 0:
+            to_read = min(remaining, buffer_size)
+            reçu = self.socket.recv(to_read)
+            if not reçu:
+                print(proc_name, "Connexion fermée avant message complet")
+                return None
+            mess_reçu += reçu
+            remaining -= len(reçu)
+        
+        return mess_reçu
+
+    def receive_messageyyyy(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
         proc_name = "receive_message: "
         header = self.socket.recv(8)
         #print(proc_name, f"réception de l'entête={header}")
@@ -64,14 +93,14 @@ class clientTCP:
             remaining -= len(reçu)
         return mess_reçu
 
-    def receive_messagexxx(self, buffer_size=PARAM_TCP_BUFFER_SIZE):
+    def receive_messagexxx(self, buffer_size=PARAM_TCP_BUFFER_SIZE): #xxx
         proc_name = "clientTCP.receive_message: "
         self.nb_receive += 1
         if self.socket:
             print(proc_name, f"message[{self.nb_receive}] reçu de {self.host}:{self.port}")
             return self.socket.recv(buffer_size)
         else:
-            print(proc_name, f"Erreur : Connexion non établie avec {self.host}:{self.port}")
+            print(proc_name, f"❌Error : Connexion not establiched with {self.host}:{self.port}")
             return None
 
     def close(self):

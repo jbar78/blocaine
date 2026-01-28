@@ -66,7 +66,7 @@ def handle_clientTCP(client_socket, addr):
                     pio['var']   = pexebloc.sublocs[i_bloc].inputs[i_io]['var']
                     pio['valide']= pexebloc.sublocs[i_bloc].inputs[i_io]['valide']
                 else:
-                    print ('proc_name', f"ERREUR: le USER est lié à un 'monitoring' de même type  type={pios['monitoring_type']}?")
+                    print ('proc_name', f"❌ERROR: the USER is linked to a 'monitoring' with same type<{pios['monitoring_type']}>?")
 
         proc_name = "monitoring_user_bloc"
         #print (proc_name, " _____________________________________debut récupe monitoring io pour bloc USER")
@@ -99,7 +99,7 @@ def handle_clientTCP(client_socket, addr):
                 elif cas == b"overwriting_stop":
                     #print(proc_name, f"del 'forced in __put['id']={ioput['id']}")
                     del ioput['forced']
-                else: print (proc_name, "ERREUR: not start and no stop")
+                else: print (proc_name, "❌ERROR: no start and no stop")
 
     global clientsTCP, list_compiled
     monitoring = None
@@ -146,7 +146,7 @@ def handle_clientTCP(client_socket, addr):
                                 #print(proc_name, f"Run: trouvé")
                                 run_exebloc(bloc_name)
                             else:
-                                print(proc_name, f"ERREUR: ni HotSwap, ni Run contenu dans status['orders']")
+                                print(proc_name, f"❌ERROR: Neither HotSwap nor Run is present in status['orders']")
 
             elif cas == b"monitoring" and index!= -1:
                 list_monitor = []

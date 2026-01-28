@@ -320,7 +320,7 @@ class c_sublocs:
         ios = []
         bloc_lu = read_bloc (pbloc_name)
         if bloc_lu == None:
-            print (proc_name, "ERROR-----------file <", pbloc_name, "> bloc_lu==None")
+            print (proc_name, "❌ERROR-----------file <", pbloc_name, "> bloc_lu==None")
             raise ValueError("C_sublocs can not be created")
         header['name'] = bloc_lu.header['name']
         header['structure_version'] = bloc_lu.header['structure_version']
@@ -338,7 +338,7 @@ class c_sublocs:
                         # inversion des Entrées / Sorties
                         if io['type']== "in": typ = "out"
                         elif io['type']== "out": typ = "in"
-                        else: print (proc_name, ': ERREUR: l\'objet n\'est ni de type IN ni OUT')
+                        else: print (proc_name, ': ❌Error : the object is neither an input nor an output ')
                         sub_obj = {}
                         sub_obj['type']= typ
                         if (bloc_lu.header['name']==PARAM_NAME_BLOC_INPUT): io_nbr = last_io (PARAM_NAME_BLOC_INPUT)
@@ -539,7 +539,7 @@ class c_sublocs:
             del self.id_lien_provisoire
             print (proc_name, "canvas.delete(self.id_lien_provisoire")
         except:
-            print (proc_name, "ERROR: try to ...canvas.delete(self.id_lien_provisoire")
+            print (proc_name, "❌ERROR: try to ...canvas.delete(self.id_lien_provisoire")
     def c_sublocs_event_double_clic_gauche_io(self, event, io=4):
         """call_back: sur evenement"""
         proc_name = "c_sublocs_event_double_clic_gauche_io: "
@@ -708,11 +708,21 @@ def id_generateur ():
 def type_index(pvariable):
     """ returne le type d'une variable"""
     proc_name = "type_index"
-    if (type(pvariable) == float): return 0
+    #if (type(pvariable) == float): return 0
+    #if (type(pvariable) == int): return 1
+    #if (type(pvariable) == bool): return 2
+    #if (type(pvariable) == str): return 3
+
+    if (type(pvariable) == bool): return 0
     if (type(pvariable) == int): return 1
-    if (type(pvariable) == bool): return 2
+    if (type(pvariable) == float): return 2
     if (type(pvariable) == str): return 3
-    print (proc_name, "ERROR: unknow type: ", type(pvariable))
+    if (pvariable is None): return 4
+    if (type(pvariable) == list): return 5
+    if (type(pvariable) == tuple): return 6
+    if (type(pvariable) == dict): return 7
+    if (type(pvariable) == set): return 8
+    print (proc_name, "❌ERROR: unknow type: ", type(pvariable))
             
 def find_thread_index(pthreads, pthread_id):
     """ retour l'index du thread correspondant à l'ID"""
@@ -739,7 +749,7 @@ def find_parent (pio):
                 #print (proc_name, "io==pio  pio:", io)
                 #print (proc_name, "io==pio  parent:", bloc.sublocs[ib])
                 return bloc.sublocs[ib]
-    print (proc_name, "ERREUR:   pio n\'a pas de parent, pio=", pio)
+    print (proc_name, "❌ERROR:   pio has no parent, pio=", pio)
     return None
 def find_liens (out):
     """trouve tous les (IO) qui pointent vers un OUT(IO)"""
@@ -772,7 +782,7 @@ def find_cadre(x,y):
         if (("in" or "out") and "cadre") in tags:
             #print (proc_name, "en x:",x, " y:", y, " item=", item, " tags=", tags)
             return item
-    #print (proc_name, "ERREUR: en x:",x, " y:", y, " cadre introuvable")
+    #print (proc_name, "❌ERROR:  x:",x, " y:", y, " frame not found")
     return None
 def find_bloc_io(id_cadre):
     """trouve l'adresse du "IO" correspondant à un ID de cadre"""
@@ -805,7 +815,7 @@ def find_index_bloc(pbloc, id):
             index= i
             break
     if index == None:
-        print (proc_name, "ERREUR: l'index <", id, "> n'a pas été trouvé dans le bloc=", pbloc)
+        print (proc_name, f"❌ERROR: the index of id<{id}> can not be found in bloc<{pbloc}")
     return index
 def find_index_io(pelem, id):
     """ retourne l'index d'un IO correspondant à l'id de l'IO"""
@@ -819,7 +829,7 @@ def find_index_io(pelem, id):
             #print (proc_name, "id=", id, "trouvé i=", i, "dans tmp_io=", tmp_io)
             break
     if index == None:
-        print (proc_name, "ERREUR: l'index <", id, "> n'a pas été trouvé dans le sous_bloc=", pelem)
+        print (proc_name, f"❌ERROR: the index of id<{id}> can not be found in sub-bloc<{pelem}>")
     return index
 
 def draw_lien(io_in):
@@ -1050,7 +1060,7 @@ def update_bloc(elem):
     try:
         updated_elem = c_sublocs(le_chemin(bloc_name, "system" in elem.header['key_word'])+bloc_name)
     except ValueError as e:
-        print (proc_name, "ERROR-----------file <", elem.header['name'], "> ", e)
+        print (proc_name, "❌ERROR : file <", elem.header['name'], "> ", e)
         return True
     couple = {}
     if elem.header['name'] == PARAM_NAME_BLOC_OUTPUT:
@@ -1628,7 +1638,7 @@ def memory_io(add_supp, io):
     elif add_supp == "supp":
         del io['memory']
     else:
-        print (procname, "ERROR: Wrong paramater: add_sup is not add or supp")
+        print (procname, "❌ERROR: Wrong paramater: add_sup is not add or supp")
 def capture_add_event(pelem, pthread_id):
     """ajout un événement à un subbloc OUTPUT"""
     def add_event():
@@ -1704,7 +1714,7 @@ def flip_monitoring():
             monitoring_thread = threading.Thread(target=monitoring_bloc)
             monitoring_thread.start()
         else:
-            messagebox.showinfo("ERROR", "Monitoring not allowed because, the target is not connected via TCP/IP ")
+            messagebox.showinfo("❌ERROR", "Monitoring not allowed because, the target is not connected via TCP/IP ")
             flag_monitoring = not flag_monitoring
     set_running(flag_monitoring)
 
@@ -1739,8 +1749,8 @@ def event_release_gauche(event):
         else:
             start_txt ="OUTPUT"
             end_txt = "INPUT"
-        print("ERROR: As starting point is an ", start_txt, " the end point must be an ", end_txt)
-        messagebox.showinfo("ERROR", "As starting point is an "+start_txt+" the end point must be an "+end_txt)
+        print(f"❌ERROR: As starting point is an <{start_txt}>, the end point must be an ", end_txt)
+        messagebox.showinfo(f"❌ERROR", "As starting point is an <{start_txt}> the end point must be an "+end_txt)
 
     proc_name = "event_release_gauche: "
     #print (proc_name, "event=", event)
@@ -1762,7 +1772,7 @@ def event_release_gauche(event):
                         if lien_destination['io']['type']=='in':  io_in  = lien_destination['io']
                         if lien_destination['io']['type']=='out': io_out = lien_destination['io']
                         if ('lien' in io_in):
-                            messagebox.showinfo("ERROR", "INPUT can only have one source")
+                            messagebox.showinfo("❌ERROR", "INPUT can only have one source")
                         else:
                             #print (proc_name, "lin_io_in=", io_in)
                             #print (proc_name, "lin_io_out=", io_out)
@@ -1842,7 +1852,7 @@ def event_molette(event):
         elif event.num == 5:
             zoom_increment = 1/PARAM_ZOOM_INCREMENT
         else:
-            print (proc_name, "ERROR: mouse well not push or pull")
+            print (proc_name, "❌ERROR: mouse well not push or pull")
     else: #windos
         if event.delta>0:
             zoom_increment = PARAM_ZOOM_INCREMENT
@@ -1905,7 +1915,7 @@ def event_key_F1(event):
                 os.startfile(doc_file)
         else:
             message_txt = "The documentaion file:\n"+doc_file+"\nis not available for this bloc"
-            messagebox.showinfo("ERROR", message_txt)
+            messagebox.showinfo("❌ERROR", message_txt)
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -2177,7 +2187,7 @@ def menu_io(event, io):
                             if 'forced' in moutput:
                                 return True
                 else:
-                    messagebox.showinfo("ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
+                    messagebox.showinfo("❌ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
         return False
 
     proc_name = "menu_io: "
@@ -2287,7 +2297,7 @@ def open_file(pf_name, decal):
         #if not 'system' in bloc.header['key_word']:
         #    update_blocs()
     else:
-        messagebox.showinfo("ERROR", "file reading error")
+        messagebox.showinfo("❌ERROR", "file reading error")
     menu_target()
     #print (proc_name, "fin")
 def save_file(save_as):
@@ -2477,7 +2487,7 @@ def TCPconnect():
         print (proc_name, "clientTCP.connect")
         clientTCP.connect(PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT)
         if clientTCP.socket == None:
-            messagebox.showinfo("ERROR",  f"Target (@IP:{PARAM_TCP_HOST_IP}) not reachable")
+            messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_HOST_IP}) not reachable")
     else:
         print (proc_name, "clientTCP.close")
         clientTCP.close()
@@ -2663,7 +2673,7 @@ def compile_bloc(pbloc, porder):
                         if output['id']==plien['id_io']:
                             print (proc_name, f"return: bloc={ib}, output={i}")
                             return ib, i
-        print (proc_name, f"ERREUR: lien non trouvé,   lien={plien}")
+        print (proc_name, f"❌ERROR: link<{plien} not found")
         return None
     def insert_user_sublocs(pexebloc):
         """ ajout les blocs constituant chaque USER"""
@@ -2728,7 +2738,7 @@ def compile_bloc(pbloc, porder):
                     print (proc_name, f" boucle_bloc i[{i}] ____trouvé___(id==id)_: retourne le bloc (name<{esubloc.header['name']}>  id={esubloc.header['id']})")
                     return i
         if not find:
-            Print (proc_name, f"ERROR: INPUT bloc of USER bloc input not found")
+            Print (proc_name, f"❌ERROR: INPUT bloc of USER bloc input not found")
     def find_index_of_output_bloc_of_user_bloc_output(pexebloc, puser_bloc_index, puser_output_id):
         """ retourne l'indexe du bloc "OUTPUT" correspondant à une patte de sortie dun USER"""
         user_sublocs_ids = []
@@ -2751,7 +2761,7 @@ def compile_bloc(pbloc, porder):
                     print (proc_name, f" boucle_bloc i[{i}] ____trouvé___(id==id)_: retourne le bloc (name<{esubloc.header['name']}>  id={esubloc.header['id']})")
                     return i
         if not find:
-            print (proc_name, f"ERROR: OUTPUT bloc of USER bloc output not found")
+            print (proc_name, f"❌ERROR: OUTPUT bloc of USER bloc output not found")
     def faire_lien_user_input(pexebloc):
         proc_name = "faire_lien_user_input"
         for i, esubloc in enumerate(pexebloc.sublocs):
@@ -2792,9 +2802,9 @@ def compile_bloc(pbloc, porder):
                             user_bloc_input['monitoring_bloc_index'] = index_input_bloc
                             user_bloc_input['monitoring_io_index'] =  0
                         else:
-                            print (proc_name, f"ERROR: USER bloc input do not have link or defaut_value")
+                            print (proc_name, f"❌ERROR: USER bloc input do not have link or defaut_value")
                     if not find:
-                        print (proc_name, f"ERROR???:  USER bloc")
+                        print (proc_name, f"❌ERROR:  USER bloc not foud")
                                      
         print(proc_name, "fin")
     def faire_lien_user_output(pexebloc):
@@ -2827,7 +2837,7 @@ def compile_bloc(pbloc, porder):
                                         user_bloc_output['monitoring_bloc_index'] = index_output_bloc
                                         user_bloc_output['monitoring_io_index'] =  0
                     if not find:
-                        print (proc_name, f"ERROR: aucun bloc ne pointe vers ce USER bloc")
+                        print (proc_name, f"❌ERROR: This USER block is not pointed to by any block")
         print(proc_name, "fin")
 
     global compile_level
@@ -2904,7 +2914,7 @@ def compile_bloc(pbloc, porder):
     #____________________________________________erreur ou vérif
     if error_compil != None or porder == "verif":
         if error_compil != None:
-            txt_compil = " ERROR: Checking aborted (code="+str(error_compil)+")\nthe bloc <"+pbloc.header['name']+"> is invalide"
+            txt_compil = "❌ERROR: Checking aborted (code="+str(error_compil)+")\nthe bloc <"+pbloc.header['name']+"> is invalide"
         else:
             txt_compil = "The bloc <"+pbloc.header['name']+"> is valide"
         print (proc_name, txt_compil)
@@ -2989,7 +2999,7 @@ def monitoring_bloc():
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
                     canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
         else:
-            messagebox.showinfo("ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
     def show_normal_io(pio):
         proc_name = "show_normal_io: "
         #print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
@@ -3002,7 +3012,7 @@ def monitoring_bloc():
                 color = PARAM_COLOR_BG_OUTPUT
             #color = PARAM_COLOR_BG_OUTPUT
         else:
-            messagebox.showinfo("ERROR", f"Shoing normal IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("❌ERROR", f"Shoing normal IO 'type' is not 'in' or 'out',  io={pio}")
         canvas.itemconfig(io['id_cadre'], fill= color)
         canvas.itemconfig(io['id_texte'], text= io_text(pio))
 
@@ -3038,7 +3048,7 @@ def monitoring_bloc():
             #print(proc_name, "Attente message")
             buff = clientTCP.receive_message()
             if buff == b"monitoring:not_found":
-                messagebox.showinfo("ERROR", f"Monitoring not allowed, because the target does not contain bloc <{monitoring['name']}>")
+                messagebox.showinfo("❌ERROR", f"Monitoring not allowed, because the target does not contain bloc <{monitoring['name']}>")
                 flip_monitoring()
                 break
             else:

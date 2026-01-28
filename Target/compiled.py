@@ -388,7 +388,7 @@ def run_exebloc(pname):
                 initialize(pname, AB)
                 running   (pname, AB)
             else:
-                print (proc_name, "ERREUR  bloc name=", pname, "ni A, ni B, n'est READY")
+                print (proc_name, f"❌ERROR  bloc name=<{pname}>, neither A nor B, is READY")
 def stop_exebloc(pname):
     proc_name = "stop_exebloc: "
     print (proc_name, "début,   bloc name=", pname)

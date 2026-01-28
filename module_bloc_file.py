@@ -21,7 +21,7 @@ def get_name(chaine):
         dic['name']=chaine[0:trouve]
         #dic['version']=chaine[trouve+2:chaine.find(".bloc")]
     else:
-        print ("ERREUR: dans GET_NAME la chaine <", chaine, "> n a pas ete trouvee")
+        print (f"❌ERROR: the string<{chaine}> has not be found in GET_NAME")
     return dic
 def get_list_of_bloc():
     "get all bloc name (and version) of avelable blocs"
@@ -61,7 +61,7 @@ def read_bloc(fname):
             bloc=pickle.load(file)
             #print (proc_name, "lecture du fichier")
     except FileNotFoundError:
-        print (proc_name, "ERROR-----------file <", fname, ">can't be open")
+        print (proc_name, "❌ERROR : file <", fname, ">can't be open")
         return None
     #for i, elem in enumerate(bloc.sublocs):
     #    print ("{}     bloc[{}]= {}, id={}, --elem.header={}".format (proc_name, i, elem.header['name'], elem.header['id'], elem.header))
@@ -73,7 +73,7 @@ def read_bloc(fname):
     #extension= file[1]
     bloc.header['name'] = name ###
     if bloc.header['structure_version'] != "2.0":
-        print ("ERROR-----------------------------structure version of bloc file is not correct")
+        print ("❌ERROR : structure version of bloc file is not correct")
         return None
     #bloc['header']['name']={}
     #bloc['header']['name']=name
