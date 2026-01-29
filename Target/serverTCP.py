@@ -7,6 +7,7 @@ from sharedata import clientsTCP
 from c_exebloc import *
 from exec import *
 from compiled import *
+import PARAM_NAME_BLOC
 
 
 def send_message(socket, data):
@@ -165,7 +166,8 @@ def handle_clientTCP(client_socket, addr):
                             #print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
                             if subloc.parent_ids == monitoring['arbo_ids']:
                                 #print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
-                                list_monitor.append(subloc)
+                                if subloc.header['name'] != PARAM_NAME_BLOC_MODBUS_CONN and subloc.header['name'] != PARAM_NAME_BLOC_MODBUS_READ and subloc.header['name'] != PARAM_NAME_BLOC_MODBUS_WRITE:###
+                                    list_monitor.append(subloc)
                 if len(list_monitor) > 0:
                     response = pickle.dumps(list_monitor)
                 else:

@@ -15,6 +15,7 @@ import copy
 import pickle
 import socket
 from datetime import datetime
+from pymodbus.client import ModbusTcpClient
 
 from module_bloc_file import *
 from exec import recup_procedure
@@ -2973,12 +2974,14 @@ def monitoring_bloc():
             else:
                 return f"{var:8.3f}"
         elif isinstance(var, list):
-            return f"...list..."
+            return f".list."
         elif isinstance(var, tuple):
             wires = cable_wires_counter(var)
-            return f"...tuple..."
+            return f".tuple."
         elif isinstance(var, dict):
-            return f"...dict..."
+            return f".dict."
+        elif isinstance(var, ModbusTcpClient):
+            return f".ModbusTcpClient."
         elif var==None:
             return f"None"
         else:

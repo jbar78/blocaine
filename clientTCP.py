@@ -47,7 +47,7 @@ class clientTCP:
             print(proc_name, f"❌Error : Connexion not establiched with {self.host}:{self.port}")
 
 
-    def receive_message(self, buffer_size=PARAM_TCP_BUFFER_SIZE):
+    def receive_messageyyyy(self, buffer_size=PARAM_TCP_BUFFER_SIZE):
         proc_name = "receive_message: "
         
         # ✅ Lecture robuste de l'entête (exactement 8 octets)
@@ -76,7 +76,7 @@ class clientTCP:
         
         return mess_reçu
 
-    def receive_messageyyyy(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
+    def receive_message(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
         proc_name = "receive_message: "
         header = self.socket.recv(8)
         #print(proc_name, f"réception de l'entête={header}")
