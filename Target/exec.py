@@ -903,7 +903,7 @@ def c_exesubloc_modbus_write (pebloc, pieb, pio, pthread):
                         cesubloc.outputs[0]['var'] = False
                         print(f"❌ <MODBUS_WRITE>  write error:  ErrorCode={write_result}")
                     else:
-                        print(f"✅ <MODBUS_WRITE> write OK: length={len(read_result.registers)}")
+                        print(f"✅ <MODBUS_WRITE> write OK: length={len(write_result.registers)}")
                         cesubloc.outputs[0]['var'] = True
                     cesubloc.outputs[1]['var'] = write_result.function_code
             else:
