@@ -1,53 +1,18 @@
 import socket
 import threading
 import pickle
+import copy
 import struct
 from PARAM_NETWORK import *
 from sharedata import clientsTCP
 from c_exebloc import *
 from exec import *
 from compiled import *
-import PARAM_NAME_BLOC
-
-
-def send_message(socket, data):
-    proc_name = "send_message: "
-    form = "!Q"+str(len(data))+"s"
-    #print (proc_name, f"format=<{form}>")
-    header = len(data)
-    #print(proc_name, f"header<{header}>,     data<{data}>\n")
-    mess = struct.pack(form, header, data)
-    #print(proc_name, f"mess <{mess}>         envoyé à {socket.host}:{socket.port}")
-    send_all(socket, mess)
-
-def send_all(socket, data):
-    proc_name = "clientTCP.send_all: "
-    if socket:
-        socket.sendall(data)
-        #print(proc_name, f"message <{data}> envoyé à {socket.host}:{socket.port}")
-    #else:
-        #print(proc_name, f"Erreur : Connexion non établie avec {socket.host}:{socket.port}")
+from sendreceive import *
 
 
 
 def handle_clientTCP(client_socket, addr):
-
-    def receive_message(): ########
-        proc_name = "receive_message: "
-        header = client_socket.recv(8)
-        #print(proc_name, f"réception de l'entête={header}")
-        (length,) = struct.unpack("!Q", header)
-        #print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
-        remaining = length
-        mess_reçu =b""
-        while remaining > 0:
-            reçu = client_socket.recv(min(length, PARAM_TCP_BUFFER_SIZE))
-            #print(proc_name, f"réception du message utile, len(reçu)={len(reçu)}")
-            if not reçu:
-                print(proc_name, "Connexion fermée avant réception complète.")
-            mess_reçu += reçu
-            remaining -= len(reçu)
-        return mess_reçu
 
 
     def monitoring_user_bloc(pexebloc):
@@ -114,7 +79,7 @@ def handle_clientTCP(client_socket, addr):
         while True:
             # receive and print client messages
             #print(proc_name, f"en attente d'un message")
-            request = receive_message()
+            request = receive_message(client_socket)
             #print(proc_name, f"réception d'un message!   len={len(request)}")
             #print(proc_name, f"Received: {request}")
             index =request.find(b':')
@@ -151,7 +116,7 @@ def handle_clientTCP(client_socket, addr):
 
             elif cas == b"monitoring" and index!= -1:
                 list_monitor = []
-                #print(proc_name, f"cas N°2 reconnu  (monitoring)  cas: {cas}")
+                print(proc_name, f"cas N°2 reconnu  (monitoring)  cas: {cas}")
                 #print(proc_name, f"  arborescence:{request[index+1:]}")
                 monitoring = pickle.loads(request[index+1:])
                 #print(proc_name, f"  monitoring['name']={monitoring['name']}")
@@ -163,11 +128,63 @@ def handle_clientTCP(client_socket, addr):
                         monitoring_user_bloc (comp)
                         #print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
                         for subloc in comp.sublocs:
+                            avec_modbus_type = False
                             #print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
                             if subloc.parent_ids == monitoring['arbo_ids']:
                                 #print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
-                                if subloc.header['name'] != PARAM_NAME_BLOC_MODBUS_CONN and subloc.header['name'] != PARAM_NAME_BLOC_MODBUS_READ and subloc.header['name'] != PARAM_NAME_BLOC_MODBUS_WRITE:###
+                                modbus_bloc =  f"bloc ModBus, bloc name<{subloc.header['name']}>, "
+                                for input in subloc.inputs:
+                                    if isinstance(input['var'], ModbusTcpClient):
+                                        #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, var=<{input['name']}>")
+                                        avec_modbus_type = True
+                                for output in subloc.outputs:
+                                    if isinstance(output['var'], ModbusTcpClient):
+                                        #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
+                                        avec_modbus_type = True
+                                if avec_modbus_type: # pour ne pas sérialiser le type ModbusTcpClient
+                                    def modbus_io (io):
+                                        #print (proc_name, modbus_bloc, f"modbus_io: <ModbusTcpClient> name=<{io['name']}>,  var=<{io['var']}>")
+                                        io_dic = io['var'].__dict__
+                                        #print(f"modbus_io: io.__dict__: {io_dic}")
+                                        #print (f"modbus_io: io_dic.comm_params: valeur={io_dic['comm_params']}")
+                                        #print (f"modbus_io: io_dic.comm_params.host: valeur={io_dic['comm_params'].host}")
+                                        #print (f"modbus_io: io_dic.comm_params.port: valeur={io_dic['comm_params'].port}")
+                                        return  c_modbus(io_dic)
+                                    #print (proc_name, f"bloc<{subloc.header['name']}> avec ModbusTcpClient")
+                                    c_subloc = copy.copy(subloc)
+                                    c_subloc.inputs = copy.copy(subloc.inputs)
+                                    c_subloc.outputs = copy.copy(subloc.outputs)
+                                    for i, (input, c_input) in enumerate(zip(subloc.inputs, c_subloc.inputs)):
+                                        #print (proc_name, f"  inputs: origine: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}")
+                                        if isinstance(input['var'], ModbusTcpClient):
+                                            #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, name=<{input['name']}>,  var=<{input['var']}>")
+                                            c_subloc.inputs[i] = copy.copy(input)
+                                            c_subloc.inputs[i]['var'] = modbus_io(input)
+                                            #print (proc_name, f"  inputs: corrigé: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}, ['var']={c_input['var']}")
+                                    for i, (output, c_output) in enumerate(zip(subloc.outputs, c_subloc.outputs)):
+                                        #print (proc_name, f"  outputs: origine:id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}")
+                                        if isinstance(output['var'], ModbusTcpClient):
+                                            #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
+                                            c_subloc.outputs[i] = copy.copy(output)
+                                            c_subloc.outputs[i]['var'] =  modbus_io(output)
+                                            #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
+                                    #for i, (output, c_output) in enumerate(zip(subloc.outputs, c_subloc.outputs)):
+                                    #    print (proc_name, f"  outputs: origine:id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}")
+                                    #    if isinstance(output['var'], ModbusTcpClient):
+                                    #        #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
+                                    #        c_subloc.outputs[i] = copy.copy(output)
+                                    #        c_subloc.outputs[i]['var']= ".Modbus."
+                                    #        print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
+                                    for i, c_input in enumerate(c_subloc.inputs):
+                                        if isinstance(c_input['var'], ModbusTcpClient):
+                                            print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
+                                    for i, c_output in enumerate(c_subloc.outputs):
+                                        if isinstance(c_output['var'], ModbusTcpClient):
+                                            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
+                                    list_monitor.append(c_subloc)
+                                else:
                                     list_monitor.append(subloc)
+
                 if len(list_monitor) > 0:
                     response = pickle.dumps(list_monitor)
                 else:

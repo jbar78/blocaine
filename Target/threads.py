@@ -4,7 +4,7 @@ PARAM_PERIOD_OFFSET = -0.0004 # en seconde
 class Intervallometre(threading.Thread):
     def __init__(self, fonction, args=[]):
         threading.Thread.__init__(self)
-        print ("thread__init__", args[0]['period'], "(s)")
+        #print ("thread__init__", args[0]['period'], "(s)")
         self.duree = args[0]['period'] + PARAM_PERIOD_OFFSET
         self.fonction = fonction
         self.args = args

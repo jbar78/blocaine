@@ -5,8 +5,11 @@ debug_c_exe = False
 
 
 
-
-
+class c_modbus:
+    """pour ne pas sérialisation des objets ModbusTcpClient"""
+    def __init__(self, client):
+        self.host = client['comm_params'].host
+        self.port = client['comm_params'].port
 
 
 
@@ -40,7 +43,7 @@ class c_exebloc:
                 if esubloc.header['id'] == pid:
                     #print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                     return i
-        print (proc_name, f"ERROR: id not found in exebloc,  id={pid}, ids={pparent_ids}")
+        print (proc_name, f"❌ERROR: id not found in exebloc,  id={pid}, ids={pparent_ids}")
     def c_exebloc_recup_input (self, pieb, pthread, piei):
         """affecte un input en appelant le bloc parent (dans la boucle récurcive)"""
         def c_exebloc_recup_defaut (pinput):
@@ -71,7 +74,7 @@ class c_exebloc:
             #print ("  il n'y a pas de lien pour cette input[" + str(piei) + "]:  name<" + input['name'] + ">")
             defaut_value_found = c_exebloc_recup_defaut (input)
             if not defaut_value_found:
-                print (": ERROR: bloc[", pieb, "],    input[", piei, "] can not be found")
+                print (": ❌ERROR: bloc[", pieb, "],    input[", piei, "] can not be found")
             prevout=input
         if 'forced' in input:
             #print (": input[", piei, "], input['forced_value']=", input['forced_value'], "input['forced_valide']=", input['valide'])
@@ -121,7 +124,7 @@ class c_exesubloc:
             if input['id'] == pid:
                 #print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                 return i
-        print (proc_name, f"ERROR: id not found in exesubbloc: id={pid}")
+        print (proc_name, f"❌ERROR: id not found in exesubbloc: id={pid}")
     def c_exesubloc_find_index_exeoutput (self, pid):
         """ retourne l'index d'un output du sous-bloc executable correspondant à l'id de l'output"""
         proc_name = 'find_index_exeoutput'
@@ -129,7 +132,7 @@ class c_exesubloc:
             if output['id'] == pid:
                 #print (proc_name, "id rechercher=", pid, "   index trouvé=", i)
                 return i
-        print (proc_name, f"ERROR: id not found in exesubbloc: id={pid}")
+        print (proc_name, f"❌ERROR: id not found in exesubbloc: id={pid}")
     def c_exesubloc_user_type (self):
         """retourne VRAI si c'est un bloc USER (non SYSTEM)"""
         return not 'system' in self.header['key_word']

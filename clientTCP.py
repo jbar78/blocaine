@@ -30,7 +30,7 @@ class clientTCP:
 
     def send_message(self, data):
         proc_name = "clientTCP.send_message: "
-        form = "!Q"+str(len(data))+"s"
+        form = PARAM_TCP_MESS_HEADER_TYPE+str(len(data))+"s"
         #print (proc_name, f"format=<{form}>")
         header = len(data)
         #print(proc_name, f"header<{header}>,     data<{data}>\n")
@@ -47,36 +47,59 @@ class clientTCP:
             print(proc_name, f"❌Error : Connexion not establiched with {self.host}:{self.port}")
 
 
-    def receive_messageyyyy(self, buffer_size=PARAM_TCP_BUFFER_SIZE):
+
+
+
+    def receive_message(self): ########
+        def receive_nbr(nbr):
+            remaining = nbr
+            mess_recu =b""
+            while remaining > 0:
+                recu = self.socket.recv(min(remaining, PARAM_TCP_BUFFER_SIZE))
+                #print(proc_name, f"réception du message utile, len(reçu)={len(recu)}")
+                #if not recu:
+                #    #raise ConnectionError("❌ERROR: TCP socket close because message length to short")
+                #    print (proc_name, f"waiting message: length to short, remaining={remaining}")
+                mess_recu += recu
+                remaining -= len(recu)
+            return mess_recu
         proc_name = "receive_message: "
-        
-        # ✅ Lecture robuste de l'entête (exactement 8 octets)
-        header = b""
-        while len(header) < 8:
-            chunk = self.socket.recv(8 - len(header))
-            if not chunk:  # Connexion fermée
-                print(proc_name, "Connexion fermée avant entête complet")
-                return None
-            header += chunk
-        
-        print(proc_name, f"entête reçu, len={len(header)}={header.hex()}")
-        (length,) = struct.unpack("!Q", header)  # Maintenant sûr : 8 octets !
-        
-        # Lecture du message utile
+        header = receive_nbr(PARAM_TCP_MESS_HEADER_SIZE)
+        length = struct.unpack(PARAM_TCP_MESS_HEADER_TYPE, header)[0]
+        print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
+        mess_utile_recu = receive_nbr(length)
+        print(proc_name, f"longeur du message utile reçu={len(mess_utile_recu)}")
+        return mess_utile_recu
+
+
+
+
+    def receive_message33333(self):
+        proc_name = "receive_message: "
+        header = self.socket.recv(PARAM_TCP_MESS_HEADER_SIZE)
+        if len(header) < PARAM_TCP_MESS_HEADER_SIZE:
+            raise ConnectionError("❌ERROR: TCP socket close because header length to short")
+        #print(proc_name, f"réception de l'entête={header}")
+        length = struct.unpack(PARAM_TCP_MESS_HEADER_TYPE, header)[0]
+        #print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
         remaining = length
-        mess_reçu = b""
+        mess_reçu =b""
         while remaining > 0:
-            to_read = min(remaining, buffer_size)
-            reçu = self.socket.recv(to_read)
+            #reçu = self.socket.recv(min(length - len(mess_reçu), PARAM_TCP_BUFFER_SIZE))
+            reçu = self.socket.recv(min(remaining, PARAM_TCP_BUFFER_SIZE))
+            #print(proc_name, f"réception du message utile, len(reçu)={len(reçu)}")
             if not reçu:
-                print(proc_name, "Connexion fermée avant message complet")
-                return None
+                raise ConnectionError("❌ERROR: TCP socket close because message length to short")
             mess_reçu += reçu
             remaining -= len(reçu)
-        
         return mess_reçu
 
-    def receive_message(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
+
+
+
+
+
+    def receive_messagexxxx(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
         proc_name = "receive_message: "
         header = self.socket.recv(8)
         #print(proc_name, f"réception de l'entête={header}")
@@ -105,10 +128,12 @@ class clientTCP:
 
     def close(self):
         proc_name = "clientTCP.close: "
-        #if self.socket:
-        self.socket.close()
-        print(proc_name, f"Connexion avec ({self.host}:{self.port})")
-        self.socket = None
+        if self.socket!=None:
+            self.socket.close()
+            print(proc_name, f"Fermeture connexion ({self.host}:{self.port})")
+            self.socket = None
+        else:
+            print(proc_name, f"❌Error : can not close onnection ({self.host}:{self.port}): allready close ")
 
 
 

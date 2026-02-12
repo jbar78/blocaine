@@ -14,6 +14,7 @@ from tkinter import ttk, filedialog, messagebox
 import copy
 import pickle
 import socket
+from pymodbus.client import ModbusTcpClient
 from datetime import datetime
 from pymodbus.client import ModbusTcpClient
 
@@ -2940,7 +2941,7 @@ def compile_bloc(pbloc, porder):
     print (proc_name,"_____________________________________fin de compilation")
 def monitoring_bloc():
     """ thread: Visualisation en temps réel d'un bloc ou sous-blocs """
-    global master, canvas, fag_monitoring, monitored_sublocs
+    global bloc, master, canvas, fag_monitoring, monitored_sublocs
     def tx_color(pio):
         """ retourne la couleur du texte selon la validité"""
         if 'forced' in pio:
@@ -2980,7 +2981,8 @@ def monitoring_bloc():
             return f".tuple."
         elif isinstance(var, dict):
             return f".dict."
-        elif isinstance(var, ModbusTcpClient):
+        elif isinstance(var, c_modbus):
+            #print (proc_name, "type=c_modbus")
             return f".ModbusTcpClient."
         elif var==None:
             return f"None"
@@ -2992,12 +2994,14 @@ def monitoring_bloc():
         if ptype == 'in':
             for minput in pmsb.inputs:
                 if minput['id'] == pid:
+                    #print (proc_name, f" var={minput['var']}")
                     #canvas.itemconfig(io['id_cadre'], fill=bg_color(minput['valide']))
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(minput))
                     canvas.itemconfig(io['id_texte'], fill=tx_color(minput), text=formatage(minput['var']))
         elif ptype == 'out':
             for moutput in pmsb.outputs:
                 if moutput['id'] == pid:
+                    #print (proc_name, f" var={moutput['var']}")
                     #canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput['valide']))
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
                     canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
@@ -3015,64 +3019,100 @@ def monitoring_bloc():
                 color = PARAM_COLOR_BG_OUTPUT
             #color = PARAM_COLOR_BG_OUTPUT
         else:
-            messagebox.showinfo("❌ERROR", f"Shoing normal IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("❌ERROR", f"Showing normal IO 'type' is not 'in' or 'out',  io={pio}")
+        #print (proc_name, f"io name={pio['name']}")
         canvas.itemconfig(io['id_cadre'], fill= color)
         canvas.itemconfig(io['id_texte'], text= io_text(pio))
 
+    def bloc_a_monitorer():
+        ''' retour le nom du bloc et l'arborésence du bloc à déboger'''
+        monitoring = {}
+        arbo_ids = []
+        monitoring_loop = 0
+        proc_name = "bloc_a_monitorer: "
+        #print(proc_name, "début")
+        #print(proc_name, "décodage arborescence du nom du bloc à monitorer")
+        lignée=master.title()
+        list_blocs = lignée.split("/")
+        #print(proc_name, f" list={list_blocs}")
+        list_blocs.pop(0)
+        #print(proc_name, f" list={list_blocs}")
+        for i, blc in enumerate(list_blocs):
+            if i==0:
+                monitoring['name'] = blc
+                arbo_ids.append(0)
+            else:
+                ip = blc.find(")")
+                arbo_ids.append(int(blc[1:ip]))
+        monitoring['arbo_ids'] = arbo_ids
+        #print(proc_name, f"  monitoring['name']={monitoring['name']}")
+        #print(proc_name, f"  monitoring['arbo_ids']={monitoring['arbo_ids']}")
+        msg_dump = pickle.dumps(monitoring)
+        #print (proc_name, "   msg_dump:", msg_dump)
+        retour = b"monitoring:"+msg_dump 
+        #print(proc_name, f" monitoring loop[{monitoring_loop}]: message envoyé à la cible={retour}")
+        return  retour
 
-    monitoring = {}
-    arbo_ids = []
-    proc_name = "monitoring_bloc: "
-    print(proc_name, "début")
-    #print(proc_name, "décodage arborescence du nom du bloc à monitorer")
-    lignée=master.title()
-    list_blocs = lignée.split("/")
-    #print(proc_name, f" list={list_blocs}")
-    list_blocs.pop(0)
-    #print(proc_name, f" list={list_blocs}")
-    mssg = ""
-    for i, blc in enumerate(list_blocs):
-        if i==0:
-            monitoring['name'] = blc
-            arbo_ids.append(0)
-        else:
-            ip = blc.find(")")
-            arbo_ids.append(int(blc[1:ip]))
-    monitoring['arbo_ids'] = arbo_ids
-    #print(proc_name, f"  monitoring['name']={monitoring['name']}")
-    #print(proc_name, f"  monitoring['arbo_ids']={monitoring['arbo_ids']}")
-    msg_dump = pickle.dumps(monitoring)
-    #print (proc_name, "   msg_dump:", msg_dump)
-    message=b"monitoring:"+msg_dump
-    print (proc_name, f"   message envoyé à la cible: len{len(message)}")
+
+
+
+    #monitoring = {}
+    #arbo_ids = []
+    #monitoring_loop = 0
+    #proc_name = "monitoring_bloc: "
+    #print(proc_name, "début")
+    ##print(proc_name, "décodage arborescence du nom du bloc à monitorer")
+    #lignée=master.title()
+    #list_blocs = lignée.split("/")
+    ##print(proc_name, f" list={list_blocs}")
+    #list_blocs.pop(0)
+    ##print(proc_name, f" list={list_blocs}")
+    #for i, blc in enumerate(list_blocs):
+    #    if i==0:
+    #        monitoring['name'] = blc
+    #        arbo_ids.append(0)
+    #    else:
+    #        ip = blc.find(")")
+    #        arbo_ids.append(int(blc[1:ip]))
+    #monitoring['arbo_ids'] = arbo_ids
+    ##print(proc_name, f"  monitoring['name']={monitoring['name']}")
+    ##print(proc_name, f"  monitoring['arbo_ids']={monitoring['arbo_ids']}")
+    #msg_dump = pickle.dumps(monitoring)
+    ##print (proc_name, "   msg_dump:", msg_dump)
+    #message=b"monitoring:"+msg_dump
+    #print (proc_name, f"   message envoyé à la cible: len{len(message)}")
+    monitoring_loop = 0
     while flag_monitoring:
         if True: #try:
-            clientTCP.send_message(message)
+            print(proc_name, f" monitoring loop[{monitoring_loop}]: message envoyé à la cible") #={message}")
+            #clientTCP.send_message(message)
+            clientTCP.send_message(bloc_a_monitorer())
             #print(proc_name, "Attente message")
             buff = clientTCP.receive_message()
             if buff == b"monitoring:not_found":
-                messagebox.showinfo("❌ERROR", f"Monitoring not allowed, because the target does not contain bloc <{monitoring['name']}>")
+                messagebox.showinfo("❌ERROR:", f"Monitoring not allowed, because the target does not contain bloc <{bloc.header['name']}>")
                 flip_monitoring()
                 break
             else:
                 monitored_sublocs = pickle.loads(buff)
                 for i, sb in enumerate(bloc.sublocs):
-                    #print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+                    #print(proc_name, f" boucle[{i}] sur bloc à l'écran,   monitored_sublocs[{i}].header['name']=<{sb.header['name']}>")
                     for j, io in enumerate(sb.ios):
-                        #print(proc_name, f" : ois[{k}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+                        #print(proc_name, f" :  boucle[{j}] sur io à l'écran, ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ")
                         for ii, msb in enumerate(monitored_sublocs):
                             if msb.header['id'] == sb.header['id']:
                                 #print(proc_name, f"bloc SYSTEM id==id: monitored_subloc[{ii}].header['name']=<{msb.header['name']}> bloc.subloc[{j}].header['name']=<{sb.header['name']}>")
-                                show_monitored_io (io['type'], io, msb, io['id'])
+                                show_monitored_io (io['type'], io, msb, io['id']) #msbmsb
 
-            time.sleep(0.1)
+            time.sleep(PARAM_MONITORING_PERIOD)
         else: #except:
-            print(proc_name, "EXECPTION: buffer reçu=", buff)
-    #print(proc_name, "fin du monitoring")
+            print(proc_name, "❌ERROR: EXECPTION") #buffer reçu=", buff)
+        monitoring_loop += 1
+    print(proc_name, "fin du monitoring")
     for i, sb in enumerate(bloc.sublocs):
-        #print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+        print(proc_name, f" monitoring bloc=<{bloc.header['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
         for j, io in enumerate(sb.ios):
-            #print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+            print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
             show_normal_io (io)
     #bloc.c_bloc_redraw()
     print(proc_name, "fin")
