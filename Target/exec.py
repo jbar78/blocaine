@@ -753,6 +753,9 @@ def c_exesubloc_minmax (pebloc, pieb, pio, pthread):
     #print ("<MINMAX> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 
+
+
+
 def c_exesubloc_modbus_conn(pebloc, pieb, pio, pthread):
     """ exécution du bloc de connection ModBus/TCP (dans la boucler écurcive)"""
     # les index des IOs
@@ -765,7 +768,6 @@ def c_exesubloc_modbus_conn(pebloc, pieb, pio, pthread):
     def modbus_connection():
         proc_name = "mod_bus_connection: "
         #print (proc_name, f"début")
-        #ret_client = ModbusTcpClient('127.0.0.1', port=502, timeout=0.2)  # IP esclave
         ret_client = ModbusTcpClient(host=cesubloc.inputs[0]['var'], port=cesubloc.inputs[1]['var'], timeout=cesubloc.inputs[2]['var']) #, retries=0
         #print (proc_name, f"après client.ModbusTcpClient(),  client={ret_client}")
         ret_client.connect()
@@ -786,50 +788,31 @@ def c_exesubloc_modbus_conn(pebloc, pieb, pio, pthread):
             #print (f"<MODBUS_CONN> après validation standard")
             #for i, input in enumerate(cesubloc.inputs): print (f"<MODBUS_CONN> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
             #for i, output in enumerate(cesubloc.outputs): print (f"<MODBUS_CONN> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
-            #cesubloc.outputs[0]['var'] = "ID"
-            #cesubloc.outputs[1]['var'] = True
-            if hasattr(cesubloc.outputs[0]['var'], "connected"):
-                #print (f"<MODBUS_CONN> ID.connected existe,   cesubloc.outputs[0]['var'].connected={cesubloc.outputs[0]['var'].connected}")
-                connected_exist = True
-            else:
-                #print (f"<MODBUS_CONN> ID.connected n'existe pas,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
-                connected_exist = False
-            if cesubloc.inputs[3]['var']:
+            connected = getattr(cesubloc.outputs[0]['var'], "connected", False)
+            #print (f"<MODBUS_CONN> ID.connected existe ou pas,  existe={connected_exist},  cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
+            if cesubloc.inputs[3]['var']: # CLOSE order
                 #print (f"<MODBUS_CONN> demande CLOSE,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
-                if connected_exist:
-                    #print (f"<MODBUS_CONN> demande CLOSE et connected existe,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
-                    if cesubloc.outputs[0]['var'].connected:
-                        #print (f"<MODBUS_CONN> demande CLOSE et connected==True,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
-                        cesubloc.outputs[0]['var'].close()
-                        cesubloc.outputs[1]['var'] = cesubloc.outputs[0]['var'].connected
-                    else:
-                        #print (f"<MODBUS_CONN> demande CLOSE et connected==False,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
-                        cesubloc.outputs[0]['var'] = None
-                        cesubloc.outputs[1]['var'] = False
+                #print (f"<MODBUS_CONN> demande CLOSE et connected existe,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
+                if connected:
+                    print (f"<MODBUS_CONN> demande CLOSE et connected==True,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
+                    cesubloc.outputs[0]['var'].close()
+                    cesubloc.outputs[1]['var'] = cesubloc.outputs[0]['var'].connected
                 else:
-                    #print (f"<MODBUS_CONN> demande CLOSE et connected n'existe pas,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
+                    #print (f"<MODBUS_CONN> demande CLOSE et connected==False,   cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
                     cesubloc.outputs[0]['var'] = None
                     cesubloc.outputs[1]['var'] = False
-            else:
+            else: #no CLOSE order
                 #print (f"<MODBUS_CONN> il n'y a pas de demande de fermeture de la connexion cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
-                if connected_exist:
-                    #print (f"<MODBUS_CONN>  .connected existe={cesubloc.outputs[0]['var'].connected}")
-                    if cesubloc.outputs[0]['var'].connected:
-                        #print (f"<MODBUS_CONN> déjà connected ne rien faire")
-                        #return cesubloc.outputs[0]['var']
-                        pass
-                    else:
-                        #print (f"<MODBUS_CONN> not connected 1")
-                        client = modbus_connection()
-                        #print (f"<MODBUS_CONN> aprés connexion 1, client={client},  .connected={client.connected}")
-                        cesubloc.outputs[0]['var'] = client
-                        cesubloc.outputs[1]['var'] = client.connected
-                else:
-                    #print (f"<MODBUS_CONN> not connected 2")
+                if not connected:
+                    print (f"<MODBUS_CONN> not connected 1")
                     client = modbus_connection()
-                    #print (f"<MODBUS_CONN> aprés connxion 2, client={client}  .connected={client.connected}")
+                    print (f"<MODBUS_CONN> aprés connexion 1, client={client},  .connected={client.connected}")
                     cesubloc.outputs[0]['var'] = client
                     cesubloc.outputs[1]['var'] = client.connected
+                else:
+                    #print (f"<MODBUS_CONN> déjà connected ne rien faire")
+                    cesubloc.outputs[1]['var'] = cesubloc.outputs[0]['var'].connected
+                    pass
         except:
             print ("<MODBUS_CONN>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
@@ -838,6 +821,7 @@ def c_exesubloc_modbus_conn(pebloc, pieb, pio, pthread):
         #for i, output in enumerate(cesubloc.outputs): print (f"<MODBUS_CONN> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
     #print (f"<MODBUS_CONN>---fin---name={cesubloc.outputs[pio]['name']}: retourne l'output [{pio}]: var={cesubloc.outputs[pio]['var']}, val={cesubloc.outputs[pio]['valide']}")
     return cesubloc.outputs[pio]
+
 
 def c_exesubloc_modbus_read (pebloc, pieb, pio, pthread):
     """ exécution du bloc de connection ModBus/TCP (dans la boucler écurcive)"""
@@ -862,30 +846,42 @@ def c_exesubloc_modbus_read (pebloc, pieb, pio, pthread):
             cesubloc.c_exesubloc_validation_standard()
             #print (f"<MODBUS_READ> après validation standard")
             #for i, input in enumerate(cesubloc.inputs): print (f"<MODBUS_READ> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
-            if hasattr(cesubloc.inputs[0]['var'], "connected"):
-                #print (f"<MODBUS_READ> ID.connected existe,   cesubloc.outputs[0]['var'].connected={cesubloc.inputs[0]['var'].connected}")
-                connected_exist = True
-            else:
-                #print (f"<MODBUS_READ> ID.connected n'existe pas,   cesubloc.outputs[0]['var']={cesubloc.inputs[0]['var']}")
-                connected_exist = False
-            if connected_exist:
-                if cesubloc.inputs[0]['var'].connected:
-                    if cesubloc.inputs[2]['var']==3: #n° de fonction
-                        read_result = cesubloc.inputs[0]['var'].read_holding_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
-                        if read_result.isError():
-                            #cesubloc.outputs[0]['var'] = None
-                            cesubloc.outputs[0]['valide'] = False
-                            cesubloc.outputs[1]['var'] = read_result
-                            #print(f"❌ <MODBUS_READ>  read error:  ErrorCode={read_result}")
-                        else:
-                            #print(f"✅ <MODBUS_READ> read OK: length={len(read_result.registers)}")
-                            cesubloc.outputs[0]['var'] = read_result.registers
-                            cesubloc.outputs[1]['var'] = 0 # status ok
+            connected = getattr(cesubloc.inputs[0]['var'], "connected", False)
+            #print (f"<MODBUS_READ> ID.connected existe ou pas,  existe={connected},  cesubloc.inputs[0]['var']={cesubloc.inputs[0]['var']}")
+            num_fonction = cesubloc.inputs[2]['var']
+            #print (f"<MODBUS_READ> N° de fonction={num_fonction}")
+            if connected:
+                read_result = None
+                if num_fonction  == 1: #n° de fonction
+                    read_result = cesubloc.inputs[0]['var'].read_coils(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    if not read_result.isError():
+                        cesubloc.outputs[0]['var'] = read_result.bits
+                elif num_fonction== 2: #n° de fonction
+                    read_result = cesubloc.inputs[0]['var'].read_discrete_inputs(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    if not read_result.isError():
+                        cesubloc.outputs[0]['var'] = read_result.bits
+                elif num_fonction== 3: #n° de fonction
+                    read_result = cesubloc.inputs[0]['var'].read_holding_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    if not read_result.isError():
+                        cesubloc.outputs[0]['var'] = read_result.registers
+                elif num_fonction== 4: #n° de fonction
+                    read_result = cesubloc.inputs[0]['var'].read_input_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    if not read_result.isError():
+                        cesubloc.outputs[0]['var'] = read_result.registers
+                if read_result != None:
+                    if read_result.isError():
+                        #cesubloc.outputs[0]['var'] = None
+                        cesubloc.outputs[0]['valide'] = False
+                        cesubloc.outputs[1]['var'] = read_result
+                        #print(f"❌ <MODBUS_READ>  read error:  ErrorCode={read_result}")
+                    else:
+                        #print(f"✅ <MODBUS_READ> read OK: length={len(read_result.registers)}")
+                        cesubloc.outputs[1]['var'] = 0 # status ok
                 else:
-                    #print(f"<MODBUS_READ>  client not connected")
+                    #print(f"<MODBUS_READ>  N° de fonction ModBus inconnu")
                     #cesubloc.outputs[0]['var'] = None
                     cesubloc.outputs[0]['valide'] = False
-                    cesubloc.outputs[1]['var'] = -1 #status: not connected
+                    cesubloc.outputs[1]['var'] = -2 # N° de fonction ModBus inconnu"
                     cesubloc.outputs[1]['valide'] = True
             else:
                 #print(f"<MODBUS_READ>  client not connected")
@@ -920,14 +916,25 @@ def c_exesubloc_modbus_write (pebloc, pieb, pio, pthread):
     else:
         cesubloc.header['counter'] = pthread['counter']
         #print ("<MODBUS_WRITE>", f" exécution:  cesubloc.header['counter']{cesubloc.header['counter']},   pthread['counter']:{pthread['counter']}")
-        if 1: #try:
+        try:
             pebloc.c_exebloc_recup_inputs(pieb, pthread)
             cesubloc.c_exesubloc_validation_standard()
             #print (f"<MODBUS_WRITE> après validation standard")
             #for i, input in enumerate(cesubloc.inputs): print (f"<MODBUS_WRITE> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
-            if cesubloc.inputs[0]['var'].connected:
-                if cesubloc.inputs[2]['var']==16: #n° de fonction
+            connected = getattr(cesubloc.inputs[0]['var'], "connected", False)
+            #print (f"<MODBUS_READ> ID.connected existe ou pas,  existe={connected_exist},  cesubloc.outputs[0]['var']={cesubloc.outputs[0]['var']}")
+            num_fonction = cesubloc.inputs[2]['var']
+            write_result = None
+            if connected:
+                if num_fonction   == 5: #n° de fonction
+                    write_result = cesubloc.inputs[0]['var'].write_coil(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                elif num_fonction == 6: #n° de fonction
+                    write_result = cesubloc.inputs[0]['var'].write_register(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                elif num_fonction == 15: #n° de fonction
+                    write_result = cesubloc.inputs[0]['var'].write_coils(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                elif num_fonction == 16: #n° de fonction
                     write_result = cesubloc.inputs[0]['var'].write_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                if write_result != None:        
                     if write_result.isError():
                         cesubloc.outputs[0]['var'] = False
                         #print(f"❌ <MODBUS_WRITE>  write error:  ErrorCode={write_result}")
@@ -935,11 +942,17 @@ def c_exesubloc_modbus_write (pebloc, pieb, pio, pthread):
                         #print(f"✅ <MODBUS_WRITE> write OK: length={len(write_result.registers)}")
                         cesubloc.outputs[0]['var'] = True
                     cesubloc.outputs[1]['var'] = write_result.function_code
+                else:
+                    #print(f"<MODBUS_WRITE>  N° de fonction ModBus inconnu")
+                    #cesubloc.outputs[0]['var'] = None
+                    cesubloc.outputs[0]['valide'] = False
+                    cesubloc.outputs[1]['var'] = -2 # N° de fonction ModBus inconnu"
+                    cesubloc.outputs[1]['valide'] = True
             else:
                 #print(f"<MODBUS_WRITE>  client not connected")
-                cesubloc.outputs[0]['var'] = False
+                cesubloc.outputs[0]['valide'] = False
                 cesubloc.outputs[1]['var'] = -1 #status: not connected
-        else: #except:
+        except:
             print ("<MODBUS_WRITE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -947,6 +960,7 @@ def c_exesubloc_modbus_write (pebloc, pieb, pio, pthread):
         #for i, output in enumerate(cesubloc.outputs): print (f"<MODBUS_WRITE> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
     #print (f"<MODBUS_WRITE>---fin---name={cesubloc.outputs[pio]['name']} retourne l'output [{pio}]: var={cesubloc.outputs[pio]['var']}, val={cesubloc.outputs[pio]['valide']}")
     return cesubloc.outputs[pio]
+
 
 def c_exesubloc_mult (pebloc, pieb, pio, pthread):
     """ exécution du bloc MULTIPLICATION (dans la boucler écurcive)"""

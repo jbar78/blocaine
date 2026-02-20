@@ -66,9 +66,9 @@ class clientTCP:
         proc_name = "receive_message: "
         header = receive_nbr(PARAM_TCP_MESS_HEADER_SIZE)
         length = struct.unpack(PARAM_TCP_MESS_HEADER_TYPE, header)[0]
-        print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
+        #print(proc_name, f"longueur du message utile inscrite dans l'entête={length}")
         mess_utile_recu = receive_nbr(length)
-        print(proc_name, f"longeur du message utile reçu={len(mess_utile_recu)}")
+        print(proc_name, f"longueur du message utile: entête={length} VS reçu={len(mess_utile_recu)}")
         return mess_utile_recu
 
 
@@ -81,7 +81,7 @@ class clientTCP:
             raise ConnectionError("❌ERROR: TCP socket close because header length to short")
         #print(proc_name, f"réception de l'entête={header}")
         length = struct.unpack(PARAM_TCP_MESS_HEADER_TYPE, header)[0]
-        #print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
+        #print(proc_name, f"longueur du message utile inscrite dans l'entête={length}")
         remaining = length
         mess_reçu =b""
         while remaining > 0:
@@ -104,7 +104,7 @@ class clientTCP:
         header = self.socket.recv(8)
         #print(proc_name, f"réception de l'entête={header}")
         (length,) = struct.unpack("!Q", header)
-        #print(proc_name, f"longeur du message utile inscrite dans l'entête={length}")
+        #print(proc_name, f"longueur du message utile inscrite dans l'entête={length}")
         remaining = length
         mess_reçu =b""
         while remaining > 0:
