@@ -9,8 +9,8 @@ import gc
 import subprocess
 import tkinter.font
 #from tkinter import font
-from tkinter import *
-from tkinter import ttk, filedialog, messagebox
+import tkinter as tk
+from tkinter import filedialog
 import copy
 import pickle
 import socket
@@ -102,7 +102,7 @@ class c_mire:
             self.cercles.append (can.create_oval(-r, r, r, -r, tag=[t_mire, "cercles"], outline=self.param_cercle_couleur, width=self.param_largeur_trait))
         # dessine le centre
         self.centre  = can.create_line(0, 0, 1, 1, tag=[t_mire, "centre"], fill="black")
-        can.move (ALL, xoff, yoff)        # décale le canvas pour avoir la mire au milieu
+        can.move (tk.ALL, xoff, yoff)        # décale le canvas pour avoir la mire au milieu
         #zoom(0.5, xoff, yoff)          # applique le zoom par défaut
 class c_position:
     """structure une position (tule) en position x,y"""
@@ -194,7 +194,7 @@ class c_bloc:
             bloc_name = PARAM_CHEMIN_SYSTEM+PARAM_NAME_BLOC_OUTPUT+".bloc"
         else:
             #print (proc_name, "type==out<{}>".format(type_bloc))
-            bloc_name = filedialog.askopenfilename(initialdir= "blocs/"+type_bloc, filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
+            bloc_name = tk.filedialog.askopenfilename(initialdir= "blocs/"+type_bloc, filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
 
         self.sublocs.append (c_sublocs(bloc_name))
         if self.sublocs[-1].header['name'] == PARAM_NAME_BLOC_OUTPUT:
@@ -452,7 +452,7 @@ class c_sublocs:
         proc_name = "c_sublocs_event_clic_droit_header: "
         #print (proc_name, "event=", event)
         #print (proc_name, "objet=<{}>".format(self))
-        memo_event_clic_droit_io = TRUE
+        memo_event_clic_droit_io = True
         self.menu_header = menu_header(event, self)
     def c_sublocs_event_clic_gauche_header (self, event):
         """call_back: sur evenement"""
@@ -520,7 +520,7 @@ class c_sublocs:
         global memo_event_clic_droit_io
         proc_name = "c_sublocs_event_clic_droit_io: "
         #print (proc_name, "event=", event)
-        memo_event_clic_droit_io = TRUE
+        memo_event_clic_droit_io = True
         menu_io(event, io)
     def c_sublocs_event_clic_gauche_io (self, event, io=4):
         """call_back: sur evenement"""
@@ -530,7 +530,7 @@ class c_sublocs:
         lien_origine['io']= io
         lien_origine['event']= event
         #print (proc_name, "io=", io, " event=", event)
-        memo_lien_en_cours = TRUE
+        memo_lien_en_cours = True
     def c_sublocs_event_release_gauche_io (self, event, io=4):
         """call_back: sur evenement"""
         proc_name = "c_sublocs_event_release_gauche_io: "
@@ -1144,7 +1144,7 @@ def update_bloc(elem):
                     elem.ios[i]['lien'] = lien['lien']
                     #print (proc_name, "reinjection un lien dans l'io=", io)
 
-    if TRUE:
+    if True:
         for lien in mem_liens_out:
             #print (proc_name, "lien dans boucle liens_out, lien=", lien)
             trouve=False
@@ -1269,7 +1269,7 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange, 
     #print (proc_name, f"param: pos_xy={pos_x}, {pos_y}, start={pstart}, toggle={ptoggle}, change={pchange}, bool={pbool}")
     bloc_parent = find_parent (io)
     if not 'system' in bloc_parent.header['key_word']:
-        messagebox.showinfo("Warning", "IO overwriting from a USER bloc interface is not yet available, please open the USER bloc and then overwrite the desired IO inside it.")
+        tk.messagebox.showinfo("Warning", "IO overwriting from a USER bloc interface is not yet available, please open the USER bloc and then overwrite the desired IO inside it.")
     else:
         if pstart:
             message=b"overwriting_start:"
@@ -1484,7 +1484,7 @@ def set_defaut_value_io_old(px, py, io, pdic):
     io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
     label_type = Label(pop.popup, text="type:")
     label_type.grid(row = pop.ligne, column = 0)
-    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+    combox_type = tk.ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
     print (proc_name, f"existing type={type(io[pdic])}")
     print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
     index_type = 0
@@ -1553,7 +1553,7 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
         label_type = Label(pop.popup, text="type:")
         label_type.grid(row = pop.ligne, column = 0, sticky="e")
-        combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+        combox_type = tk.ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
         print (proc_name, f"existing type={type(io[pdic])}")
         print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
         index_type = 0
@@ -1716,7 +1716,7 @@ def flip_monitoring():
             monitoring_thread = threading.Thread(target=monitoring_bloc)
             monitoring_thread.start()
         else:
-            messagebox.showinfo("❌ERROR", "Monitoring not allowed because, the target is not connected via TCP/IP ")
+            tk.messagebox.showinfo("❌ERROR", "Monitoring not allowed because, the target is not connected via TCP/IP ")
             flag_monitoring = not flag_monitoring
     set_running(flag_monitoring)
 
@@ -1752,7 +1752,7 @@ def event_release_gauche(event):
             start_txt ="OUTPUT"
             end_txt = "INPUT"
         print(f"❌ERROR: As starting point is an <{start_txt}>, the end point must be an ", end_txt)
-        messagebox.showinfo(f"❌ERROR", "As starting point is an <{start_txt}> the end point must be an "+end_txt)
+        tk.messagebox.showinfo(f"❌ERROR", "As starting point is an <{start_txt}> the end point must be an "+end_txt)
 
     proc_name = "event_release_gauche: "
     #print (proc_name, "event=", event)
@@ -1774,7 +1774,7 @@ def event_release_gauche(event):
                         if lien_destination['io']['type']=='in':  io_in  = lien_destination['io']
                         if lien_destination['io']['type']=='out': io_out = lien_destination['io']
                         if ('lien' in io_in):
-                            messagebox.showinfo("❌ERROR", "INPUT can only have one source")
+                            tk.messagebox.showinfo("❌ERROR", "INPUT can only have one source")
                         else:
                             #print (proc_name, "lin_io_in=", io_in)
                             #print (proc_name, "lin_io_out=", io_out)
@@ -1796,7 +1796,7 @@ def event_release_gauche(event):
                     else: end_error()
                 else: end_error()
         else: end_error()
-    memo_lien_en_cours = FALSE
+    memo_lien_en_cours = False
 def event_clic_droit(event):
     """callback: sur evenement"""
     global menu_contextuel
@@ -1804,7 +1804,7 @@ def event_clic_droit(event):
     #print ("event_clic_droit_canvas:")
     #if memo_event_header: print ("memo_event_header=VRAI")
     #else: print ("memo_event_header=FAUX")
-    if memo_event_clic_droit_io==FALSE:
+    if memo_event_clic_droit_io==False:
         # crée un menu cntextuel
         x = event.x
         y = event.y
@@ -1813,11 +1813,11 @@ def event_clic_droit(event):
         except:
             pass #print ("pas de menu contextuel à destroy")
         #print ("création menu contextuel en x<{}>  ymc<{}>".format(event.x, event.y))
-        items = canvas.find_withtag(CURRENT)
+        items = canvas.find_withtag(tk.CURRENT)
         #print("items len() =<{}>".format(len(items)))
         tags_list = canvas.gettags(items)
         print (f"dans menu, items<{items}>   tags<{tags_list}") #
-        menu_contextuel = Menu(master, tearoff=0)
+        menu_contextuel = tk.Menu(master, tearoff=0)
         if 'lien' in tags_list:
             menu_contextuel.add_command(label = "Delete link", command = lambda: bloc.c_bloc_delete_lien(event), foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER )
         else:
@@ -1827,7 +1827,7 @@ def event_clic_droit(event):
             menu_contextuel.add_command(label = "Add system bloc", command = lambda: bloc.c_bloc_add(event, "system"), background = PARAM_COLOR_BG_HEADER_SYSTEM, activebackground = PARAM_COLOR_BG_HEADER_SYSTEM)
             menu_contextuel.add_command(label = "Add user bloc", command = lambda: bloc.c_bloc_add(event, "user"), background = PARAM_COLOR_BG_HEADER_USER, activebackground = PARAM_COLOR_BG_HEADER_USER)
         menu_contextuel.post(event.x_root, event.y_root)
-    memo_event_clic_droit_io = FALSE
+    memo_event_clic_droit_io = False
 def event_clic_molette(event):
     """callback: sur evenement"""
     proc_name = "event_clic_molette"
@@ -1838,7 +1838,7 @@ def event_deplacement_clic_gauche_enfonce(event):
     """callback: sur evenement"""
     global memo_event_clic_gauche_header, x_molette, y_molette
     if not memo_event_clic_gauche_header and not memo_lien_en_cours:
-        canvas.move (ALL, event.x-x_molette, event.y-y_molette)
+        canvas.move (tk.ALL, event.x-x_molette, event.y-y_molette)
         #self.canvas.scan_dragto (event.x, event.y, 1)
         event_deplacement_souris(event)
         x_molette = event.x
@@ -1917,7 +1917,7 @@ def event_key_F1(event):
                 os.startfile(doc_file)
         else:
             message_txt = "The documentaion file:\n"+doc_file+"\nis not available for this bloc"
-            messagebox.showinfo("❌ERROR", message_txt)
+            tk.messagebox.showinfo("❌ERROR", message_txt)
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -1980,7 +1980,7 @@ def zoom(factor_brut, x, y):
         else:
             factor = factor_brut
             scale_factor = scale
-            canvas.scale(ALL, x, y, factor, factor)
+            canvas.scale(tk.ALL, x, y, factor, factor)
             #"zoom des textes"
             ltxt = canvas.find_withtag("texte")
             #print (proc_name, "update_font_size: list=<{}>".format(ltxt))
@@ -1992,9 +1992,9 @@ def zoom(factor_brut, x, y):
 def menu_bar():
     global bloc, config_window, rt_menubar, target_menubar, list_compiled, flag_monitoring
     proc_name = "menu_bar: "
-    menubar = Menu(master)
+    menubar = tk.Menu(master)
     master.config(menu = menubar)
-    bloc_menubar = Menu(menubar)
+    bloc_menubar = tk.Menu(menubar)
     menubar.add_cascade(label="Bloc", menu = bloc_menubar)
     bloc_menubar.add_command(label = "Open", command = lambda: open_file(None, (0,0)))
     bloc_menubar.add_command(label = "Save [F3]", command = lambda: save_file(save_as=False))
@@ -2006,28 +2006,28 @@ def menu_bar():
     bloc_menubar.add_separator()
     bloc_menubar.add_command(label = "Quit [Escape]",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = on_closing)
     #-------------------------
-    #rt_menubar = Menu(menubar)
+    #rt_menubar = tk.Menu(menubar)
     #menubar.add_cascade(label = "local (old)", menu = rt_menubar) 
     #menu_RT()
     #-------------------------
-    target_menubar = Menu(menubar)
+    target_menubar = tk.Menu(menubar)
     menubar.add_cascade(label = "Target", menu = target_menubar) 
     menu_target()
 
     #-------------------------
-    edit_menubar = Menu(menubar)
+    edit_menubar = tk.Menu(menubar)
     menubar.add_cascade(label = "Edit", menu = edit_menubar)
     edit_menubar.add_command(label = "Auto layout [F7]", command = routage)
     #edit_menubar.add_command(label = "Monitoring (Start/Stop) [Space]", command = flip_monitoring)
     edit_menubar.add_command(label = "Status bar (show/hide)", command = status_bar)
     #-------------------------
-    help_menubar = Menu(menubar)
+    help_menubar = tk.Menu(menubar)
     menubar.add_cascade(label = "Help", menu = help_menubar)
-    help_version_menubar = Menu(help_menubar)
+    help_version_menubar = tk.Menu(help_menubar)
     help_menubar.add_cascade(label = "Versions", menu = help_version_menubar)
     help_version_menubar.add_command(label = "bloc editor: Version 1.1")
     help_version_menubar.add_command(label = f"bloc structure: Version {bloc.header['structure_version']}")
-    help_mouse_menubar = Menu(help_menubar)
+    help_mouse_menubar = tk.Menu(help_menubar)
     help_menubar.add_cascade(label = "Mouse usage", menu = help_mouse_menubar)
     help_mouse_menubar.add_command(label = "[Left click] to select, to use menu")
     help_mouse_menubar.add_command(label = "[Left held down] to scroll within windows, to move bloc, to link I/O")
@@ -2035,7 +2035,7 @@ def menu_bar():
     help_mouse_menubar.add_command(label = "[Right button] to open the context menu")
     help_mouse_menubar.add_command(label = "[wheel button] to monitor the target variables (on/off)")
     help_mouse_menubar.add_command(label = "[wheel rotation] to zoom (in/out)")
-    help_key_menubar = Menu(help_menubar)
+    help_key_menubar = tk.Menu(help_menubar)
     help_menubar.add_cascade(label = "Key usage", menu = help_key_menubar)
     help_key_menubar.add_command(label = "[F1] Open the documentation for the bloc whose header is located under the cursor")
     help_key_menubar.add_command(label = "[F3] to save curant bloc")
@@ -2113,7 +2113,7 @@ def menu_header(event, elem):
         menu_contextuel.destroy()
     except:
         pass #print (proc_name, "pas de menu contextuel à destroy")
-    menu_contextuel = Menu(master, tearoff=0)
+    menu_contextuel = tk.Menu(master, tearoff=0)
     menu_contextuel.add_command(label = "Delete", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_bloc(elem))
     if True: #(elem.header['name'] != PARAM_NAME_BLOC_INPUT) and (elem.header['name'] != PARAM_NAME_BLOC_OUTPUT):
         menu_contextuel.add_command(label = "Update", command = lambda: update_bloc(elem))
@@ -2129,7 +2129,7 @@ def menu_header(event, elem):
             sufix = ""
         else:
             prefix= "Add"
-        menu_event = Menu(menu_contextuel)
+        menu_event = tk.Menu(menu_contextuel)
         menu_contextuel.add_cascade(label = prefix+" event", menu = menu_event)
         if 'event_id' in elem.header:
             menu_event.add_command(label = "Delete event: ", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_event(elem))
@@ -2189,7 +2189,7 @@ def menu_io(event, io):
                             if 'forced' in moutput:
                                 return True
                 else:
-                    messagebox.showinfo("❌ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
+                    tk.messagebox.showinfo("❌ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
         return False
 
     proc_name = "menu_io: "
@@ -2200,7 +2200,7 @@ def menu_io(event, io):
         print (proc_name, "pas de menu contextuel à destroy")
     elem_parent = find_parent(io)
 
-    menu_contextuel = Menu(master, tearoff=0)
+    menu_contextuel = tk.Menu(master, tearoff=0)
 
     if 'lien' in io:
         menu_contextuel.add_command(label = "Delete link",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_lien(io))
@@ -2274,7 +2274,7 @@ def open_file(pf_name, decal):
     proc_name = "open_file: "
     #mire = c_mire(canvas)
     if pf_name==None:
-        fname = filedialog.askopenfilename(initialdir= PARAM_CHEMIN_USER, title="Please select bloc", filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
+        fname = tk.filedialog.askopenfilename(initialdir= PARAM_CHEMIN_USER, title="Please select bloc", filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
         print (proc_name, "file name=", fname)
         if not fname: return
     else:
@@ -2294,12 +2294,12 @@ def open_file(pf_name, decal):
         bloc.c_bloc_draw(master, canvas, mire)
         decalage = c_position(decal)
         print (proc_name, "avant décalage, decalage=", decal)
-        canvas.move (ALL, scale_factor * decalage.x, scale_factor * decalage.y)
+        canvas.move (tk.ALL, scale_factor * decalage.x, scale_factor * decalage.y)
         routage()
         #if not 'system' in bloc.header['key_word']:
         #    update_blocs()
     else:
-        messagebox.showinfo("❌ERROR", "file reading error")
+        tk.messagebox.showinfo("❌ERROR", "file reading error")
     menu_target()
     #print (proc_name, "fin")
 def save_file(save_as):
@@ -2308,7 +2308,7 @@ def save_file(save_as):
     proc_name = "save_file: "
     bloc_a_sauver = pickle.loads(pickle.dumps(bloc))
     if save_as:
-        fullname = filedialog.asksaveasfilename(title="Please new bloc name", filetypes = [("Fichiers Bloc", "*.bloc")])
+        fullname = tk.filedialog.asksaveasfilename(title="Please new bloc name", filetypes = [("Fichiers Bloc", "*.bloc")])
         print (proc_name, "file name=", fullname)
         if not fullname: return
         fname_sans_chemin = os.path.basename(fullname)
@@ -2337,7 +2337,7 @@ def update_blocs():
             #print (proc_name, "updating bloc name=", elem.header['name'], "  id=", elem.header['id'])
             update_error = update_error or update_bloc(bloc.sublocs[i])
     if update_error:
-        messagebox.showinfo("ERROR", "some sub-bloc can not be updated")
+        tk.messagebox.showinfo("ERROR", "some sub-bloc can not be updated")
 def reset_blocs():
     """supprimer tous les éléments (BLOC)"""
     global bloc
@@ -2466,7 +2466,7 @@ def status_bar():
     try:
         barre_de_status.pack_info()
     except:
-        barre_de_status.pack(side = LEFT, fill=BOTH, expand=1)
+        barre_de_status.pack(side = tk.LEFT, fill=tk.BOTH, expand=1)
     else:
         barre_de_status.pack_forget()
     #print ("status_bar: fin")
@@ -2489,7 +2489,7 @@ def TCPconnect():
         print (proc_name, "clientTCP.connect")
         clientTCP.connect(PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT)
         if clientTCP.socket == None:
-            messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_HOST_IP}) not reachable")
+            tk.messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_HOST_IP}) not reachable")
     else:
         print (proc_name, "clientTCP.close")
         clientTCP.close()
@@ -2920,12 +2920,12 @@ def compile_bloc(pbloc, porder):
         else:
             txt_compil = "The bloc <"+pbloc.header['name']+"> is valide"
         print (proc_name, txt_compil)
-        messagebox.showinfo("Compilation Status:", txt_compil)
+        tk.messagebox.showinfo("Compilation Status:", txt_compil)
     #______________________________________________________________________________________________________pas d'erreur et (transfer ou execute)
     if error_compil == None and (porder == "transfer" or porder == "execute") and clientTCP.socket != None:
         if porder == "execute": txt_execute = "\n and execute?"
         else: txt_execute = ""
-        reponse = messagebox.askquestion("Confirmation", "The bloc <"+pbloc.header['name']+"> is valide\nSend it to the target?"+txt_execute)
+        reponse = tk.messagebox.askquestion("Confirmation", "The bloc <"+pbloc.header['name']+"> is valide\nSend it to the target?"+txt_execute)
         if reponse == 'yes':
             print(proc_name, "L'utilisateur a choisi Oui")
             exebloc_dump = pickle.dumps(exebloc)
@@ -3006,7 +3006,7 @@ def monitoring_bloc():
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
                     canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
         else:
-            messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+            tk.messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
     def show_normal_io(pio):
         proc_name = "show_normal_io: "
         #print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
@@ -3019,7 +3019,7 @@ def monitoring_bloc():
                 color = PARAM_COLOR_BG_OUTPUT
             #color = PARAM_COLOR_BG_OUTPUT
         else:
-            messagebox.showinfo("❌ERROR", f"Showing normal IO 'type' is not 'in' or 'out',  io={pio}")
+            tk.messagebox.showinfo("❌ERROR", f"Showing normal IO 'type' is not 'in' or 'out',  io={pio}")
         #print (proc_name, f"io name={pio['name']}")
         canvas.itemconfig(io['id_cadre'], fill= color)
         canvas.itemconfig(io['id_texte'], text= io_text(pio))
@@ -3090,7 +3090,7 @@ def monitoring_bloc():
             #print(proc_name, "Attente message")
             buff = clientTCP.receive_message()
             if buff == b"monitoring:not_found":
-                messagebox.showinfo("❌ERROR:", f"Monitoring not allowed, because the target does not contain bloc <{bloc.header['name']}>")
+                tk.messagebox.showinfo("❌ERROR:", f"Monitoring not allowed, because the target does not contain bloc <{bloc.header['name']}>")
                 flip_monitoring()
                 break
             else:
@@ -3137,7 +3137,7 @@ PARAM_ARG_NBR_MAIN = 1
 PARAM_ARG_NBR_SECOND = 3
 
 config_window={}
-master = Tk()
+master = tk.Tk()
 master.resizable(True, True)
 config_window['largeur']= int (master.winfo_screenwidth()//PARAM_RATIO_FENETRE_A_LOUVERTURE)
 config_window['hauteur']= int (master.winfo_screenheight()//PARAM_RATIO_FENETRE_A_LOUVERTURE)
@@ -3168,20 +3168,20 @@ master.update()
 scale_factor = 1.
 
 # création du canevas
-canvas = Canvas(master, bg=config_window['canvas_bg_color'])
+canvas = tk.Canvas(master, bg=config_window['canvas_bg_color'])
 canvas.pack(fill='both', expand=True, padx = 0, pady = 0)
 
 # création de la barre de status
-barre_de_status = Frame(master)
-bar_connexion = Label(barre_de_status, text="Target : Disconnected") 
-bar_souris_canv = Label(barre_de_status, text="position souris dans repère canvas") #, bg="orange"
-bar_coeff_zoom= Label(barre_de_status, text="coeff zoom")
-bar_souris_mire = Label(barre_de_status, text="position souris dans repère Mire")
-barre_de_status.pack(side = LEFT, fill=BOTH, expand=1)
-bar_connexion.pack(side =LEFT, expand=1)
-bar_souris_canv.pack(side =LEFT, expand=1)
-bar_coeff_zoom.pack(side = LEFT, expand=1)
-bar_souris_mire.pack(side = RIGHT, expand=1)
+barre_de_status = tk.Frame(master)
+bar_connexion = tk.Label(barre_de_status, text="Target : Disconnected") 
+bar_souris_canv = tk.Label(barre_de_status, text="position souris dans repère canvas") #, bg="orange"
+bar_coeff_zoom= tk.Label(barre_de_status, text="coeff zoom")
+bar_souris_mire = tk.Label(barre_de_status, text="position souris dans repère Mire")
+barre_de_status.pack(side = tk.LEFT, fill=tk.BOTH, expand=1)
+bar_connexion.pack(side =tk.LEFT, expand=1)
+bar_souris_canv.pack(side =tk.LEFT, expand=1)
+bar_coeff_zoom.pack(side = tk.LEFT, expand=1)
+bar_souris_mire.pack(side = tk.RIGHT, expand=1)
 master.update()
 master.resizable(width=True, height=True)
 
