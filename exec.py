@@ -4,7 +4,9 @@ import inspect
 import time
 import sys
 import math
-from pymodbus.client import ModbusTcpClient
+from PARAM_CONFIG import *
+if PARAM_CONFIG_MODULE_MODBUS:
+    from pymodbus.client import ModbusTcpClient
 from PARAM_NAME_BLOC import *
 from c_exebloc import *
 from sharedata import list_threads

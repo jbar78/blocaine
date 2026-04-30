@@ -10,22 +10,22 @@ import subprocess
 import tkinter.font
 #from tkinter import font
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import ttk, filedialog
 import copy
 import pickle
 import socket
-from pymodbus.client import ModbusTcpClient
 from datetime import datetime
-from pymodbus.client import ModbusTcpClient
-
 from module_bloc_file import *
 from exec import recup_procedure
 from utile import cable_wires_counter
 from c_exebloc import *
 from PARAM import *
+from PARAM_CONFIG import *
 from PARAM_NAME_BLOC import *
 from sharedata import *
 from clientTCP import *
+if PARAM_CONFIG_MODULE_MODBUS:
+    from pymodbus.client import ModbusTcpClient
 
 PARAM_DEBUG_ROUTAGE = False
 PARAM_MODE_MONITORING="RT"
@@ -644,7 +644,7 @@ class c_average:
         return self.sum/self.nb
 class c_popup:
     def __init__(self, title, x, y):
-        self.popup = Toplevel(master)
+        self.popup = tk.Toplevel(master)
         self.popup.wm_attributes("-topmost", True)
         self.popup.geometry("+{}+{}".format (x, y))
         self.popup.title(title)
@@ -654,12 +654,12 @@ class c_popup:
         self.set_proc=[] # méthode servant à modifier une variable de l'entête du bloc
     def c_popup_add_une_propriete(self, texte, param, set_proc):
         proc_name = "c_popup_add_une_propriete: "
-        self.label.append (Label(self.popup, text = texte))
+        self.label.append (tk.Label(self.popup, text = texte))
         if type(param).__name__ == "str":
             largeur = len(param)
         else: largeur = 10
-        self.entry.append (Entry(self.popup, width=largeur)) ####
-        self.entry[self.ligne].delete(0, END)
+        self.entry.append (tk.Entry(self.popup, width=largeur)) ####
+        self.entry[self.ligne].delete(0, tk.END)
         self.entry[self.ligne].insert(0, param)
         self.label[self.ligne].grid(row = self.ligne, column = 0, sticky="e")
         self.entry[self.ligne].grid(row = self.ligne, column = 1, sticky="w")
@@ -993,10 +993,20 @@ def open_bloc_new_window(name, id, pos):
     else: monitoring_str = PARAM_MODE_EDITION
     #if name==None: name=""
     #subprocess.Popen([sys.executable, "main.py", name, str(config_window['pos_x']), str(config_window['pos_y']), monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"])
+    #if name==None:
+    #    subprocess.Popen([sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y'])])
+    #else:
+    #    subprocess.Popen([sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y']), name, monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"])
+    list_param_commun = [sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y'])]
     if name==None:
-        subprocess.Popen([sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y'])])
+        list_param_subprocess = list_param_commun
     else:
-        subprocess.Popen([sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y']), name, monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"])
+        list_param_bloc = [name, monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"]
+        list_param_subprocess = list_param_commun+list_param_bloc
+    if sys.platform == "linux":
+        subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exec bash"])
+    else:
+        subprocess.Popen(list_param_subprocess,  creationflags=subprocess.CREATE_NEW_CONSOLE)
 def open_io_new_window(io):
     """ouvre un autre interpréteur Python pour permettre d'éditer le bloc passé en paramètre"""
     proc_name = "open_io_new_window: "
@@ -1345,9 +1355,9 @@ def modif_io(px, py, io, rename, comment, local ):
         if not 'comment' in io:
             io['comment']="no comment"
     io_modif = pop.c_popup_add_une_propriete(item+":", io[item], proc_null)
-    BP_escape = Button(pop.popup, text = 'Escape', command = pop.popup.destroy) #### width = 25,
+    BP_escape = tk.Button(pop.popup, text = 'Escape', command = pop.popup.destroy) #### width = 25,
     BP_escape.grid(row = pop.ligne, column = 0, sticky="w")
-    BP_validation = Button(pop.popup, text='Validation', command = validation) ####  width = 25,
+    BP_validation = tk.Button(pop.popup, text='Validation', command = validation) ####  width = 25,
     BP_validation.grid(row = pop.ligne, column = 1, sticky="e")
     #BP_escape.focus()
     BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
@@ -1375,9 +1385,9 @@ def change_local_name_io(px, py, io):
     pop = c_popup("io rename", 25+px, 75+py)
     if not 'local_name' in io: io['local_name']="new"
     io_name = pop.c_popup_add_une_propriete("Local Name:", io['local_name'], proc_null)
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
     BP_escape.grid(row = pop.ligne, column = 0)
-    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+    BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
     BP_validation.grid(row = pop.ligne, column = 1)
     #BP_escape.focus()
     BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
@@ -1409,9 +1419,9 @@ def change_local_comment_io(px, py, io):
     pop = c_popup("io comment", 25+px, 75+py)
     if not 'local_comment' in io: io['local_comment']="new"
     io_comment = pop.c_popup_add_une_propriete("Local Comment:", io['local_comment'], proc_null)
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
     BP_escape.grid(row = pop.ligne, column = 0)
-    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+    BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
     BP_validation.grid(row = pop.ligne, column = 1)
     #BP_escape.focus()
     BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
@@ -1482,9 +1492,9 @@ def set_defaut_value_io_old(px, py, io, pdic):
     pop = c_popup(pdic, 25+px, 75+py)
     if not pdic in io: io[pdic]=0
     io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
-    label_type = Label(pop.popup, text="type:")
+    label_type = tk.Label(pop.popup, text="type:")
     label_type.grid(row = pop.ligne, column = 0)
-    combox_type = tk.ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
     print (proc_name, f"existing type={type(io[pdic])}")
     print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
     index_type = 0
@@ -1497,9 +1507,9 @@ def set_defaut_value_io_old(px, py, io, pdic):
     combox_type.set(PARAM_TYPE_LIST[index_type])
     combox_type.grid(row = pop.ligne, column = 1)
     pop.ligne += 1
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
     BP_escape.grid(row = pop.ligne, column = 0)
-    BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+    BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
     BP_validation.grid(row = pop.ligne, column = 1)
     #BP_escape.focus()
     BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
@@ -1551,9 +1561,9 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         print(proc_name, f"io={io}")
         if not pdic in io: io[pdic]=0
         io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
-        label_type = Label(pop.popup, text="type:")
+        label_type = tk.Label(pop.popup, text="type:")
         label_type.grid(row = pop.ligne, column = 0, sticky="e")
-        combox_type = tk.ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+        combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
         print (proc_name, f"existing type={type(io[pdic])}")
         print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
         index_type = 0
@@ -1567,9 +1577,9 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         combox_type.set(PARAM_TYPE_LIST[index_type])
         combox_type.grid(row = pop.ligne, column = 1, sticky="w")
         pop.ligne += 1
-        BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+        BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
         BP_escape.grid(row = pop.ligne, column = 0)
-        BP_validation = Button(pop.popup, text='Validation', width = 25, command = validation)
+        BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
         BP_validation.grid(row = pop.ligne, column = 1)
         #BP_escape.focus()
         BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
@@ -1629,7 +1639,7 @@ def properties_io(px, py, io, all):
             lien_io_name = bloc.sublocs[index_parent].ios[lien_io_index]['name']
             texte = parent_header_name + "(" + str(parent_header_id) + ") / " + str(lien_io_name) + "(" + str(lien_io_id)+ ")"
             io_lien = pop.c_popup_add_une_propriete("link: (bloc / output)", texte, proc_null)
-        BP_escape = Button(pop.popup, text = 'Escape', command = pop.popup.destroy) ####  width = 25,
+        BP_escape = tk.Button(pop.popup, text = 'Escape', command = pop.popup.destroy) ####  width = 25,
         BP_escape.grid(row = pop.ligne, column = 0)
     return pop
 def memory_io(add_supp, io):
@@ -2057,6 +2067,7 @@ def menu_bar():
     #help_menubar.add_separator()
     doc_txt  = 'General Documentation'
     doc_file = 'Documentation/Documentation_générale.html'
+    doc_file = 'docs/general_en.pdf'
     if sys.platform == "linux":
         help_menubar.add_command(label = doc_txt, command = lambda: subprocess.Popen(['xdg-open', doc_file]))
     else:
@@ -2081,7 +2092,7 @@ def menu_target():
     if 'target_menubar' in globals():
         list_running = []
         proc_name = "menu_target: "
-        for i in range(target_menubar.index(tkinter.END)):
+        for i in range(target_menubar.index(tk.END)):
             #print (proc_name, "  index=", 1, "  avant delete")
             target_menubar.delete(1)
             #print (proc_name, "  index=", 1, "  aprés delete")
@@ -2395,10 +2406,10 @@ def properties_header(px, py, elem, modification=0):
             else:
                 txt_event = list_threads[ith]['name']+"  "+str(list_threads[ith]['period'])+"(s)"
             pop.c_popup_add_une_propriete("event:", txt_event, call_nul) ###
-    BP_escape = Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
     BP_escape.grid(row = pop.ligne, column = 0)
     if modification:
-        BP_validation = Button(pop.popup, text='Validation', width = 25, command = lambda :pop.c_popup_validation(val_objet))
+        BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = lambda :pop.c_popup_validation(val_objet))
         BP_validation.grid(row = pop.ligne, column = 1)
     BP_escape.focus()
     BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
@@ -2439,16 +2450,16 @@ def on_closing():
             print (proc_name, "pas de modifs")
         else:
             print (proc_name, "il y a des modifs")
-            popup = Toplevel(master)
+            popup = tk.Toplevel(master)
             popup.wm_attributes("-topmost", True)
             popup.geometry("+{}+{}".format (int(config_window['pos_x']+50), int(config_window['pos_y']+50)))
             popup.title("Warnning")
             #popup.pack()
-            Label(popup, text = "\r"+bloc.header['name']+".bloc   has changed!\r\rWould you like to save it?\r\r").pack()
-            BP_no = Button(popup, text = 'no', width = 25, command = master.destroy)
-            BP_yes = Button(popup, text = 'yes', width = 25, command = save_and_exit)
-            BP_no.pack(side=LEFT)
-            BP_yes.pack(side=RIGHT)
+            tk.Label(popup, text = "\r"+bloc.header['name']+".bloc   has changed!\r\rWould you like to save it?\r\r").pack()
+            BP_no = tk.Button(popup, text = 'no', width = 25, command = master.destroy)
+            BP_yes = tk.Button(popup, text = 'yes', width = 25, command = save_and_exit)
+            BP_no.pack(side=tk.LEFT)
+            BP_yes.pack(side=tk.RIGHT)
             BP_no.focus()
             BP_no.bind("<Return>", lambda event: BP_no.invoke())
             BP_no.bind("<KP_Enter>", lambda event: BP_no.invoke())
@@ -2487,9 +2498,9 @@ def TCPconnect():
     print (proc_name, f"clientTCP.socket={clientTCP.socket}")
     if clientTCP.socket == None:
         print (proc_name, "clientTCP.connect")
-        clientTCP.connect(PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT)
+        clientTCP.connect(PARAM_TCP_TARGET_IP, PARAM_TCP_TARGET_PORT)
         if clientTCP.socket == None:
-            tk.messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_HOST_IP}) not reachable")
+            tk.messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_TARGET_IP}) not reachable")
     else:
         print (proc_name, "clientTCP.close")
         clientTCP.close()
@@ -3084,7 +3095,7 @@ def monitoring_bloc():
     monitoring_loop = 0
     while flag_monitoring:
         if True: #try:
-            print(proc_name, f" monitoring loop[{monitoring_loop}]: message envoyé à la cible") #={message}")
+            print(proc_name, f" monitoring bloc <{master.title()}>    index[{monitoring_loop}]")
             #clientTCP.send_message(message)
             clientTCP.send_message(bloc_a_monitorer())
             #print(proc_name, "Attente message")
@@ -3218,7 +3229,7 @@ master.bind("<KeyPress-Delete>", event_key_delete)
 master.protocol("WM_DELETE_WINDOW", on_closing)
 
 clientTCP = clientTCP()
-clientTCP.connect(PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT) # connexion automatique
+clientTCP.connect(PARAM_TCP_TARGET_IP, PARAM_TCP_TARGET_PORT) # connexion automatique
 
 # création du menu static
 menu_bar()

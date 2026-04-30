@@ -49,7 +49,7 @@ menu = """<table>
         <tr><td>
         <span title="List of blocs"><a href='/blocs'>Bloc</a></span><br>
         <span title="List of outputs"><a href='/outputs'>Output</a></span><br>
-        <span title="List of overwriting"><a href='/overwriting'>Overwriting</a></span><br>
+        <span title="List of overwriting"><a href='/overwriting'>Overriding</a></span><br>
         <span title="List of tasks and CPU load"><a href='/threads'>Task & Load</a></span><br>
         <span title="List of connexions"><a href='/connexion'>Connexion</a></span><br>
         <span title="To print the list of compiled blocs"><a href='/list_compiled:print_list_compiled:'>print list_compiled</a></span><br>
@@ -180,7 +180,7 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<table>"
             html += f"""<tr><th colspan="3";>TCP/IP protocol</th></tr>"""
             html += f"""<tr><th>...</th><th>@ip</th><th>port</th></tr>"""
-            html += f"""<tr><th>server</th><td>{local_ip}</td><td>{PARAM_TCP_HOST_PORT}</td></tr>"""
+            html += f"""<tr><th>server</th><td>{local_ip}</td><td>{PARAM_TCP_TARGET_PORT}</td></tr>"""
             for i, client in enumerate(clientsTCP):
                 html += f"""<tr><th>client[{i}]</th><td>{client[0]}</td><td>{client[1]}</td></tr>"""
             html +="</table>"

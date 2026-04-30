@@ -4,6 +4,9 @@ import pickle
 import copy
 import struct
 from PARAM_NETWORK import *
+from PARAM_CONFIG import *
+if PARAM_CONFIG_MODULE_MODBUS:
+    from pymodbus.client import ModbusTcpClient
 from sharedata import clientsTCP
 from c_exebloc import *
 from exec import *
@@ -134,13 +137,15 @@ def handle_clientTCP(client_socket, addr):
                                 #print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
                                 modbus_bloc =  f"bloc ModBus, bloc name<{subloc.header['name']}>, "
                                 for input in subloc.inputs:
-                                    if isinstance(input['var'], ModbusTcpClient):
-                                        #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, var=<{input['name']}>")
-                                        avec_modbus_type = True
+                                    if PARAM_CONFIG_MODULE_MODBUS:
+                                        if isinstance(input['var'], ModbusTcpClient):
+                                            #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, var=<{input['name']}>")
+                                            avec_modbus_type = True
                                 for output in subloc.outputs:
-                                    if isinstance(output['var'], ModbusTcpClient):
-                                        #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
-                                        avec_modbus_type = True
+                                    if PARAM_CONFIG_MODULE_MODBUS:
+                                        if isinstance(output['var'], ModbusTcpClient):
+                                            #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
+                                            avec_modbus_type = True
                                 if avec_modbus_type: # pour ne pas sérialiser le type ModbusTcpClient
                                     def modbus_io (io):
                                         #print (proc_name, modbus_bloc, f"modbus_io: <ModbusTcpClient> name=<{io['name']}>,  var=<{io['var']}>")
@@ -156,31 +161,28 @@ def handle_clientTCP(client_socket, addr):
                                     c_subloc.outputs = copy.copy(subloc.outputs)
                                     for i, (input, c_input) in enumerate(zip(subloc.inputs, c_subloc.inputs)):
                                         #print (proc_name, f"  inputs: origine: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}")
-                                        if isinstance(input['var'], ModbusTcpClient):
-                                            #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, name=<{input['name']}>,  var=<{input['var']}>")
-                                            c_subloc.inputs[i] = copy.copy(input)
-                                            c_subloc.inputs[i]['var'] = modbus_io(input)
-                                            #print (proc_name, f"  inputs: corrigé: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}, ['var']={c_input['var']}")
+                                        if PARAM_CONFIG_MODULE_MODBUS:
+                                            if isinstance(input['var'], ModbusTcpClient):
+                                                #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, name=<{input['name']}>,  var=<{input['var']}>")
+                                                c_subloc.inputs[i] = copy.copy(input)
+                                                c_subloc.inputs[i]['var'] = modbus_io(input)
+                                                #print (proc_name, f"  inputs: corrigé: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}, ['var']={c_input['var']}")
                                     for i, (output, c_output) in enumerate(zip(subloc.outputs, c_subloc.outputs)):
                                         #print (proc_name, f"  outputs: origine:id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}")
-                                        if isinstance(output['var'], ModbusTcpClient):
-                                            #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
-                                            c_subloc.outputs[i] = copy.copy(output)
-                                            c_subloc.outputs[i]['var'] =  modbus_io(output)
-                                            #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
-                                    #for i, (output, c_output) in enumerate(zip(subloc.outputs, c_subloc.outputs)):
-                                    #    print (proc_name, f"  outputs: origine:id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}")
-                                    #    if isinstance(output['var'], ModbusTcpClient):
-                                    #        #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
-                                    #        c_subloc.outputs[i] = copy.copy(output)
-                                    #        c_subloc.outputs[i]['var']= ".Modbus."
-                                    #        print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
+                                        if PARAM_CONFIG_MODULE_MODBUS:
+                                            if isinstance(output['var'], ModbusTcpClient):
+                                                #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
+                                                c_subloc.outputs[i] = copy.copy(output)
+                                                c_subloc.outputs[i]['var'] =  modbus_io(output)
+                                                #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
                                     for i, c_input in enumerate(c_subloc.inputs):
-                                        if isinstance(c_input['var'], ModbusTcpClient):
-                                            print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
+                                        if PARAM_CONFIG_MODULE_MODBUS:
+                                            if isinstance(c_input['var'], ModbusTcpClient):
+                                                print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
                                     for i, c_output in enumerate(c_subloc.outputs):
-                                        if isinstance(c_output['var'], ModbusTcpClient):
-                                            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
+                                        if PARAM_CONFIG_MODULE_MODBUS:
+                                            if isinstance(c_output['var'], ModbusTcpClient):
+                                                print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
                                     list_monitor.append(c_subloc)
                                 else:
                                     list_monitor.append(subloc)
@@ -256,13 +258,13 @@ def run_serverTCP():
         print(proc_name, f"après création soket d'écoute")
         # bind the socket to the host and port
         print(proc_name, f"avant bind sur soket d'écoute")
-        #serverTCP.bind((PARAM_TCP_HOST_IP, PARAM_TCP_HOST_PORT )
-        serverTCP.bind(('', PARAM_TCP_HOST_PORT ))
+        #serverTCP.bind((PARAM_TCP_TARGET_IP, PARAM_TCP_TARGET_PORT )
+        serverTCP.bind(('', PARAM_TCP_TARGET_PORT ))
         print(proc_name, f"apès bind sur soket d'écoute")
         # listen for incoming connections
-        print(proc_name, f"avant Listening on {PARAM_TCP_HOST_IP}:{PARAM_TCP_HOST_PORT }")
+        print(proc_name, f"avant Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
         serverTCP.listen()
-        print(proc_name, f"après Listening on {PARAM_TCP_HOST_IP}:{PARAM_TCP_HOST_PORT }")
+        print(proc_name, f"après Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
 
         while True:
             # accept a client connection
