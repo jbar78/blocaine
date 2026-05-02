@@ -1279,7 +1279,7 @@ def overwriting(pos_x, pos_y, io, pmonitored_sublocs, pstart, ptoggle, pchange, 
     #print (proc_name, f"param: pos_xy={pos_x}, {pos_y}, start={pstart}, toggle={ptoggle}, change={pchange}, bool={pbool}")
     bloc_parent = find_parent (io)
     if not 'system' in bloc_parent.header['key_word']:
-        tk.messagebox.showinfo("Warning", "IO overwriting from a USER bloc interface is not yet available, please open the USER bloc and then overwrite the desired IO inside it.")
+        messagebox.showinfo("Warning", "IO overwriting from a USER bloc interface is not yet available, please open the USER bloc and then overwrite the desired IO inside it.")
     else:
         if pstart:
             message=b"overwriting_start:"
@@ -1726,7 +1726,7 @@ def flip_monitoring():
             monitoring_thread = threading.Thread(target=monitoring_bloc)
             monitoring_thread.start()
         else:
-            tk.messagebox.showinfo("❌ERROR", "Monitoring not allowed because, the target is not connected via TCP/IP ")
+            messagebox.showinfo("❌ERROR", "Monitoring not allowed because, the target is not connected via TCP/IP ")
             flag_monitoring = not flag_monitoring
     set_running(flag_monitoring)
 
@@ -1762,7 +1762,7 @@ def event_release_gauche(event):
             start_txt ="OUTPUT"
             end_txt = "INPUT"
         print(f"❌ERROR: As starting point is an <{start_txt}>, the end point must be an ", end_txt)
-        tk.messagebox.showinfo(f"❌ERROR", "As starting point is an <{start_txt}> the end point must be an "+end_txt)
+        messagebox.showinfo(f"❌ERROR", "As starting point is an <{start_txt}> the end point must be an "+end_txt)
 
     proc_name = "event_release_gauche: "
     #print (proc_name, "event=", event)
@@ -1784,7 +1784,7 @@ def event_release_gauche(event):
                         if lien_destination['io']['type']=='in':  io_in  = lien_destination['io']
                         if lien_destination['io']['type']=='out': io_out = lien_destination['io']
                         if ('lien' in io_in):
-                            tk.messagebox.showinfo("❌ERROR", "INPUT can only have one source")
+                            messagebox.showinfo("❌ERROR", "INPUT can only have one source")
                         else:
                             #print (proc_name, "lin_io_in=", io_in)
                             #print (proc_name, "lin_io_out=", io_out)
@@ -1927,7 +1927,7 @@ def event_key_F1(event):
                 os.startfile(doc_file)
         else:
             message_txt = "The documentaion file:\n"+doc_file+"\nis not available for this bloc"
-            tk.messagebox.showinfo("❌ERROR", message_txt)
+            messagebox.showinfo("❌ERROR", message_txt)
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -2200,7 +2200,7 @@ def menu_io(event, io):
                             if 'forced' in moutput:
                                 return True
                 else:
-                    tk.messagebox.showinfo("❌ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
+                    messagebox.showinfo("❌ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
         return False
 
     proc_name = "menu_io: "
@@ -2310,7 +2310,7 @@ def open_file(pf_name, decal):
         #if not 'system' in bloc.header['key_word']:
         #    update_blocs()
     else:
-        tk.messagebox.showinfo("❌ERROR", "file reading error")
+        messagebox.showinfo("❌ERROR", "file reading error")
     menu_target()
     #print (proc_name, "fin")
 def save_file(save_as):
@@ -2348,7 +2348,7 @@ def update_blocs():
             #print (proc_name, "updating bloc name=", elem.header['name'], "  id=", elem.header['id'])
             update_error = update_error or update_bloc(bloc.sublocs[i])
     if update_error:
-        tk.messagebox.showinfo("ERROR", "some sub-bloc can not be updated")
+        messagebox.showinfo("ERROR", "some sub-bloc can not be updated")
 def reset_blocs():
     """supprimer tous les éléments (BLOC)"""
     global bloc
@@ -2500,7 +2500,7 @@ def TCPconnect():
         print (proc_name, "clientTCP.connect")
         clientTCP.connect(PARAM_TCP_TARGET_IP, PARAM_TCP_TARGET_PORT)
         if clientTCP.socket == None:
-            tk.messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_TARGET_IP}) not reachable")
+            messagebox.showinfo("❌ERROR",  f"Target (@IP:{PARAM_TCP_TARGET_IP}) not reachable")
     else:
         print (proc_name, "clientTCP.close")
         clientTCP.close()
@@ -2931,12 +2931,12 @@ def compile_bloc(pbloc, porder):
         else:
             txt_compil = "The bloc <"+pbloc.header['name']+"> is valide"
         print (proc_name, txt_compil)
-        tk.messagebox.showinfo("Compilation Status:", txt_compil)
+        messagebox.showinfo("Compilation Status:", txt_compil)
     #______________________________________________________________________________________________________pas d'erreur et (transfer ou execute)
     if error_compil == None and (porder == "transfer" or porder == "execute") and clientTCP.socket != None:
         if porder == "execute": txt_execute = "\n and execute?"
         else: txt_execute = ""
-        reponse = tk.messagebox.askquestion("Confirmation", "The bloc <"+pbloc.header['name']+"> is valide\nSend it to the target?"+txt_execute)
+        reponse = messagebox.askquestion("Confirmation", "The bloc <"+pbloc.header['name']+"> is valide\nSend it to the target?"+txt_execute)
         if reponse == 'yes':
             print(proc_name, "L'utilisateur a choisi Oui")
             exebloc_dump = pickle.dumps(exebloc)
@@ -3017,7 +3017,7 @@ def monitoring_bloc():
                     canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
                     canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
         else:
-            tk.messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
     def show_normal_io(pio):
         proc_name = "show_normal_io: "
         #print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
@@ -3030,7 +3030,7 @@ def monitoring_bloc():
                 color = PARAM_COLOR_BG_OUTPUT
             #color = PARAM_COLOR_BG_OUTPUT
         else:
-            tk.messagebox.showinfo("❌ERROR", f"Showing normal IO 'type' is not 'in' or 'out',  io={pio}")
+            messagebox.showinfo("❌ERROR", f"Showing normal IO 'type' is not 'in' or 'out',  io={pio}")
         #print (proc_name, f"io name={pio['name']}")
         canvas.itemconfig(io['id_cadre'], fill= color)
         canvas.itemconfig(io['id_texte'], text= io_text(pio))
@@ -3101,7 +3101,7 @@ def monitoring_bloc():
             #print(proc_name, "Attente message")
             buff = clientTCP.receive_message()
             if buff == b"monitoring:not_found":
-                tk.messagebox.showinfo("❌ERROR:", f"Monitoring not allowed, because the target does not contain bloc <{bloc.header['name']}>")
+                messagebox.showinfo("❌ERROR:", f"Monitoring not allowed, because the target does not contain bloc <{bloc.header['name']}>")
                 flip_monitoring()
                 break
             else:
