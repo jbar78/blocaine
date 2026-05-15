@@ -30,8 +30,6 @@ from c_exebloc import *
 from PARAM import *
 from PARAM_NAME_BLOC import *
 from sharedata import *
-#if PARAM_CONFIG_MODULE_MODBUS:
-#    from pymodbus.client import ModbusTcpClient
 
 PARAM_DEBUG_ROUTAGE = False
 PARAM_MODE_MONITORING="RT"
