@@ -1914,7 +1914,7 @@ def doc_file_name (pelem):
         txt_type = "system_"
     else:
         txt_type = "user_"
-    return "Documentation/bloc_"+txt_type+pelem.header['name']+".html"
+    return "../docs/bloc_"+txt_type+pelem.header['name']+".html"
 
 def event_key_F1(event):
     """callback: sur evenement"""
@@ -2071,8 +2071,8 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
     doc_txt  = 'General Documentation'
-    doc_file = 'Documentation/Documentation_générale.html'
-    doc_file = 'docs/general_en.pdf'
+    doc_file = '../docs/Documentation_générale.html'
+    doc_file = '../docs/general_en.pdf'
     if sys.platform == "linux":
         help_menubar.add_command(label = doc_txt, command = lambda: subprocess.Popen(['xdg-open', doc_file]))
     else:
