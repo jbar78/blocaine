@@ -24,8 +24,8 @@ from PARAM_CONFIG import *
 from PARAM_NAME_BLOC import *
 from sharedata import *
 from clientTCP import *
-if PARAM_CONFIG_MODULE_MODBUS:
-    from pymodbus.client import ModbusTcpClient
+#if PARAM_CONFIG_MODULE_MODBUS:
+#    from pymodbus.client import ModbusTcpClient
 
 PARAM_DEBUG_ROUTAGE = False
 PARAM_MODE_MONITORING="RT"
@@ -1004,7 +1004,8 @@ def open_bloc_new_window(name, id, pos):
         list_param_bloc = [name, monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"]
         list_param_subprocess = list_param_commun+list_param_bloc
     if sys.platform == "linux":
-        subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exec bash"])
+        #subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exec bash"])
+        subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exit"])
     else:
         subprocess.Popen(list_param_subprocess,  creationflags=subprocess.CREATE_NEW_CONSOLE)
 def open_io_new_window(io):
