@@ -1,7 +1,9 @@
 #! /usr/bin/python3
 import threading
+import socket
 from serverHTTP import *
 from serverTCP import *
+from utile import get_local_ip
 
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoire du fichier courant
 parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier parent (projet/)
@@ -59,17 +61,8 @@ def motor(pthread):
 
 
 
-# Démarrez le serveur HTTP dans un thread séparé
-serverHTTP_thread = threading.Thread(target=run_serverHTTP)
-serverHTTP_thread.start()
-
-# Démarrez le serveur TCP dans un thread séparé (communication avec éditeur de bloc)
-serverTCP_thread = threading.Thread(target=run_serverTCP)
-serverTCP_thread.start()
-
 
 import time
-
 # Création des évènements périodiques (arment du motor d'exécution)
 for i, thread in enumerate(list_threads):
     thread['min_max']['min'] = 99999999999
@@ -77,4 +70,21 @@ for i, thread in enumerate(list_threads):
     thread['thread'] = Intervallometre(motor, [thread])
     thread['thread'].setDaemon(True)
     thread['thread'].start()
+time.sleep (0.3)
+
+# Démarrez le serveur HTTP dans un thread séparé
+serverHTTP_thread = threading.Thread(target=run_serverHTTP)
+serverHTTP_thread.start()
+
+
+# Démarrez le serveur TCP dans un thread séparé (communication avec éditeur de bloc)
+serverTCP_thread = threading.Thread(target=run_serverTCP)
+serverTCP_thread.start()
+
+
+
+# affiche des adresse ipv4 disponible
+time.sleep (0.5)
+print (f"Target IP address: {get_local_ip()}")
+print (f"Target: 😊")
 

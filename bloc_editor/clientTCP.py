@@ -16,8 +16,8 @@ class clientTCP:
         proc_name = "clientTCP.__init__: "
         self.socket = None
         self.nb_receive= 0
-        print (proc_name, "initialisation de l'objet <clientTCP>")
-        print (proc_name, f"socket=<{self.socket}>")
+        #print (proc_name, "create clientTCP object")
+        #print (proc_name, f"socket=<{self.socket}>")
 
     def connect(self, address, port):
         proc_name = "clientTCP.connect: "
@@ -25,14 +25,14 @@ class clientTCP:
         self.port = port
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print (proc_name, "socket créée!")
-            print (proc_name, f"socket=<{self.socket}>")
+            #print (proc_name, "socket créée!")
+            #print (proc_name, f"socket=<{self.socket}>")
             self.socket.connect((self.host, self.port))
-            print(proc_name, f"Connexion TCP/IP établie avec {self.host}:{self.port}")
+            print(proc_name, f"Connection established with Target {self.host}:{self.port}")
         except:
-            print(proc_name, f"Connexion TCP/IP impossible {self.host}:{self.port}")
+            print(proc_name, f"❌Connection with Target {self.host}:{self.port} refused")
             self.close()
-        print (proc_name, f"socket=<{self.socket}>")
+        #print (proc_name, f"socket={self.socket}")
 
 
     def send_message(self, data):
@@ -75,7 +75,7 @@ class clientTCP:
         length = struct.unpack(PARAM_TCP_MESS_HEADER_TYPE, header)[0]
         #print(proc_name, f"longueur du message utile inscrite dans l'entête={length}")
         mess_utile_recu = receive_nbr(length)
-        print(proc_name, f"longueur du message utile: entête={length} VS reçu={len(mess_utile_recu)}")
+        #print(proc_name, f"longueur du message utile: entête={length} VS reçu={len(mess_utile_recu)}")
         return mess_utile_recu
 
 
@@ -101,11 +101,7 @@ class clientTCP:
             remaining -= len(reçu)
         return mess_reçu
 
-
-
-
-
-
+    """
     def receive_messagexxxx(self, buffer_size=PARAM_TCP_BUFFER_SIZE): ########
         proc_name = "receive_message: "
         header = self.socket.recv(8)
@@ -132,6 +128,8 @@ class clientTCP:
         else:
             print(proc_name, f"❌Error : Connexion not establiched with {self.host}:{self.port}")
             return None
+    """
+
 
     def close(self):
         proc_name = "clientTCP.close: "

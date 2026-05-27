@@ -11,7 +11,7 @@ sys.path.append(path_commun)                             # Ajouter le répertoir
 from PARAM_NETWORK import *
 from sharedata import clientsTCP
 from compiled import *
-from utile import cable_wires_counter
+from utile import cable_wires_counter, get_local_ip
 
 html_style ="""<style>
         th,
@@ -80,17 +80,17 @@ html_debut = """<html>
 html_fin ="</body></html>"
 
 
-def get_local_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        # Cette connexion n'a pas besoin d'être établie réellement
-        s.connect(('10.254.254.254', 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
+#def get_local_ip():
+#    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#    try:
+#        # Cette connexion n'a pas besoin d'être établie réellement
+#        s.connect(('10.254.254.254', 1))
+#        IP = s.getsockname()[0]
+#    except Exception:
+#        IP = '127.0.0.1'
+#    finally:
+#        s.close()
+#    return IP
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -153,7 +153,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # Page d'accueil
             html = html_debut
-            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html +=f"<p>Target IP address:{local_ip})</p>"
             html += menu
             html += html_fin
             #print ("HTML=", html)
@@ -175,7 +175,7 @@ class MyServer(BaseHTTPRequestHandler):
             except socket.herror:
                 client_name = "'Unknow'"
             html = html_debut
-            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
             html += f"""<tr><th colspan="4";>HTTP protocol</th></tr>"""
@@ -204,7 +204,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # page: thread list
             html = html_debut
-            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
             html += f"""<tr><th colspan="9";>Task list</th></tr>"""
@@ -258,7 +258,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # page: thread list
             html = html_debut
-            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
             html += f"""<tr><th colspan="5">bloc list</th></tr>"""
@@ -283,7 +283,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # page: thread list
             html = html_debut
-            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
             html += f"""<tr><th colspan="12">bloc output list</th></tr>"""
@@ -338,7 +338,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # page: thread list
             html = html_debut
-            html +=f"<p>Target: {hostname}     (ip:{local_ip})</p>"
+            html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
             html += f"""<tr><th colspan="8">Overwriting list</th></tr>"""
@@ -390,8 +390,8 @@ def run_serverHTTP(server_class=HTTPServer, handler_class=MyServer, port=PARAM_H
     global httpd
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print(f"Starting server on port {port}...")
+    #print(f"HTTP server on port {port}...")
     httpd.allow_reuse_address = True 
     (ipp, ppp) = httpd.server_address
-    print (f"httpd: ip={ipp},   port={ppp}")
+    print (f"HTTP server: lisening on {ipp};{ppp}")
     httpd.serve_forever()

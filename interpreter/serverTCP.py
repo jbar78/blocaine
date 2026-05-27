@@ -15,6 +15,8 @@ sys.path.append(path_commun)                             # Ajouter le répertoir
 from PARAM_NETWORK import *
 if PARAM_CONFIG_MODULE_MODBUS:
     from pymodbus.client import ModbusTcpClient
+if PARAM_CONFIG_MODULE_GPIOZERO:
+    from gpiozero import LED as GPIOZ_LED, Button as GPIOZ_Button, PWMLED as GPIOZ_PWMLED
 from sharedata import clientsTCP
 from c_exebloc import *
 from exec import *
@@ -80,7 +82,7 @@ def handle_clientTCP(client_socket, addr):
     global clientsTCP, list_compiled
     monitoring = None
     proc_name = "handle_clientTCP: "
-    print ("clientsTCP.append")
+    #print ("clientsTCP.append")
     clientsTCP.append(addr)
     i=len(clientsTCP)-1
     txt_client = f" client[{i}] ({clientsTCP[i][0]}/{clientsTCP[i][1]}): "
@@ -102,7 +104,7 @@ def handle_clientTCP(client_socket, addr):
                 curant_exebloc = pickle.loads(request[index+1:])
 
                 bloc_name = curant_exebloc.header['name']
-                print(proc_name, f"cas reconnu  (transfer ou exécute),     cas: {cas}")
+                #print(proc_name, f"cas reconnu  (transfer ou exécute),     cas: {cas}")
                 #print(proc_name, f"ebloc reçu={bloc_name}")
                 #print(proc_name, f"curant_exebloc={curant_exebloc}")
                 compiled_load(curant_exebloc)
@@ -126,7 +128,7 @@ def handle_clientTCP(client_socket, addr):
 
             elif cas == b"monitoring" and index!= -1:
                 list_monitor = []
-                print(proc_name, f"cas N°2 reconnu  (monitoring)  cas: {cas}")
+                #print(proc_name, f"cas N°2 reconnu  (monitoring)  cas: {cas}")
                 #print(proc_name, f"  arborescence:{request[index+1:]}")
                 monitoring = pickle.loads(request[index+1:])
                 #print(proc_name, f"  monitoring['name']={monitoring['name']}")
@@ -139,20 +141,32 @@ def handle_clientTCP(client_socket, addr):
                         #print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
                         for subloc in comp.sublocs:
                             avec_modbus_type = False
+                            avec_gpio_type = False
                             #print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
                             if subloc.parent_ids == monitoring['arbo_ids']:
                                 #print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
                                 modbus_bloc =  f"bloc ModBus, bloc name<{subloc.header['name']}>, "
+                                gpio_bloc =  f"bloc GPIO, bloc name<{subloc.header['name']}>, "
                                 for input in subloc.inputs:
                                     if PARAM_CONFIG_MODULE_MODBUS:
                                         if isinstance(input['var'], ModbusTcpClient):
                                             #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in input, var=<{input['name']}>")
                                             avec_modbus_type = True
+                                    if PARAM_CONFIG_MODULE_GPIOZERO:
+                                        if isinstance(input['var'], GPIOZ_Button) or isinstance(input['var'], GPIOZ_LED) or isinstance(input['var'], GPIOZ_PWMLED):
+                                            #print (proc_name, gpio_bloc, f"<ModbusTcpClient> in input, var=<{input['name']}>")
+                                            avec_gpio_type = True
                                 for output in subloc.outputs:
                                     if PARAM_CONFIG_MODULE_MODBUS:
                                         if isinstance(output['var'], ModbusTcpClient):
                                             #print (proc_name, modbus_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
                                             avec_modbus_type = True
+                                    if PARAM_CONFIG_MODULE_GPIOZERO:
+                                        if isinstance(output['var'], GPIOZ_Button) or isinstance(output['var'], GPIOZ_LED) or isinstance(output['var'], GPIOZ_PWMLED):
+                                            #print (proc_name, gpio_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
+                                            avec_gpio_type = True
+                                            
+                                            
                                 if avec_modbus_type: # pour ne pas sérialiser le type ModbusTcpClient
                                     def modbus_io (io):
                                         #print (proc_name, modbus_bloc, f"modbus_io: <ModbusTcpClient> name=<{io['name']}>,  var=<{io['var']}>")
@@ -182,14 +196,55 @@ def handle_clientTCP(client_socket, addr):
                                                 c_subloc.outputs[i] = copy.copy(output)
                                                 c_subloc.outputs[i]['var'] =  modbus_io(output)
                                                 #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
-                                    for i, c_input in enumerate(c_subloc.inputs):
-                                        if PARAM_CONFIG_MODULE_MODBUS:
-                                            if isinstance(c_input['var'], ModbusTcpClient):
-                                                print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
-                                    for i, c_output in enumerate(c_subloc.outputs):
-                                        if PARAM_CONFIG_MODULE_MODBUS:
-                                            if isinstance(c_output['var'], ModbusTcpClient):
-                                                print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
+                                    # pour vérifier qu'il ne reste plus d'objet ModbusTcpClient
+                                    #for i, c_input in enumerate(c_subloc.inputs):
+                                    #    if PARAM_CONFIG_MODULE_MODBUS:
+                                    #        if isinstance(c_input['var'], ModbusTcpClient):
+                                    #            print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
+                                    #for i, c_output in enumerate(c_subloc.outputs):
+                                    #    if PARAM_CONFIG_MODULE_MODBUS:
+                                    #        if isinstance(c_output['var'], ModbusTcpClient):
+                                    #            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
+                                    list_monitor.append(c_subloc)
+
+                                elif avec_gpio_type: # pour ne pas sérialiser les types GPIOZERO
+                                    def gpio_io (io):
+                                        #print (proc_name, gpio_bloc, f"gpio_io: <Button,LED, PWMLED> name=<{io['name']}>,  var=<{io['var']}>")
+                                        io_dic = io['var'].__dict__
+                                        #print(f"gpio_io: io.__dict__: {io_dic}")
+                                        #print (f"gpio_io: io_dic.comm_params: valeur={io_dic['comm_params']}")
+                                        #print (f"gpio_io: io_dic.comm_params.host: valeur={io_dic['comm_params'].host}")
+                                        #print (f"gpio_io: io_dic.comm_params.port: valeur={io_dic['comm_params'].port}")
+                                        return  c_gpio(io_dic)
+                                    #print (proc_name, f"bloc<{subloc.header['name']}> avec GPIOZERO objet")
+                                    c_subloc = copy.copy(subloc)
+                                    c_subloc.inputs = copy.copy(subloc.inputs)
+                                    c_subloc.outputs = copy.copy(subloc.outputs)
+                                    for i, (input, c_input) in enumerate(zip(subloc.inputs, c_subloc.inputs)):
+                                        #print (proc_name, f"  inputs: origine: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}")
+                                        if PARAM_CONFIG_MODULE_GPIOZERO:
+                                            if isinstance(input['var'], GPIOZ_Button) or isinstance(input['var'], GPIOZ_LED) or isinstance(input['var'], GPIOZ_PWMLED):
+                                                #print (proc_name, gpio_bloc, f"<GPIOZERO objet> in input, name=<{input['name']}>,  var=<{input['var']}>")
+                                                c_subloc.inputs[i] = copy.copy(input)
+                                                c_subloc.inputs[i]['var'] = gpio_io(input)
+                                                #print (proc_name, f"  inputs: corrigé: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}, ['var']={c_input['var']}")
+                                    for i, (output, c_output) in enumerate(zip(subloc.outputs, c_subloc.outputs)):
+                                        #print (proc_name, f"  outputs: origine:id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}")
+                                        if PARAM_CONFIG_MODULE_GPIOZERO:
+                                            if isinstance(output['var'], GPIOZ_Button) or isinstance(output['var'], GPIOZ_LED) or isinstance(output['var'], GPIOZ_PWMLED):
+                                                #print (proc_name, gpio_bloc, f"<GPIOZERO objet> in output, var=<{output['name']}>")
+                                                c_subloc.outputs[i] = copy.copy(output)
+                                                c_subloc.outputs[i]['var'] =  gpio_io(output)
+                                                #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
+                                    # pour vérifier qu'il ne reste plus d'objet GPIOZERO
+                                    #for i, c_input in enumerate(c_subloc.inputs):
+                                    #    if PARAM_CONFIG_MODULE_GPIOZERO:
+                                    #        if isinstance(c_input['var'], GPIOZ_Button) or isinstance(c_input['var'], GPIOZ_LED) or isinstance(c_input['var'], GPIOZ_PWMLED):
+                                    #            print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
+                                    #for i, c_output in enumerate(c_subloc.outputs):
+                                    #    if PARAM_CONFIG_MODULE_GPIOZERO:
+                                    #        if isinstance(c_output['var'], GPIOZ_Button) or isinstance(c_output['var'], GPIOZ_LED) or isinstance(c_output['var'], GPIOZ_PWMLED):
+                                    #            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
                                     list_monitor.append(c_subloc)
                                 else:
                                     list_monitor.append(subloc)
@@ -241,8 +296,9 @@ def handle_clientTCP(client_socket, addr):
                                     maj_forced_io(subloc.outputs)
 
             elif cas == b"cas4" and index!= -1:
-                print(proc_name, f"cas N°4 reconnu    cas: {cas}")
+                #print(proc_name, f"cas N°4 reconnu    cas: {cas}")
                 #response = b"cas4"
+                pass
             else:
                 print(proc_name, f"Unknow Message Received: {request}")
                 response = b"?"
@@ -260,27 +316,27 @@ def run_serverTCP():
     # create a socket object
     proc_name = "run_serverTCP: "
     try:
-        print(proc_name, f"avant création soket d'écoute")
+        #print(proc_name, f"avant création soket d'écoute")
         serverTCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print(proc_name, f"après création soket d'écoute")
+        #print(proc_name, f"après création soket d'écoute")
         # bind the socket to the host and port
-        print(proc_name, f"avant bind sur soket d'écoute")
+        #print(proc_name, f"avant bind sur soket d'écoute")
         #serverTCP.bind((PARAM_TCP_TARGET_IP, PARAM_TCP_TARGET_PORT )
         serverTCP.bind(('', PARAM_TCP_TARGET_PORT ))
-        print(proc_name, f"apès bind sur soket d'écoute")
+        #print(proc_name, f"apès bind sur soket d'écoute")
         # listen for incoming connections
-        print(proc_name, f"avant Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
+        #print(proc_name, f"avant Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
         serverTCP.listen()
-        print(proc_name, f"après Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
+        print(f"TCP server: Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
 
         while True:
             # accept a client connection
             #print(proc_name, f"avant .accept")
             client_socket, addr = serverTCP.accept()
             #print(proc_name, f"près .accept")
-            print(proc_name, f"Accepted connection from {addr[0]}:{addr[1]}")
+            print(proc_name, f"TCP server: Accepted connection from {addr[0]}:{addr[1]}")
             # start a new thread to handle the client
-            print(proc_name, f"create new thread for new client")
+            #print(proc_name, f"create new thread for new client")
             thread = threading.Thread(target=handle_clientTCP, args=(client_socket, addr,))
             #print(proc_name, f"après .thread")
             thread.start()

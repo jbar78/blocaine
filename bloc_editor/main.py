@@ -3000,6 +3000,9 @@ def monitoring_bloc():
         elif isinstance(var, c_modbus):
             #print (proc_name, "type=c_modbus")
             return f".ModbusTcpClient."
+        elif isinstance(var, c_gpio):
+            #print (proc_name, "type=c_gpio")
+            return f".GPIO."
         elif var==None:
             return f"None"
         else:
@@ -3100,7 +3103,7 @@ def monitoring_bloc():
     monitoring_loop = 0
     while flag_monitoring:
         if True: #try:
-            print(proc_name, f" monitoring bloc <{master.title()}>    index[{monitoring_loop}]")
+            #print(proc_name, f" monitoring bloc <{master.title()}>    index[{monitoring_loop}]")
             #clientTCP.send_message(message)
             clientTCP.send_message(bloc_a_monitorer())
             #print(proc_name, "Attente message")
@@ -3137,9 +3140,9 @@ def monitoring_bloc():
 #  début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début ---
 proc_name = "__main__: "
 if __name__ == '__main__':
-    print (proc_name, "début du main:")
-    print (proc_name, "sys.argg: <", sys.argv, ">")
-    print (proc_name, "nb arg=<", len(sys.argv), ">")
+    print (proc_name, "starting bloc editor:")
+    #print (proc_name, "sys.argg: <", sys.argv, ">")
+    #print (proc_name, "nb arg=<", len(sys.argv), ">")
 # index des arguments
 PARAM_ARG_CODE_PYTHON = 0
 PARAM_ARG_DECAL_WINDOW_X = 1
@@ -3160,16 +3163,16 @@ config_window['hauteur']= int (master.winfo_screenheight()//PARAM_RATIO_FENETRE_
 flag_monitoring = False
 print (proc_name, f"nb arg={len(sys.argv)}")
 for i,arg in enumerate(sys.argv):
-    print (proc_name, f" dans boucle, argument[{i}]={sys.argv[i]}")
+    print (proc_name, f"  argument[{i}]={sys.argv[i]}")
     if (i==PARAM_ARG_MONITORING and arg==PARAM_MODE_MONITORING):  # décalage de la nouvelle fenêtre
         flag_monitoring = True
-print (proc_name, "flag_monitoring=<", flag_monitoring, ">")
+print (proc_name, f"flag_monitoring={flag_monitoring}")
 if len(sys.argv) > PARAM_ARG_NBR_MAIN:
-    print (proc_name, "décalage de la fenêtre")
+    #print (proc_name, "décalage de la fenêtre")
     config_window['pos_x']= int(sys.argv[PARAM_ARG_DECAL_WINDOW_X]) +50
     config_window['pos_y']= int(sys.argv[PARAM_ARG_DECAL_WINDOW_Y]) +50
 else:
-    print (proc_name, "pas de décalage de la fenêtre")
+    #print (proc_name, "pas de décalage de la fenêtre")
     config_window['pos_x']= (master.winfo_screenwidth()-config_window['largeur'])//2
     config_window['pos_y']= (master.winfo_screenheight()-config_window['hauteur'])//2
 if len(sys.argv) > PARAM_ARG_NBR_SECOND:
@@ -3177,7 +3180,7 @@ if len(sys.argv) > PARAM_ARG_NBR_SECOND:
 else:
     config_window['canvas_bg_color'] = PARAM_COLOR_CANVAS_BG_MAIN
 txt_geometry =f"{config_window['largeur']}x{config_window['hauteur']}+{config_window['pos_x']}+{config_window['pos_y']}"
-print (proc_name, f"config. window: {txt_geometry}")
+#print (proc_name, f"config. window: {txt_geometry}")
 master.geometry (txt_geometry)
 master.config(bd=5, relief="groove")
 master.update()
@@ -3247,10 +3250,10 @@ menu_bar()
 
 if len(sys.argv) > PARAM_ARG_NBR_SECOND:
     name = sys.argv[PARAM_ARG_BLOC_NAME]
-    print (proc_name, "bloc: name=<", name, ">")
+    #print (proc_name, "bloc: name=<", name, ">")
 
     decalage = [float(sys.argv[PARAM_ARG_DECAL_X]), float(sys.argv[PARAM_ARG_DECAL_Y])]
-    print (proc_name, "decalage=", decalage)
+    #print (proc_name, "decalage=", decalage)
     #if flag_monitoring: arborescence = sys.argv[PARAM_ARG_ARBORESCENCE]
     arborescence = sys.argv[PARAM_ARG_ARBORESCENCE]
     if name=="": name=None

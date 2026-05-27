@@ -11,6 +11,12 @@ class c_modbus:
         self.host = client['comm_params'].host
         self.port = client['comm_params'].port
 
+class c_gpio:
+    """pour ne pas sérialisation des objets GPIOZERO"""
+    def __init__(self, client):
+        self.host = "le host"
+        self.port = "le port"
+
 
 
 class c_exebloc:
