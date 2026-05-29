@@ -2090,6 +2090,8 @@ def menu_bar():
         help_menubar.add_command(label = doc_txt, command = lambda: subprocess.Popen(['xdg-open', doc_file]))
     else:
         help_menubar.add_command(label = doc_txt, command = lambda: os.startfile(doc_file))
+    blocaine_web_pages = "HTTPs://blocaine.org"
+    help_menubar.add_command(label = "Open Blocaïne web pages", command = lambda: subprocess.Popen(['xdg-open', blocaine_web_pages]))
     help_menubar.add_separator()
     help_menubar.add_command(label = "Debug: print bloc", command = lambda: bloc.c_bloc_print())
     help_menubar.add_command(label = "Debug: print list_compiled", command = lambda: print_exeblocs())
