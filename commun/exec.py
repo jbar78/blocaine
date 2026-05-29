@@ -555,7 +555,7 @@ def c_exesubloc_gpio_di (pebloc, pieb, pio, pthread): #_________________________
                     print (f"<GPIO_DI> GPIO pin {cesubloc.inputs[1]['var']}, is now configured in Button mode")
         except:
             print ("<GPIO_DI>", PARAM_TEXT_EXCEPTION)
-            cesubloc.outputs[1]['var'] = -1
+            cesubloc.outputs[1]['var'] = -2
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()

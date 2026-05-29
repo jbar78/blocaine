@@ -658,13 +658,17 @@ class c_popup:
         self.set_proc=[] # méthode servant à modifier une variable de l'entête du bloc
     def c_popup_add_une_propriete(self, texte, param, set_proc):
         proc_name = "c_popup_add_une_propriete: "
+        #print (proc_name, f"parametres: texte={texte}, param={param}, set_proc={set_proc}")
         self.label.append (tk.Label(self.popup, text = texte))
         if type(param).__name__ == "str":
             largeur = len(param)
         else: largeur = 10
         self.entry.append (tk.Entry(self.popup, width=largeur)) ####
         self.entry[self.ligne].delete(0, tk.END)
-        self.entry[self.ligne].insert(0, param)
+        if param is None:
+            self.entry[self.ligne].insert(0, "None")
+        else:
+            self.entry[self.ligne].insert(0, param)
         self.label[self.ligne].grid(row = self.ligne, column = 0, sticky="e")
         self.entry[self.ligne].grid(row = self.ligne, column = 1, sticky="w")
         self.set_proc.append(set_proc)
@@ -709,7 +713,7 @@ def id_generateur ():
         if elem.header['id'] >= bloc.header['last_id']:
             print (proc_name, "ERRUR: un id est supérieur à last_id", elem.header['id'], ", ", bloc.header['last_id'])
     bloc.header['last_id'] +=1
-    print (proc_name, "last_loop_id=", bloc.header['last_id'])
+    #print (proc_name, "last_loop_id=", bloc.header['last_id'])
     return bloc.header['last_id']
 def type_index(pvariable):
     """ returne le type d'une variable"""
@@ -1446,18 +1450,18 @@ def delete_local_comment_io(px, py, io):
     bloc.c_bloc_redraw()
 def change_initial_value_io(px, py, io):
     """pour definir la valeur initiale d'une sortie mémorisée de l'instance"""
-    def proc_nul(val, txt):
+    def proc_nul_ini(val, txt):
         print ("-------procc initial_value------------val=", val, ",   txt=", txt)
     proc_name = "change_initial_value_io: "
     print (proc_name, "début")
-    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", False, proc_nul)
+    io['initial_value'] = set_value_io(px, py, io, "initial_value", "ini", False, proc_nul_ini)
 def change_defaut_value_io(px, py, io):
     """pour definir la valeur par défaut d'une entrée de l'instance"""
-    def proc_nul(val, txt):
+    def proc_nul_def(val, txt):
         print ("-------procc defaut_value------------val=", val, ",   txt=", txt)
     proc_name = "change_defaut_value_io: "
     print (proc_name, "début")
-    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", False, proc_nul)
+    io['defaut_value']  = set_value_io(px, py, io, "defaut_value", "def", False, proc_nul_def)
 def delete_initial_value_io(px, py, io):
     """ supprime la valeur par défaut d'une sortie d'une instance"""
     global bloc
@@ -1470,66 +1474,67 @@ def delete_defaut_value_io(px, py, io):
     proc_name = "delete_defaut_value_io: "
     print (proc_name, "supprime io['defaut_value']=", io['defaut_value'])
     del io['defaut_value']
+    bloc.c_bloc_redraw() #dddddd
 def delete_local_defaut_value_io(px, py, io):
     """ supprime la valeur par défaut d'une entrée d'une instance"""
     proc_name = "delete_local_defaut_value_io: "
     print (proc_name, "supprime io['local_defaut_value']=", io['local_defaut_value'])
     del io['local_defaut_value']
-def set_defaut_value_io_old(px, py, io, pdic):
-    """pour definir la valeur par défaut d'une entrée"""
-    global PARAM_TYPE_LIST
-    proc_name = "defaut_value: "
-    print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, ")
-    def proc_null():
-        return
-    def validation():
-        global bloc
-        #io['defaut_value'] = float(io_defaut_value.get())
-        if combox_type.get() == "float":  io[pdic] = float(io_defaut_value.get())
-        if combox_type.get() == "int":    io[pdic] = int(io_defaut_value.get())
-        if combox_type.get() == "bool":
-            #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
-            io[pdic] = io_defaut_value.get() == "True" or io_defaut_value.get() == "1"
-        if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
-
-        pop.popup.destroy()
-        bloc.c_bloc_redraw()
-    pop = c_popup(pdic, 25+px, 75+py)
-    if not pdic in io: io[pdic]=0
-    io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
-    label_type = tk.Label(pop.popup, text="type:")
-    label_type.grid(row = pop.ligne, column = 0)
-    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
-    print (proc_name, f"existing type={type(io[pdic])}")
-    print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
-    index_type = 0
-    for i, typ in enumerate(PARAM_TYPE_LIST):
-        print (proc_name, f"loop type={typ}")
-        if type(value).__name__ == typ:
-            print (proc_name, f"io([pdic]==typ")
-            index_type = i
-            break
-    combox_type.set(PARAM_TYPE_LIST[index_type])
-    combox_type.grid(row = pop.ligne, column = 1)
-    pop.ligne += 1
-    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
-    BP_escape.grid(row = pop.ligne, column = 0)
-    BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
-    BP_validation.grid(row = pop.ligne, column = 1)
-    #BP_escape.focus()
-    BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
-    BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
-    BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
-    BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
-
-    pop.entry[0].focus()
-    pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
-    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
+#def set_defaut_value_io_old(px, py, io, pdic):
+#    """pour definir la valeur par défaut d'une entrée"""
+#    global PARAM_TYPE_LIST
+#    proc_name = "defaut_value: "
+#    print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, ")
+#    def proc_null():
+#        return
+#    def validation():
+#        global bloc
+#        #io['defaut_value'] = float(io_defaut_value.get())
+#        if combox_type.get() == "float":  io[pdic] = float(io_defaut_value.get())
+#        if combox_type.get() == "int":    io[pdic] = int(io_defaut_value.get())
+#        if combox_type.get() == "bool":
+#            #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
+#            io[pdic] = io_defaut_value.get() == "True" or io_defaut_value.get() == "1"
+#        if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
+#
+#        pop.popup.destroy()
+#        bloc.c_bloc_redraw()
+#    pop = c_popup(pdic, 25+px, 75+py)
+#    if not pdic in io: io[pdic]=0
+#    io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
+#    label_type = tk.Label(pop.popup, text="type:")
+#    label_type.grid(row = pop.ligne, column = 0)
+#    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
+#    print (proc_name, f"existing type={type(io[pdic])}")
+#    print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
+#    index_type = 0
+#    for i, typ in enumerate(PARAM_TYPE_LIST):
+#        print (proc_name, f"loop type={typ}")
+#        if type(value).__name__ == typ:
+#            print (proc_name, f"io([pdic]==typ")
+#            index_type = i
+#            break
+#    combox_type.set(PARAM_TYPE_LIST[index_type])
+#    combox_type.grid(row = pop.ligne, column = 1)
+#    pop.ligne += 1
+#    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
+#    BP_escape.grid(row = pop.ligne, column = 0)
+#    BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
+#    BP_validation.grid(row = pop.ligne, column = 1)
+#    #BP_escape.focus()
+#    BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
+#    BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
+#    BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
+#    BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
+#
+#    pop.entry[0].focus()
+#    pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
+#    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
 def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
     """pour definir la valeur par défaut d'une entrée"""
     global PARAM_TYPE_LIST
     proc_name = "set_value_io: "
-    print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, ")
+    #print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, msg={pmsg}, pbool={pbool}, pproc{pproc}")
     def proc_null():
         return
     def validation():
@@ -1550,11 +1555,18 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         pproc(io[pdic], pmsg)
         pop.popup.destroy()
         bloc.c_bloc_redraw()
+    #try:
+    #    if io[pdic] == None:
+    #        io[pdic] = 1
+    #except:
+    #    print (proc_name, "exception: io[pdic] does not exist")
+    #    io[pdic] =1
     try:
-        if io[pdic] == None:
-            io[pdic] = 1
+        io[pdic]
+        print (proc_name, "try: io[pdic] exist")
     except:
-        io['defaut_value'] =1
+        print (proc_name, "exception: io[pdic] does not exist")
+        io[pdic] =1
     if pbool:
         if type(io[pdic]).__name__ == "bool":
             print (proc_name, f"io([pdic] est de type bool")
@@ -1563,19 +1575,19 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
         bloc.c_bloc_redraw()
     else:
         pop = c_popup(pdic, 25+px, 75+py)
-        print(proc_name, f"io={io}")
+        #print(proc_name, f"io={io}")
         if not pdic in io: io[pdic]=0
         io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
         label_type = tk.Label(pop.popup, text="type:")
         label_type.grid(row = pop.ligne, column = 0, sticky="e")
         combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
-        print (proc_name, f"existing type={type(io[pdic])}")
-        print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
+        #print (proc_name, f"existing type={type(io[pdic])}")
+        #print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
         index_type = 0
         for i, typ in enumerate(PARAM_TYPE_LIST):
-            print (proc_name, f"loop type={typ}")
+            #print (proc_name, f"loop type={typ}")
             if type(io[pdic]).__name__ == typ:
-                print (proc_name, f"io([pdic]==typ")
+                #print (proc_name, f"io([pdic]==typ")
                 index_type = i
                 break
 
@@ -1623,12 +1635,13 @@ def properties_io(px, py, io, all):
             str_type = " ("+PARAM_TYPE_LIST[type_index(io['local_defaut_value'])]+")"
             io_local_defaut_value = pop.c_popup_add_une_propriete("Local Default Value:"+str_type, io['local_defaut_value'], proc_null)
         if 'memory' in io:
-            print (proc_name, "memory=", type(io['memory']))
+            #print (proc_name, "memory type=", type(io['memory']))
             str_type = " ("+PARAM_TYPE_LIST[type_index(io['memory'])]+")"
             io_memory = pop.c_popup_add_une_propriete("Memory:"+str_type, io['memory'], proc_null)
         if 'initial_value' in io:
-            print (proc_name, "initial value=", type(io['initial_value']))
+            #print (proc_name, f"initial value={(io['initial_value'])}, initial value type={type(io['initial_value'])}")
             str_type = " ("+PARAM_TYPE_LIST[type_index(io['initial_value'])]+")"
+            #print (f"str_type={str_type}")
             io_init = pop.c_popup_add_une_propriete("Initial:"+str_type, io['initial_value'], proc_null)
         if "lien" in io:
             id_parent = io['lien']['id_parent']
@@ -2111,10 +2124,14 @@ def menu_target():
             color_activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER
         #print (proc_name, f"connection/disconnect: {clientTCP.socket}")
         target_menubar.add_command(label = texteTCP,  foreground = color_foreground, activeforeground = color_activeforeground, command = lambda: TCPconnect())
-        #print (proc_name, "ajout Vérification")
+        target_menubar.add_separator()
+        if clientTCP.socket != None:
+            address = clientTCP.host+":"+str(PARAM_HTTP_PORT)
+            target_web_pages = "HTTP://"+address
+            target_menubar.add_command(label = "Open Target's web pages "+address, command = lambda: subprocess.Popen(['xdg-open', target_web_pages]))
+            target_menubar.add_separator()
         target_menubar.add_command(label = "Check <"+bloc.header['name']+">", command = lambda: set_compile_thread("verif"))
         if clientTCP.socket != None:
-            #print (proc_name, "ajout Transfer")
             target_menubar.add_command(label = "Check & Transfer <"+bloc.header['name']+">", command = lambda: set_compile_thread("transfer"))
             #print (proc_name, "ajout Transfer & exécution")
             target_menubar.add_command(label = "Check, Transfer & Execute <"+bloc.header['name']+">", command = lambda: set_compile_thread("execute"))
@@ -2247,18 +2264,23 @@ def menu_io(event, io):
                 menu_contextuel.add_command(label = "Create local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
 
     if ((elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT and bloc.header['name'] != PARAM_NAME_BLOC_OUTPUT) or \
-        (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT and not 'system' in bloc.header) or \
-        (io['type'] == 'in' and not 'system' in bloc.header)):
+        (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT and not 'system' in bloc.header['key_word']) or \
+        (io['type'] == 'in' and not 'system' in bloc.header['key_word'])): # 28mai2026
         menu_contextuel.add_command(label = "Set default value", command = lambda: change_defaut_value_io(event.x_root, event.y_root, io))
+        if "defaut_value" in io:
+            menu_contextuel.add_command(label = "Delete default value",foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
+
+    #menu_contextuel.add_command(label = "+++Delete default value",foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
 
 
-
-    if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT):
-            if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
-                if "memory" not in io:
-                    menu_contextuel.add_command(label = "Add Memory", command = lambda: memory_io("add", io))
-                else:
-                    menu_contextuel.add_command(label = "Delete Memory", command = lambda: memory_io("supp", io))
+    #if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT):
+    #        if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
+    if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT): 
+        if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
+            if "memory" not in io:
+                menu_contextuel.add_command(label = "Add Memory", command = lambda: memory_io("add", io))
+            else:
+                menu_contextuel.add_command(label = "Delete Memory", command = lambda: memory_io("supp", io))
 
 
     if "memory" in io:
@@ -2582,12 +2604,6 @@ def compile_bloc(pbloc, porder):
             if io['type']=='in':
                 input = {}
                 copy_io_name_comment (io, input)
-                #input['name'] = io['name']
-                #if 'local_name' in io:
-                #    input['loacl_name'] = io['local_name']
-                #input['comment'] = io['comment']
-                #if 'local_comment' in io:
-                #    input['local_comment'] = io['local_comment']
 
                 input['id'] = io['id']
                 input['var'] = PARAM_VAL_INIT_INPUT
@@ -2617,13 +2633,6 @@ def compile_bloc(pbloc, porder):
                 output = {}
 
                 copy_io_name_comment (io, output)
-                #output['name'] = io['name']
-                #if 'local_name' in io:
-                #    output['loacl_name'] = io['local_name']
-                #output['comment'] = io['comment']
-                #if 'local_comment' in io:
-                #    output['local_comment'] = io['local_comment']
-
                 output['id'] = io['id']
                 if 'local_name' in io:
                     output['local_name'] = io['local_name']
@@ -3072,34 +3081,6 @@ def monitoring_bloc():
         #print(proc_name, f" monitoring loop[{monitoring_loop}]: message envoyé à la cible={retour}")
         return  retour
 
-
-
-
-    #monitoring = {}
-    #arbo_ids = []
-    #monitoring_loop = 0
-    #proc_name = "monitoring_bloc: "
-    #print(proc_name, "début")
-    ##print(proc_name, "décodage arborescence du nom du bloc à monitorer")
-    #lignée=master.title()
-    #list_blocs = lignée.split("/")
-    ##print(proc_name, f" list={list_blocs}")
-    #list_blocs.pop(0)
-    ##print(proc_name, f" list={list_blocs}")
-    #for i, blc in enumerate(list_blocs):
-    #    if i==0:
-    #        monitoring['name'] = blc
-    #        arbo_ids.append(0)
-    #    else:
-    #        ip = blc.find(")")
-    #        arbo_ids.append(int(blc[1:ip]))
-    #monitoring['arbo_ids'] = arbo_ids
-    ##print(proc_name, f"  monitoring['name']={monitoring['name']}")
-    ##print(proc_name, f"  monitoring['arbo_ids']={monitoring['arbo_ids']}")
-    #msg_dump = pickle.dumps(monitoring)
-    ##print (proc_name, "   msg_dump:", msg_dump)
-    #message=b"monitoring:"+msg_dump
-    #print (proc_name, f"   message envoyé à la cible: len{len(message)}")
     monitoring_loop = 0
     while flag_monitoring:
         if True: #try:
