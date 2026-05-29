@@ -2083,7 +2083,7 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Reset draw", command = bloc.c_bloc_erase_draw)
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
-    doc_txt  = 'General Documentation'
+    doc_txt  = 'of line Documentation'
     doc_file = '../docs/Documentation_générale.html'
     doc_file = '../docs/general_en.pdf'
     if sys.platform == "linux":
@@ -2188,9 +2188,9 @@ def menu_header(event, elem):
     #doc_file = "Documentation/bloc_"+elem.header['name']+".html"
     if os.path.isfile(doc_file):
         if sys.platform == "linux":
-            menu_contextuel.add_command(label = "Documentation", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
+            menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
         else:
-            menu_contextuel.add_command(label = "Documentation", command = lambda: os.startfile(doc_file))
+            menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: os.startfile(doc_file))
         menu_contextuel.add_separator()
     else:
         menu_contextuel.add_command(label = "Documentation not available")
