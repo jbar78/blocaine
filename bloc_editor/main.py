@@ -2407,7 +2407,7 @@ def open_file(pf_name, decal):
         #print (proc_name, "bloc=", bloc)
         bloc.c_bloc_draw(master, canvas, mire)
         decalage = c_position(decal)
-        print (proc_name, "avant décalage, decalage=", decal)
+        print (proc_name, f"before shfting,  shift value={decal}")
         canvas.move (tk.ALL, scale_factor * decalage.x, scale_factor * decalage.y)
         routage()
         #if not 'system' in bloc.header['key_word']:
@@ -2423,21 +2423,21 @@ def save_file(save_as):
     bloc_a_sauver = pickle.loads(pickle.dumps(bloc))
     if save_as:
         fullname = tk.filedialog.asksaveasfilename(title="Please new bloc name", filetypes = [("Fichiers Bloc", "*.bloc")])
-        print (proc_name, "file name=", fullname)
+        #print (proc_name, "file name=", fullname)
         if not fullname: return
         fname_sans_chemin = os.path.basename(fullname)
         fname_sans_extension = os.path.splitext(fname_sans_chemin)[0]
         bloc_a_sauver.header['name'] = fname_sans_extension
-    print (proc_name, "début: name<"+bloc_a_sauver.header['name']+">")
+    #print (proc_name, "début: name<"+bloc_a_sauver.header['name']+">")
     if bloc_a_sauver.header['structure_version']=="2.0":
         bloc.c_bloc_position(raz=True) #False
     else:
-        print (proc_name, "Ce n'est pas une version 2.0")
+        print (proc_name, "Warning it's not a version 2.0")
     #bloc_a_sauver.c_bloc_print()
     write_bloc (bloc_a_sauver)
     if not save_as:
         memo_bloc = bloc.c_bloc_copy()
-    print (proc_name, "fin: name<"+bloc.header['name']+">")
+    print (proc_name, f"writing name<{bloc.header['name']}>")
     #print (proc_name, "fin")
 def update_blocs():
     global bloc

@@ -14,23 +14,23 @@ def compiled_find_master(bloc_name, master):
     global list_compiled
     proc_name = "compiled_find_master: "
     if master:
-        txt_param = "recherche MASTER"
+        txt_param = "MASTER"
     else:
-        txt_param = "recherche PENDING"
-    print (proc_name, "début", txt_param)
+        txt_param = "PENDING"
+    #print (proc_name, "début", txt_param)
     for i, cb in enumerate(list_compiled):
-        print (proc_name, f"boucle   i={i}")
+        #print (proc_name, f"boucle   i={i}")
         if cb.header['name']  == bloc_name:
-            print (proc_name, f"même nom={bloc_name}")
+            #print (proc_name, f"même nom={bloc_name}")
             if master == cb.header['master']:
-                print (proc_name, f"même master={master}")
+                #print (proc_name, f"même master={master}")
                 if master:
                     txt= "master"
                 else:
                     txt = "No master"
-                print(proc_name,  txt+f" MASTER trouvé dans list_compiled (index={i})  le bloc<{cb.header['name']}> /{cb.header['AB']}")
+                print(proc_name, f": search bloc <{cb.header['name']}>: found /{cb.header['AB']} in {txt} at index={i}  ")
                 return True, i
-    print (proc_name, "non trouvé   ", txt_param)
+    print (proc_name, f"bloc <{bloc_name}> not found in ", txt_param)
     return False, -1
 def compiled_status():
     """retourne les status des shift A et B"""
@@ -105,7 +105,7 @@ def compiled_load(curant_exebloc):
     """Charge le bloc exécutable reçu dans list_compiled"""
     global list_compiled
     proc_name = "compiled_load: "
-    print (proc_name, "début")
+    print (proc_name, "beginning")
     #trouvé = False
     #for i, cb in enumerate(list_compiled):
     #   if (cb.header['name']  == curant_exebloc.header['name']) and not master:
@@ -121,27 +121,27 @@ def compiled_load(curant_exebloc):
         curant_exebloc.header['master'] = False
         curant_exebloc.header['AB'] = list_compiled[ipending].header['AB']
     else:# si le bloc n'est pas "pending" il faut en ajouter un
-        print(proc_name,  f"ajout en fin de list_compiled")
+        #print(proc_name,  f"add to list_compiled")
         if master: # si le bloc est "ready" ou "running" 
-            print(proc_name,  f"C'est un bloc master  shift={list_compiled[imaster].header['AB']}")
+            #print(proc_name,  f"C'est un bloc master  shift={list_compiled[imaster].header['AB']}")
             if list_compiled[imaster].header['AB'] == "A":
                 curant_exebloc.header['AB'] = "B"
             else:
                 curant_exebloc.header['AB'] = "A"
             curant_exebloc.header['master'] = False
-            print(proc_name,  f"à ajout bloc={curant_exebloc.header['name']} Shift={curant_exebloc.header['AB']} master={curant_exebloc.header['master']}")
+            #print(proc_name,  f"add bloc={curant_exebloc.header['name']} Shift={curant_exebloc.header['AB']} master={curant_exebloc.header['master']}")
         else:
             curant_exebloc.header['AB'] = "A"
             curant_exebloc.header['master'] = True
-        print(proc_name,  f"ajout à list_compiled[{ipending}]  bloc={curant_exebloc.header['name']}  /{curant_exebloc.header['AB']}  master={curant_exebloc.header['master']}")
+        print(proc_name,  f"add to list_compiled[{ipending}]  bloc={curant_exebloc.header['name']}  /{curant_exebloc.header['AB']}  master={curant_exebloc.header['master']}")
     delete_exebloc_AB(curant_exebloc.header['name'], curant_exebloc.header['AB'])
     list_compiled.append(curant_exebloc) # ajout du bloc compilé
 
     for ebloc in list_compiled:
         if curant_exebloc.header['name'] == ebloc.header['name'] and curant_exebloc.header['AB'] == ebloc.header['AB']:
-            print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
+            #print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
             for ib, subloc in enumerate(ebloc.sublocs):
-                print (proc_name, f"     subobj: name={subloc.header['name']},  (id{subloc.header['id']})")
+                #print (proc_name, f"     subobj: name={subloc.header['name']},  (id{subloc.header['id']})")
                 #if 'subloc_id' in omemo:
                 if subloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:
                     #print (proc_name,     " output trouvé: name=", subloc.header['name'], ", id=", subloc.header['id'])
@@ -153,7 +153,7 @@ def compiled_load(curant_exebloc):
                         dic['run'] = False
                         list_threads[index]['list_exe'].append(dic)
 
-    print(proc_name,  f"fin: list_compiled,  len={len(list_compiled)}")
+    print(proc_name,  f"list_compiled,  len={len(list_compiled)}")
 def find_thread_index(pthread_id):
     """ retourne l'index du thread correspondant à l'ID"""
     global list_threads
@@ -178,13 +178,13 @@ def find_running_bloc(pname, pAB):
                 #print (proc_name, "  trouvé: index thread=", ith, "    index list_exe=", i, "  run=",exe['run'])
                 if exe['run']:
                     return True
-    print (proc_name, " BLOC<"+pname+"> /"+pAB+" non trouvé")
+    print (proc_name, " bloc <"+pname+"> /"+pAB+" not RUNNING")
     return False
 def initialize(pname, pAB):
     """initialise le bloc exécutable reçu dans list_compiled"""
     global list_compiled
     proc_name = "initialize: "
-    print (proc_name, f"début: paramètres: name={pname},  AB={pAB}")
+    #print (proc_name, f"début: paramètres: name={pname},  AB={pAB}")
     for ebloc in list_compiled:
         if pname == ebloc.header['name'] and pAB == ebloc.header['AB']:
             #print (proc_name, " boucle: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
@@ -193,7 +193,7 @@ def initialize(pname, pAB):
                 for index_output, output in enumerate(subloc.outputs):
                     #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
                     if 'initial_value' in output:
-                        print (proc_name, f"initialisation: bloc name <{subloc.header['name']}> (id{subloc.header['id']}),     output name={output['name']},  initial_value={output['initial_value']}")
+                        print (proc_name, f"initialize: bloc name <{subloc.header['name']}> (id{subloc.header['id']}),     output name={output['name']},  initial_value={output['initial_value']}")
                         output['var'] = output['initial_value']
                         output['valide'] = True
 def running(pname, pAB):
@@ -201,7 +201,9 @@ def running(pname, pAB):
     ajoute les subbloc OUTPUT à exécuté dans la structure list_threads et démarre la version pAB """
     global list_compiled, list_threads
     proc_name = "running: "
-    print (proc_name, "paramètres:  name<"+pname+">    AB="+pAB)
+    if pAB=="A": nonAB = "B"
+    else: nonAB = "B"
+    print (proc_name, f"Stop  name<{pname}> /{nonAB} then Start /{pAB}")
     for thread in list_threads:
         for exe in thread['list_exe']:
             if pname == exe['exebloc'].header['name'] and pAB != exe['exebloc'].header['AB']:
@@ -216,8 +218,8 @@ def swaping(pname, pAB):
     list_omemos= []
     list_iforceds= []
     list_oforceds= []
-    proc_name = "running: "
-    print (proc_name, "paramètres:  name<"+pname+">    AB="+pAB)
+    proc_name = "swaping: "
+    print (proc_name, f"Start the main USER bloc<{pname}>  /{pAB}")
 
     #______________________________stop the bloc NON pAB
     for thread in list_threads:
@@ -233,10 +235,10 @@ def swaping(pname, pAB):
                 for index_output, output in enumerate(subloc.outputs):
                     #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
                     if 'system' in subloc.header['key_word']:
-                        print (proc_name, " récup Memory: c'est un subloc SYSTEM name=",subloc.header['name'])
+                        #print (proc_name, " récup Memory: c'est un subloc SYSTEM name=",subloc.header['name'])
                         if 'memory' in output:
                             omemo = {}
-                            #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+"> Memory trouvée")
+                            print (proc_name, f"get Memory: bloc name<{subloc.header['name']}> (id={subloc.header['id']}),      output[{index_output}]: name<"+output['name']+">")
                             omemo['subloc_id'] = subloc.header['id']
                             omemo['parent_ids'] = subloc.parent_ids
                             omemo['output_id'] = subloc.outputs[index_output]['id']
@@ -384,7 +386,7 @@ def hot_swap_exebloc(pname):
     swaping(list_compiled[imaster].header['name'], list_compiled[imaster].header['AB'])
 def run_exebloc(pname):
     proc_name = "run_exebloc: "
-    print (proc_name, "début,   bloc name=", pname)
+    print (proc_name, "beginning,   bloc name=", pname)
     ls = compiled_status()
     for sta in ls:
         if sta['name'] == pname:
@@ -408,7 +410,7 @@ def delete_exebloc_AB(pname, pAB):
     """ supprime un shifts spécifique du bloc """
     global list_compiled, list_threads
     proc_name = "delete_exebloc_AB: "
-    print (proc_name, f"début,   bloc name={pname}  /{pAB}")
+    print (proc_name, f"delete bloc name={pname} in shift /{pAB} from list_compiled")
     for  cb in list_compiled.copy():
         if cb.header['name'] == pname and cb.header['AB'] == pAB :
             list_compiled.remove(cb)

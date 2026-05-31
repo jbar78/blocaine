@@ -86,5 +86,5 @@ serverTCP_thread.start()
 # affiche des adresse ipv4 disponible
 time.sleep (0.5)
 print (f"Target IP address: {get_local_ip()}")
-print (f"Target: 😊")
+print (f"Target is ready 😊")
 
