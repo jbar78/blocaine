@@ -968,6 +968,30 @@ def routage ():
                     if PARAM_DEBUG_ROUTAGE: print (trace_txt, " pas de input avec un lien")
                         #pos.y += PARAM_ROUTAGE_HEADER_DY
         if PARAM_DEBUG_ROUTAGE: print (proc_name, "FIN---------------------")
+    def decal_inputs():
+        """ décale les blocs <input> à gauche des blocs suivants"""
+        proc_name = "decal_inputs: "
+        for i, elem in enumerate(bloc.sublocs):
+            #print (proc_name, f"boucle i={i},  elem scruté: name={elem.header['name']}, (id={elem.header['id']})")
+            for i, io in enumerate(elem.ios):
+                #print (proc_name, "boucle ois[{i}],    io_name={io['name']},    io_type={io['type']},     (id={io['id']})")
+                if io['type']=='in':
+                    if 'lien' in io:
+                        #print (proc_name, f"il y a un io['lien'] dans l'io name={io['name']},  (id={io['id']}),  id_parent={io['lien']['id_parent']},  id_io={io['lien']['id_io']}")
+                        index_parent = find_index_bloc (bloc, io['lien']['id_parent'])
+                        bloc_parent = bloc.sublocs[index_parent]
+                        if bloc_parent.header['name'] == PARAM_NAME_BLOC_INPUT:
+                            #print (proc_name, f"bloc <input> (id{bloc_parent.header['id']}), posx={bloc_parent.header['position'][0]},    posx={elem.header['position'][0]} du bloc suivant <{elem.header['name']}>  (id{elem.header['id']})")
+                            if elem.header['position'][0] <= bloc_parent.header['position'][0]:
+                                #print (proc_name, f"bloc <input> (id{bloc_parent.header['id']}), posx={bloc_parent.header['position'][0]} < à posx={elem.header['position'][0]} du bloc suivant <{elem.header['name']}>  (id{elem.header['id']})")
+                                x = min (bloc_parent.header['position'][0], elem.header['position'][0] - PARAM_ROUTAGE_DX)
+                                y = bloc_parent.header['position'][1]
+                                #print(proc_name, f"ancien x={bloc_parent.header['position'][0]} nouveau x={x}")
+                                bloc_parent.header['position'] = (x, y)
+
+
+
+
     def routage_gravite():
         """Repositionne les elements par rapport au centre de gravité"""
         global bloc
@@ -1001,6 +1025,7 @@ def routage ():
                 routage_pass1(elem, posxy_routage) # récurcif
                 posxy_routage.x = -PARAM_ROUTAGE_DX
                 posxy_routage.y += PARAM_ROUTAGE_MARGE_DY + PARAM_ROUTAGE_HEADER_DY + PARAM_ROUTAGE_IO_DY + PARAM_ROUTAGE_OUTPUT_DY
+        decal_inputs()
         routage_gravite()
         bloc.c_bloc_erase_draw()
         bloc.c_bloc_draw(master, canvas, mire)
@@ -2010,8 +2035,11 @@ def event_key_F5(event):
     print (proc_name," arg=", event)
     print (proc_name," KEY_F5")
     global bloc
-    update_blocs()
-    routage()
+    if not flag_monitoring:
+        update_blocs()
+        routage()
+    else:
+        messagebox.showinfo("❌ERROR", "Update not allowed in Monitoring mode")
 def event_key_F7(event):
     """callback: sur evenement"""
     proc_name = "event_key_F7: "
@@ -2022,10 +2050,13 @@ def event_key_delete(event):
     """callback: sur evenement"""
     proc_name = "event_key_delete: "
     print (proc_name," arg=", event)
-    elem = find_bloc_under_event(event)
-    if elem != None:
-        print (proc_name, f"nom du bloc à supprimer={elem.header['name']}")
-        del_bloc(elem)
+    if not flag_monitoring:
+        elem = find_bloc_under_event(event)
+        if elem != None:
+            print (proc_name, f"nom du bloc supprimé={elem.header['name']}")
+            del_bloc(elem)
+    else:
+        messagebox.showinfo("❌ERROR", "Delete not allowed in Monitoring mode")
 def event_key_escape(event):
     """callback: sur evenement"""
     proc_name = "event_exit: "
@@ -2191,16 +2222,17 @@ def menu_header(event, elem):
     except:
         pass #print (proc_name, "pas de menu contextuel à destroy")
     menu_contextuel = tk.Menu(master, tearoff=0)
-    menu_contextuel.add_command(label = "Delete", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_bloc(elem))
-    if True: #(elem.header['name'] != PARAM_NAME_BLOC_INPUT) and (elem.header['name'] != PARAM_NAME_BLOC_OUTPUT):
-        menu_contextuel.add_command(label = "Update", command = lambda: update_bloc(elem))
     if not "system" in elem.header['key_word']:
-        menu_contextuel.add_separator()
         menu_contextuel.add_command(label = "Open", command = lambda: open_bloc_new_window(elem.header['name'], elem.header['id'], (0,0)))
-    print (proc_name, ":  elem.header['name']=", elem.header['name'])
+    print (proc_name, f"opening bloc name<{elem.header['name']}>")
+    if not flag_monitoring:
+        # if (elem.header['name'] != PARAM_NAME_BLOC_INPUT) and (elem.header['name'] != PARAM_NAME_BLOC_OUTPUT):
+        menu_contextuel.add_command(label = "Update", command = lambda: update_bloc(elem))
+        menu_contextuel.add_separator()
+        menu_contextuel.add_command(label = "Delete", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_bloc(elem))
+        menu_contextuel.add_separator()
     if elem.header['name'] == PARAM_NAME_BLOC_OUTPUT:
         print (proc_name, ":  output trouvé")
-        menu_contextuel.add_separator()
         if 'event_id' in elem.header:
             prefix= "Change"
             sufix = ""
@@ -2225,7 +2257,7 @@ def menu_header(event, elem):
             menu_contextuel.add_command(label = "move up",   command = lambda: io_interface_move(elem, "up"))
         if pos_io < nbr_io:
             menu_contextuel.add_command(label = "move down", command = lambda: io_interface_move(elem, "down"))
-    menu_contextuel.add_separator()
+        menu_contextuel.add_separator()
     doc_file = doc_file_name(elem)
     #doc_file = "Documentation/bloc_"+elem.header['name']+".html"
     if os.path.isfile(doc_file):
@@ -2233,7 +2265,6 @@ def menu_header(event, elem):
             menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
         else:
             menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: os.startfile(doc_file))
-        menu_contextuel.add_separator()
     else:
         menu_contextuel.add_command(label = "Documentation not available")
 

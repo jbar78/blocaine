@@ -141,7 +141,7 @@ def compiled_load(curant_exebloc):
         if curant_exebloc.header['name'] == ebloc.header['name'] and curant_exebloc.header['AB'] == ebloc.header['AB']:
             print (proc_name, "boucle des sousbloc de: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
             for ib, subloc in enumerate(ebloc.sublocs):
-                print (proc_name, "     subobj: name=",subloc.header['name'])
+                print (proc_name, f"     subobj: name={subloc.header['name']},  (id{subloc.header['id']})")
                 #if 'subloc_id' in omemo:
                 if subloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:
                     #print (proc_name,     " output trouvé: name=", subloc.header['name'], ", id=", subloc.header['id'])
@@ -187,12 +187,13 @@ def initialize(pname, pAB):
     print (proc_name, f"début: paramètres: name={pname},  AB={pAB}")
     for ebloc in list_compiled:
         if pname == ebloc.header['name'] and pAB == ebloc.header['AB']:
-            print (proc_name, " boucle: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
+            #print (proc_name, " boucle: BLOC=",ebloc.header['name']," /",ebloc.header['AB'])
             for subloc in ebloc.sublocs:
-                print (proc_name, " boucle récup subobj: name=",subloc.header['name'])
+                #print (proc_name, " boucle récup subobj: name=",subloc.header['name'])
                 for index_output, output in enumerate(subloc.outputs):
-                    print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
+                    #print (proc_name, "  récup Memory: output["+str(index_output)+"] name<"+output['name']+">")
                     if 'initial_value' in output:
+                        print (proc_name, f"initialisation: bloc name <{subloc.header['name']}> (id{subloc.header['id']}),     output name={output['name']},  initial_value={output['initial_value']}")
                         output['var'] = output['initial_value']
                         output['valide'] = True
 def running(pname, pAB):

@@ -139,7 +139,7 @@ class MyServer(BaseHTTPRequestHandler):
         #print ("self.key=", self.key)
         #print ("self.order=", self.order)
         #print ("self.bloc_name=", self.bloc_name)
-        print ("HTTP: réception: self.key=", self.key, "self.order=", self.order, "self.bloc_name=", self.bloc_name)
+        #print ("HTTP: réception: self.key=", self.key, "self.order=", self.order, "self.bloc_name=", self.bloc_name)
         # Gestion des différentes pages
         if self.path == "/" or self.key == "/list_compiled" or self.key == "/list_threads": #__________________menu principal
             if self.key == "/list_compiled":
