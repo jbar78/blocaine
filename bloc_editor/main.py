@@ -515,10 +515,12 @@ class c_sublocs:
         proc_name = "c_sublocs_event_double_clic_gauche_header: "
         #print (proc_name, "event=", event)
         if not ("system" in self.header['key_word']): # les blocs system ne sont ouvrable en double cliquant sur leur entête
-            print (proc_name, "ouverture du bloc (name=", self.header['name'], "dans une autre fenêtre")
+            #print (proc_name, "ouverture du bloc (name=", self.header['name'], "dans une autre fenêtre")
             open_bloc_new_window(self.header['name'], self.header['id'], (0,0))
         else:
-            print (proc_name, "WARNNING: ouverture du bloc (name=", self.header['name'], "impossible, car c'est un bloc <system>")
+            messagebox.showinfo("❌ERROR:", f"Opening <{self.header['name']}> is not allowed because it is a system bloc")
+
+            #print (proc_name, "WARNNING: ouverture du bloc (name=", self.header['name'], "impossible, car c'est un bloc <system>")
     def c_sublocs_event_clic_droit_io (self, event, io):
         """call_back: sur evenement"""
         global memo_event_clic_droit_io
@@ -537,24 +539,38 @@ class c_sublocs:
         memo_lien_en_cours = True
     def c_sublocs_event_release_gauche_io (self, event, io=4):
         """call_back: sur evenement"""
+        global popup_properties, flag_monitoring
         proc_name = "c_sublocs_event_release_gauche_io: "
         #print (proc_name, "event=", event)
         #print (proc_name, "event_realese_gauche_io: ")
         try:
             canvas.delete(self.id_lien_provisoire)
             del self.id_lien_provisoire
-            print (proc_name, "canvas.delete(self.id_lien_provisoire")
+            #print (proc_name, "canvas.delete(self.id_lien_provisoire")
         except:
-            print (proc_name, "❌ERROR: try to ...canvas.delete(self.id_lien_provisoire")
+            print (proc_name, "WARNING: try to ...canvas.delete(self.id_lien_provisoire")
+            if flag_monitoring:
+                #print (proc_name, f"flag_monitoring={flag_monitoring}")
+                #print (proc_name, f"fermer le popup")
+                popup_properties.popup.destroy()
     def c_sublocs_event_double_clic_gauche_io(self, event, io=4):
         """call_back: sur evenement"""
+        global monitored_sublocs
         proc_name = "c_sublocs_event_double_clic_gauche_io: "
-        print (proc_name, "event=", event)
-        parent=find_parent(io)
-        if not "system" in parent.header['key_word']: # les blocs system ne sont ouvrable en double cliquant sur leurs IO
-            open_io_new_window(io)
+        #print (proc_name, "event=", event)
+        if flag_monitoring:
+            #print (proc_name, f"flag_monitoring={flag_monitoring}")
+            if io_forced(monitored_sublocs, io):
+                if overwriting_bool(io, monitored_sublocs):
+                    overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=True)
+                else:
+                    overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=True, pbool=False)
         else:
-            print (proc_name, "ouverture du bloc  name=", parent.header['name'], "impossible")
+            parent=find_parent(io)
+            if not "system" in parent.header['key_word']: # les blocs system ne sont ouvrable en double cliquant sur leurs IO
+                open_io_new_window(io)
+            else:
+                messagebox.showinfo("❌ERROR:", f"Opening <{bloc.header['name']}> is not allowed because it is a system bloc")
     def c_sublocs_event_glisser_gauche_io (self, event, io=4):
         global origne_lien
         proc_name = "c_sublocs_event_glisser_gauche_io: "
@@ -563,7 +579,7 @@ class c_sublocs:
         try:
             canvas.delete(self.id_lien_provisoire)
         except: pass
-        self.id_lien_provisoire  = canvas.create_line(lien_origine['event'].x, lien_origine['event'].y, event.x, event.y, tag=["lien"], fill="red", width=PARAM_LIEN_WIDTH)
+        self.id_lien_provisoire  = canvas.create_line(lien_origine['event'].x, lien_origine['event'].y, event.x, event.y, tag=["lien"], fill="red", width=3*PARAM_LIEN_WIDTH)
     def c_sublocs_event_enter_leave_io (self, event, io, over):
         """call_back: sur evenement"""
         global popup_properties, flag_monitoring
@@ -648,6 +664,7 @@ class c_average:
         return self.sum/self.nb
 class c_popup:
     def __init__(self, title, x, y):
+        #print (f"c_popup__init__  =tk.Toplevel(master),  title={title}")
         self.popup = tk.Toplevel(master)
         self.popup.wm_attributes("-topmost", True)
         self.popup.geometry("+{}+{}".format (x, y))
@@ -670,7 +687,7 @@ class c_popup:
         else:
             self.entry[self.ligne].insert(0, param)
         self.label[self.ligne].grid(row = self.ligne, column = 0, sticky="e")
-        self.entry[self.ligne].grid(row = self.ligne, column = 1, sticky="w")
+        self.entry[self.ligne].grid(row = self.ligne, column = 1, sticky="ew") #w
         self.set_proc.append(set_proc)
         retour = self.entry[self.ligne]
         self.ligne += 1
@@ -901,8 +918,7 @@ def draw_lien(io_in):
 
     points.append(pos_out[0])
     points.append(pos_out[1])
-
-    io_in['id_lien'] = canvas.create_line(points, smooth=True, tag=["lien"], fill=color, width=PARAM_LIEN_WIDTH)
+    io_in['id_lien'] = canvas.create_line(points, smooth=True, tag=["lien"], fill=color, width=PARAM_LIEN_WIDTH )
     #io_in['id_lien'] = canvas.create_line(pos_in[0], pos_in[1], pos_out[0], pos_out[1], tag=["lien"], fill=color, width=3)
 def routage ():
     """callback: sur evenement"""
@@ -1532,7 +1548,7 @@ def delete_local_defaut_value_io(px, py, io):
 #    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
 def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
     """pour definir la valeur par défaut d'une entrée"""
-    global PARAM_TYPE_LIST
+    global PARAM_TYPE_LIST, bloc
     proc_name = "set_value_io: "
     #print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, msg={pmsg}, pbool={pbool}, pproc{pproc}")
     def proc_null():
@@ -1563,13 +1579,13 @@ def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
     #    io[pdic] =1
     try:
         io[pdic]
-        print (proc_name, "try: io[pdic] exist")
+        #print (proc_name, "try: io[pdic] exist")
     except:
-        print (proc_name, "exception: io[pdic] does not exist")
+        #print (proc_name, "exception: io[pdic] does not exist")
         io[pdic] =1
     if pbool:
-        if type(io[pdic]).__name__ == "bool":
-            print (proc_name, f"io([pdic] est de type bool")
+        #if type(io[pdic]).__name__ == "bool":
+        #    print (proc_name, f"io([pdic] est de type bool")
         io[pdic] = not io[pdic]
         pproc(io[pdic], pmsg)
         bloc.c_bloc_redraw()
@@ -1736,6 +1752,32 @@ def io_interface_move (elem, direction):
             bloc.sublocs[index] = elem_memo
         else:
             print (proc_name, "io déjà en dernière position")
+def io_forced (pmonitored_sublocs, pio):
+    """ Retourn létat de l'OI du bloc exécutable: True=forced, False=not forced"""
+    proc_name = "io_forced: "
+    io_forced = False
+
+    #for i, sb in enumerate(bloc.sublocs):
+    #    print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+    #        for j, io in enumerate(sb.ios):
+    #            print(proc_name, f" : ois[{k}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+
+    sb = find_parent (pio)
+    for ii, msb in enumerate(pmonitored_sublocs):
+        if msb.header['id'] == sb.header['id']:
+            if pio['type'] == 'in':
+                for minput in msb.inputs:
+                    if minput['id'] == pio['id']:
+                        if 'forced' in minput:
+                            return True
+            elif pio['type'] == 'out':
+                for moutput in msb.outputs:
+                    if moutput['id'] == pio['id']:
+                        if 'forced' in moutput:
+                            return True
+            else:
+                messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+    return False
 def flip_monitoring():
     global flag_monitoring, monitoring_thread
     flag_monitoring = not flag_monitoring
@@ -1780,7 +1822,7 @@ def event_release_gauche(event):
             start_txt ="OUTPUT"
             end_txt = "INPUT"
         print(f"❌ERROR: As starting point is an <{start_txt}>, the end point must be an ", end_txt)
-        messagebox.showinfo(f"❌ERROR", "As starting point is an <{start_txt}> the end point must be an "+end_txt)
+        messagebox.showinfo("❌ERROR", f"As starting point is an {start_txt} the end point must be an {end_txt}")
 
     proc_name = "event_release_gauche: "
     #print (proc_name, "event=", event)
@@ -1893,8 +1935,8 @@ def event_key_space(event):
     """callback: sur evenement"""
     global flag_monitoring
     proc_name = "event_key_space: "
-    print (proc_name," arg=", event)
-    print (proc_name," KEY_SPACE ")
+    #print (proc_name," arg=", event)
+    #print (proc_name," KEY_SPACE ")
     flip_monitoring()
 
 def find_bloc_under_event(event):
@@ -2000,10 +2042,10 @@ def zoom(factor_brut, x, y):
     proc_name = "zoom: "
     #print(proc_name, "scale_factor=", scale_factor)
     scale = factor_brut * scale_factor
-    if (scale > 1.01) :
+    if (scale > PARAM_ZOOM_MAXI) :
         print ("zoom max atteint")
     else :
-        if (scale < 0.001) :
+        if (scale < PARAM_ZOOM_MINI) :
             print ("zoom min atteint")
         else:
             factor = factor_brut
@@ -2200,8 +2242,8 @@ def menu_header(event, elem):
 def menu_io(event, io):
     """construit le menu lié à un IO"""
     global bloc, monitored_sublocs, menu_contextuel
-    def io_forced (pmonitored_sublocs):
-        """ Retourn létat de l'OI du bloc exécutable: True=forced, Falce=not forced"""
+    def io_forcedXXXX (pmonitored_sublocs):
+        """ Retourn létat de l'OI du bloc exécutable: True=forced, False=not forced"""
         proc_name = "io_forced: "
         io_forced = False
 
@@ -2224,7 +2266,7 @@ def menu_io(event, io):
                             if 'forced' in moutput:
                                 return True
                 else:
-                    messagebox.showinfo("❌ERROR", f"Shoing monitored IO 'type' is not 'in' or 'out',  io={io}")
+                    messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={io}")
         return False
 
     proc_name = "menu_io: "
@@ -2237,72 +2279,73 @@ def menu_io(event, io):
 
     menu_contextuel = tk.Menu(master, tearoff=0)
 
-    if 'lien' in io:
-        menu_contextuel.add_command(label = "Delete link",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_lien(io))
-        menu_contextuel.add_separator()
-    if not ("system" in elem_parent.header['key_word']):
-        menu_contextuel.add_command(label = "Open", command = lambda: open_io_new_window(io))
+    if not flag_monitoring:
+        if 'lien' in io:
+            menu_contextuel.add_command(label = "Delete link",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: del_lien(io))
+            menu_contextuel.add_separator()
+        if not ("system" in elem_parent.header['key_word']):
+            menu_contextuel.add_command(label = "Open", command = lambda: open_io_new_window(io))
 
-    if (elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT) or (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT): #rename
-        #if (io['type'] == 'in') or (io['type'] == 'out'):
-        menu_contextuel.add_command(label = "Rename", command = lambda: modif_io(event.x_root, event.y_root, io, rename=True, comment=False, local=False))
-        menu_contextuel.add_command(label = "Change comment", command = lambda: modif_io(event.x_root, event.y_root, io, rename= False, comment=True, local=False))
+        if (elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT) or (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT): #rename
+            #if (io['type'] == 'in') or (io['type'] == 'out'):
+            menu_contextuel.add_command(label = "Rename", command = lambda: modif_io(event.x_root, event.y_root, io, rename=True, comment=False, local=False))
+            menu_contextuel.add_command(label = "Change comment", command = lambda: modif_io(event.x_root, event.y_root, io, rename= False, comment=True, local=False))
 
-    try:
-        io['local_name']
-        menu_contextuel.add_command(label = "Change local name", command = lambda: change_local_name_io(event.x_root, event.y_root, io))
-        menu_contextuel.add_command(label = "Delete local name", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_local_name_io(event.x_root, event.y_root, io))
-    except KeyError:
-        if (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and elem_parent.header['name'] != PARAM_NAME_BLOC_INPUT):
-            if not 'system' in bloc.header['key_word']:
-                menu_contextuel.add_command(label = "Create local name", command = lambda: change_local_name_io(event.x_root, event.y_root, io))
-    try:
-        io['local_comment']
-        menu_contextuel.add_command(label = "Change local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
-        menu_contextuel.add_command(label = "Delete local comment", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_local_comment_io(event.x_root, event.y_root, io))
-    except KeyError:
-        if (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and elem_parent.header['name'] != PARAM_NAME_BLOC_INPUT):
-            if not 'system' in bloc.header['key_word']:
-                menu_contextuel.add_command(label = "Create local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
+        try:
+            io['local_name']
+            menu_contextuel.add_command(label = "Change local name", command = lambda: change_local_name_io(event.x_root, event.y_root, io))
+            menu_contextuel.add_command(label = "Delete local name", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_local_name_io(event.x_root, event.y_root, io))
+        except KeyError:
+            if (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and elem_parent.header['name'] != PARAM_NAME_BLOC_INPUT):
+                if not 'system' in bloc.header['key_word']:
+                    menu_contextuel.add_command(label = "Create local name", command = lambda: change_local_name_io(event.x_root, event.y_root, io))
+        try:
+            io['local_comment']
+            menu_contextuel.add_command(label = "Change local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
+            menu_contextuel.add_command(label = "Delete local comment", foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_local_comment_io(event.x_root, event.y_root, io))
+        except KeyError:
+            if (elem_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and elem_parent.header['name'] != PARAM_NAME_BLOC_INPUT):
+                if not 'system' in bloc.header['key_word']:
+                    menu_contextuel.add_command(label = "Create local comment", command = lambda: change_local_comment_io(event.x_root, event.y_root, io))
 
-    if ((elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT and bloc.header['name'] != PARAM_NAME_BLOC_OUTPUT) or \
-        (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT and not 'system' in bloc.header['key_word']) or \
-        (io['type'] == 'in' and not 'system' in bloc.header['key_word'])): # 28mai2026
-        menu_contextuel.add_command(label = "Set default value", command = lambda: change_defaut_value_io(event.x_root, event.y_root, io))
-        if "defaut_value" in io:
-            menu_contextuel.add_command(label = "Delete default value",foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
+        if ((elem_parent.header['name'] == PARAM_NAME_BLOC_INPUT and bloc.header['name'] != PARAM_NAME_BLOC_OUTPUT) or \
+            (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT and not 'system' in bloc.header['key_word']) or \
+            (io['type'] == 'in' and not 'system' in bloc.header['key_word'])): # 28mai2026
+            menu_contextuel.add_command(label = "Set default value", command = lambda: change_defaut_value_io(event.x_root, event.y_root, io))
+            if "defaut_value" in io:
+                menu_contextuel.add_command(label = "Delete default value",foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
 
-    #menu_contextuel.add_command(label = "+++Delete default value",foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
+        #menu_contextuel.add_command(label = "+++Delete default value",foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: delete_defaut_value_io(event.x_root, event.y_root, io))
 
 
-    #if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT):
-    #        if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
-    if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT): 
-        if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
-            if "memory" not in io:
-                menu_contextuel.add_command(label = "Add Memory", command = lambda: memory_io("add", io))
+        #if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT):
+        #        if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
+        if (elem_parent.header['name'] == PARAM_NAME_BLOC_OUTPUT): 
+            if 'system' in bloc.header['key_word'] and bloc.header['name'] != PARAM_NAME_BLOC_INPUT:
+                if "memory" not in io:
+                    menu_contextuel.add_command(label = "Add Memory", command = lambda: memory_io("add", io))
+                else:
+                    menu_contextuel.add_command(label = "Delete Memory", command = lambda: memory_io("supp", io))
+
+
+        if "memory" in io:
+            if "initial_value" not in io:
+                menu_contextuel.add_command(label = "Add initial value ", command = lambda: change_initial_value_io(event.x_root, event.y_root, io))
             else:
-                menu_contextuel.add_command(label = "Delete Memory", command = lambda: memory_io("supp", io))
+                menu_contextuel.add_command(label = "Change initial value ", command = lambda: change_initial_value_io(event.x_root, event.y_root, io))
+                menu_contextuel.add_command(label = "Delete initial value ", command = lambda: delete_initial_value_io(event.x_root, event.y_root, io))
 
 
-    if "memory" in io:
-        if "initial_value" not in io:
-            menu_contextuel.add_command(label = "Add initial value ", command = lambda: change_initial_value_io(event.x_root, event.y_root, io))
-        else:
-            menu_contextuel.add_command(label = "Change initial value ", command = lambda: change_initial_value_io(event.x_root, event.y_root, io))
-            menu_contextuel.add_command(label = "Delete initial value ", command = lambda: delete_initial_value_io(event.x_root, event.y_root, io))
-
-
-    menu_contextuel.add_separator()
-    if flag_monitoring:
-        if io_forced(monitored_sublocs):
-            menu_contextuel.add_command(label = "OverWriting: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=False))
+        menu_contextuel.add_separator()
+    else: #if flag_monitoring:
+        if io_forced(monitored_sublocs, io):
+            menu_contextuel.add_command(label = "Override: delete",  foreground = PARAM_COLOR_MENU_TEXTE_DANGER, activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=False))
             if overwriting_bool(io, monitored_sublocs):
-                menu_contextuel.add_command(label = "OverWriting: toggle bool value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=True))
-            menu_contextuel.add_command(label = "OverWriting: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=True, pbool=False))
-            menu_contextuel.add_command(label = "OverWriting: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=True, pchange=False, pbool=False))
+                menu_contextuel.add_command(label = "Override: toggle bool value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=False, pbool=True))
+            menu_contextuel.add_command(label = "Override: change value",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=False, pchange=True, pbool=False))
+            menu_contextuel.add_command(label = "Override: toggle validity",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=False, ptoggle=True, pchange=False, pbool=False))
         else:
-            menu_contextuel.add_command(label = "OverWriting",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=True, ptoggle=False, pchange=False, pbool=False))
+            menu_contextuel.add_command(label = "Override",  foreground = PARAM_COLOR_MENU_TEXTE_WARNING, activeforeground = PARAM_COLOR_MENU_TEXTE_WARNING, command = lambda: overwriting(event.x_root, event.y_root, io, monitored_sublocs, pstart=True, ptoggle=False, pchange=False, pbool=False))
 
         menu_contextuel.add_separator()
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_io(event.x_root, event.y_root, io, all=True))
@@ -2377,7 +2420,7 @@ def update_blocs():
             #print (proc_name, "updating bloc name=", elem.header['name'], "  id=", elem.header['id'])
             update_error = update_error or update_bloc(bloc.sublocs[i])
     if update_error:
-        messagebox.showinfo("ERROR", "some sub-bloc can not be updated")
+        messagebox.showinfo("❌ERROR", "some sub-bloc can not be updated")
 def reset_blocs():
     """supprimer tous les éléments (BLOC)"""
     global bloc
@@ -3110,14 +3153,14 @@ def monitoring_bloc():
         else: #except:
             print(proc_name, "❌ERROR: EXECPTION") #buffer reçu=", buff)
         monitoring_loop += 1
-    print(proc_name, "fin du monitoring")
+    #print(proc_name, "fin du monitoring")
     for i, sb in enumerate(bloc.sublocs):
-        print(proc_name, f" monitoring bloc=<{bloc.header['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
+        #print(proc_name, f" monitoring bloc=<{bloc.header['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
         for j, io in enumerate(sb.ios):
-            print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
+            #print(proc_name, f" : ois[{j}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
             show_normal_io (io)
     #bloc.c_bloc_redraw()
-    print(proc_name, "fin")
+    #print(proc_name, "fin")
 
 
 #  début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début --- début ---
