@@ -17,6 +17,15 @@ class c_gpio:
         self.host = "le host"
         self.port = "le port"
 
+class c_opc_server:
+    """pour ne pas sérialisation des objets OPC """
+    def __init__(self, var):
+        self.endpoint = "toto_server"
+class c_opc_node:
+    """pour ne pas sérialisation des objets OPC """
+    def __init__(self, var):
+        self.toto = "toto_node"
+
 
 
 class c_exebloc:

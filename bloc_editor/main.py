@@ -3088,6 +3088,12 @@ def monitoring_bloc():
         elif isinstance(var, c_gpio):
             #print (proc_name, "type=c_gpio")
             return f".GPIO."
+        elif isinstance(var, c_opc_server):
+            #print (proc_name, "type=c_opc_server")
+            return f".OPC.server."
+        elif isinstance(var, c_opc_node):
+            #print (proc_name, "type=c_opc_node")
+            return f".OPC.node."
         elif var==None:
             return f"None"
         else:

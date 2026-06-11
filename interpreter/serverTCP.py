@@ -17,6 +17,11 @@ if PARAM_CONFIG_MODULE_MODBUS:
     from pymodbus.client import ModbusTcpClient
 if PARAM_CONFIG_MODULE_GPIOZERO:
     from gpiozero import LED as GPIOZ_LED, Button as GPIOZ_Button, PWMLED as GPIOZ_PWMLED
+if PARAM_CONFIG_MODULE_OPC:
+    from opcua import ua as OPC_ua, Server as OPC_Server
+    from opcua.common.node import Node as OPC_Node
+
+
 from sharedata import clientsTCP
 from c_exebloc import *
 from exec import *
@@ -141,12 +146,14 @@ def handle_clientTCP(client_socket, addr):
                         #print(proc_name, f" list_compiled[{ic}].header['name']={comp.header['name']} trouvée")
                         for subloc in comp.sublocs:
                             avec_modbus_type = False
-                            avec_gpio_type = False
+                            avec_gpio_type   = False
+                            avec_opc_type    = False
                             #print(proc_name, f" subloc.header['name']={subloc.header['name']} subloc.parent_ids={subloc.parent_ids}")
                             if subloc.parent_ids == monitoring['arbo_ids']:
                                 #print(proc_name, f" parent_ids trouvée={subloc.parent_ids}")
                                 modbus_bloc =  f"bloc ModBus, bloc name<{subloc.header['name']}>, "
                                 gpio_bloc =  f"bloc GPIO, bloc name<{subloc.header['name']}>, "
+                                opc_bloc =  f"bloc OPC, bloc name<{subloc.header['name']}>, "
                                 for input in subloc.inputs:
                                     if PARAM_CONFIG_MODULE_MODBUS:
                                         if isinstance(input['var'], ModbusTcpClient):
@@ -156,6 +163,10 @@ def handle_clientTCP(client_socket, addr):
                                         if isinstance(input['var'], GPIOZ_Button) or isinstance(input['var'], GPIOZ_LED) or isinstance(input['var'], GPIOZ_PWMLED):
                                             #print (proc_name, gpio_bloc, f"<ModbusTcpClient> in input, var=<{input['name']}>")
                                             avec_gpio_type = True
+                                    if PARAM_CONFIG_MODULE_OPC:
+                                        if isinstance(input['var'], OPC_Server) or isinstance(input['var'], OPC_Node):
+                                            print (proc_name, opc_bloc, f"in input, var=<{input['name']}> Objet OPC trouvé")
+                                            avec_opc_type = True
                                 for output in subloc.outputs:
                                     if PARAM_CONFIG_MODULE_MODBUS:
                                         if isinstance(output['var'], ModbusTcpClient):
@@ -165,16 +176,16 @@ def handle_clientTCP(client_socket, addr):
                                         if isinstance(output['var'], GPIOZ_Button) or isinstance(output['var'], GPIOZ_LED) or isinstance(output['var'], GPIOZ_PWMLED):
                                             #print (proc_name, gpio_bloc, f"<ModbusTcpClient> in output, var=<{output['name']}>")
                                             avec_gpio_type = True
+                                    if PARAM_CONFIG_MODULE_OPC:
+                                        if isinstance(output['var'], OPC_Server) or isinstance(output['var'], OPC_Node):
+                                            print (proc_name, opc_bloc, f"in output, var=<{output['name']}> Objet OPC trouvé")
+                                            avec_opc_type = True
                                             
                                             
                                 if avec_modbus_type: # pour ne pas sérialiser le type ModbusTcpClient
                                     def modbus_io (io):
                                         #print (proc_name, modbus_bloc, f"modbus_io: <ModbusTcpClient> name=<{io['name']}>,  var=<{io['var']}>")
                                         io_dic = io['var'].__dict__
-                                        #print(f"modbus_io: io.__dict__: {io_dic}")
-                                        #print (f"modbus_io: io_dic.comm_params: valeur={io_dic['comm_params']}")
-                                        #print (f"modbus_io: io_dic.comm_params.host: valeur={io_dic['comm_params'].host}")
-                                        #print (f"modbus_io: io_dic.comm_params.port: valeur={io_dic['comm_params'].port}")
                                         return  c_modbus(io_dic)
                                     #print (proc_name, f"bloc<{subloc.header['name']}> avec ModbusTcpClient")
                                     c_subloc = copy.copy(subloc)
@@ -196,6 +207,7 @@ def handle_clientTCP(client_socket, addr):
                                                 c_subloc.outputs[i] = copy.copy(output)
                                                 c_subloc.outputs[i]['var'] =  modbus_io(output)
                                                 #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
+                                    list_monitor.append(c_subloc)
                                     # pour vérifier qu'il ne reste plus d'objet ModbusTcpClient
                                     #for i, c_input in enumerate(c_subloc.inputs):
                                     #    if PARAM_CONFIG_MODULE_MODBUS:
@@ -205,16 +217,11 @@ def handle_clientTCP(client_socket, addr):
                                     #    if PARAM_CONFIG_MODULE_MODBUS:
                                     #        if isinstance(c_output['var'], ModbusTcpClient):
                                     #            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
-                                    list_monitor.append(c_subloc)
 
                                 elif avec_gpio_type: # pour ne pas sérialiser les types GPIOZERO
                                     def gpio_io (io):
                                         #print (proc_name, gpio_bloc, f"gpio_io: <Button,LED, PWMLED> name=<{io['name']}>,  var=<{io['var']}>")
                                         io_dic = io['var'].__dict__
-                                        #print(f"gpio_io: io.__dict__: {io_dic}")
-                                        #print (f"gpio_io: io_dic.comm_params: valeur={io_dic['comm_params']}")
-                                        #print (f"gpio_io: io_dic.comm_params.host: valeur={io_dic['comm_params'].host}")
-                                        #print (f"gpio_io: io_dic.comm_params.port: valeur={io_dic['comm_params'].port}")
                                         return  c_gpio(io_dic)
                                     #print (proc_name, f"bloc<{subloc.header['name']}> avec GPIOZERO objet")
                                     c_subloc = copy.copy(subloc)
@@ -236,6 +243,7 @@ def handle_clientTCP(client_socket, addr):
                                                 c_subloc.outputs[i] = copy.copy(output)
                                                 c_subloc.outputs[i]['var'] =  gpio_io(output)
                                                 #print (proc_name, f" outputs: corrigé: id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}, ['var']={c_output['var']}")
+                                    list_monitor.append(c_subloc)
                                     # pour vérifier qu'il ne reste plus d'objet GPIOZERO
                                     #for i, c_input in enumerate(c_subloc.inputs):
                                     #    if PARAM_CONFIG_MODULE_GPIOZERO:
@@ -245,7 +253,43 @@ def handle_clientTCP(client_socket, addr):
                                     #    if PARAM_CONFIG_MODULE_GPIOZERO:
                                     #        if isinstance(c_output['var'], GPIOZ_Button) or isinstance(c_output['var'], GPIOZ_LED) or isinstance(c_output['var'], GPIOZ_PWMLED):
                                     #            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
+                                elif avec_opc_type:
+                                    def opc_io (io):
+                                        print ("opc_io: ", opc_bloc, f" name=<{io['name']}>,  (id={io['id']} var=<{io['var']}>")
+                                        #io_dic = io['var'].__dict__
+                                        #return  c_opc(io_dic)
+                                        if isinstance(io['var'], OPC_Server): return  c_opc_server(io['var'])
+                                        if isinstance(io['var'], OPC_Node):   return  c_opc_node  (io['var'])
+                                    #print (proc_name, f"bloc<{subloc.header['name']}> avec OPC")
+                                    c_subloc = copy.copy(subloc)
+                                    c_subloc.inputs = copy.copy(subloc.inputs)
+                                    c_subloc.outputs = copy.copy(subloc.outputs)
+                                    for i, (input, c_input) in enumerate(zip(subloc.inputs, c_subloc.inputs)):
+                                        #print (proc_name, f"  inputs: origine: id(subloc.inputs[{i}])={id(input)}, id(c_subloc.inputs[{i}])={id(c_input)}")
+                                        if PARAM_CONFIG_MODULE_OPC:
+                                            if isinstance(input['var'], OPC_Server) or isinstance(input['var'], OPC_Node):
+                                                #print (proc_name, opc_bloc, f" in input, name=<{input['name']}>,  var=<{input['var']}>")
+                                                c_subloc.inputs[i] = copy.copy(input)
+                                                c_subloc.inputs[i]['var'] = opc_io(input)
+                                                #print (proc_name, f"  inputs[{i}]: corrigé: new['var']={c_subloc.inputs[i]['var']}")
+                                    for i, (output, c_output) in enumerate(zip(subloc.outputs, c_subloc.outputs)):
+                                        #print (proc_name, f"  outputs: origine:id(subloc.outputs[{i}])={id(output)}, id(c_subloc.outputs[{i}])={id(c_output)}")
+                                        if PARAM_CONFIG_MODULE_OPC:
+                                            if isinstance(output['var'], OPC_Server) or isinstance(output['var'], OPC_Node):
+                                                #print (proc_name, opc_bloc, f" in output, var=<{output['name']}>")
+                                                c_subloc.outputs[i] = copy.copy(output)
+                                                c_subloc.outputs[i]['var'] =  opc_io(output)
+                                                #print (proc_name, f" outputs[{i}]: corrigé: new['var']={c_subloc.outputs[i]['var']}")
                                     list_monitor.append(c_subloc)
+                                    # pour vérifier qu'il ne reste plus d'objet OPC
+                                    #for i, c_input in enumerate(c_subloc.inputs):
+                                    #    if PARAM_CONFIG_MODULE_OPC:
+                                    #        if isinstance(input['var'], OPC_Server) or isinstance(input['var'], OPC_Node):
+                                    #            print (proc_name, f"  inpouts: vérif non ok: id(c_subloc.inputs[{i}])={id(c_input)}) #, ['var']={c_input['var']}")
+                                    #for i, c_output in enumerate(c_subloc.outputs):
+                                    #    if PARAM_CONFIG_MODULE_OPC:
+                                    #        if isinstance(output['var'], OPC_Server) or isinstance(output['var'], OPC_Node):
+                                    #            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
                                 else:
                                     list_monitor.append(subloc)
 

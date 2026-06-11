@@ -9,11 +9,14 @@ if PARAM_CONFIG_MODULE_MODBUS:
     from pymodbus.client import ModbusTcpClient
 if PARAM_CONFIG_MODULE_GPIOZERO:
     from gpiozero import LED as GPIOZ_LED, Button as GPIOZ_Button, PWMLED as GPIOZ_PWMLED
+if PARAM_CONFIG_MODULE_OPC:
+    from opcua import ua as OPC_ua, Server as OPC_Server
 from PARAM_NAME_BLOC import *
 from c_exebloc import *
 from sharedata import list_threads
-PARAM_TEXT_EXCEPTION = " EXCEPTION: so output(s) become unvalid"
 
+PARAM_TEXT_EXCEPTION = " EXCEPTION: so output(s) become unvalid"
+PARAM_OPC_URI = "urn:Blocaine:serveur:opcua"
 
 def recup_procedure(psubloc):
     proc_name = "recupe_procedure: "
@@ -62,6 +65,11 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GPIO_DI:      procedure= c_exesubloc_gpio_di
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GPIO_DO:      procedure= c_exesubloc_gpio_do
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GPIO_PWM:     procedure= c_exesubloc_gpio_pwm
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_SERVER:   procedure= c_exesubloc_opc_server
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_NODE:     procedure= c_exesubloc_opc_node
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_VAR:      procedure= c_exesubloc_opc_var
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_READ:     procedure= c_exesubloc_opc_read
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_WRITE:    procedure= c_exesubloc_opc_write
     else:
         print (proc_name, "❌ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -1598,3 +1606,247 @@ def c_exesubloc_validWrite (pebloc, pieb, pio, pthread): #______________________
     #print ("<VALIDWRITE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
     
+def c_exesubloc_opc_server (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc OPC_SERVER gestion du server OPC AU (dans la boucler écurcive)"""
+    #les index IOs
+    #I_PORT=0
+    #I_START=1
+    #I_STOP=2
+    #O_SERVER_OBJ=0
+    #O_NODE_OBJ=1
+    #O_STARTED=2
+    #O_STATUS=3
+
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OPC_server> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<OPC_server>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        if True: #try:
+            #print ("<OPC_server> après récup et validation standard_____________________________________________________")
+            #for i, input in enumerate(cesubloc.inputs): print (f"<OPC_server> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
+            #for i, output in enumerate(cesubloc.outputs): print (f"<OPC_server> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
+            if cesubloc.outputs[0]['var'] is None: # cas serveur non configuré
+
+                if not cesubloc.inputs[2]['var']: # si il n'y a pas de cmd Stop
+                    print( f"<OPC_server> openning a new OPC server", "endpoint=opc.tcp://0.0.0.0:"+str(cesubloc.inputs[0]['var'])+"/freeopcua/server/")
+                    cesubloc.outputs[0]['var'] = OPC_Server()
+                    cesubloc.outputs[0]['var'].set_endpoint("opc.tcp://0.0.0.0:"+str(cesubloc.inputs[0]['var'])+"/freeopcua/server/")
+                    print( f"<OPC_server> oserver={cesubloc.outputs[0]['var']}")
+                    print( f"<OPC_server> oserver type={type(cesubloc.outputs[0]['var'])}")
+
+
+                    # setup our own namespace, not really necessary but should as spec
+                    idx = cesubloc.outputs[0]['var'].register_namespace(PARAM_OPC_URI)
+                    print(f"<OPC_server> idx={idx}")
+                    # get Objects node, this is where we should put our nodes
+                    cesubloc.outputs[1]['var'] = cesubloc.outputs[0]['var'].get_objects_node()
+                    print(f"<OPC_server> new node={cesubloc.outputs[1]['var']}")
+                    cesubloc.outputs[3]['var'] = -3
+                else:
+                    cesubloc.outputs[3]['var'] = -4
+            elif cesubloc.inputs[1]['var'] and not cesubloc.inputs[2]['var']: #si Start ET PAS Stop
+                print(f"<OPC_server> lSTART:")
+                cesubloc.outputs[0]['var'].start()
+                cesubloc.outputs[2]['var'] = True
+                cesubloc.outputs[3]['var'] = 0
+
+            elif cesubloc.inputs[2]['var']: #si Stop
+                print(f"<OPC_server> lSTOP:")
+                cesubloc.outputs[0]['var'].stop()
+                cesubloc.outputs[2]['var'] = False
+                cesubloc.outputs[3]['var'] = +5
+            else: 
+                print(f"<OPC_server> ne rien faire")
+                cesubloc.outputs[3]['var'] = 1
+                pass # ne rien faire c'est déjà fait!
+
+        else: #except:
+            print ("<OPC_server>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[3]['var'] = -1
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OPC_server> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+
+def c_exesubloc_opc_node (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc OPC_NODE crée un noeud OPC AU (dans la boucler écurcive)"""
+    #les index IOs
+    #I_SERVER_OBJ=0
+    #I_NODE_OBJ=1
+    #I_NAME=2
+    #O_SERVER_OBJ=0
+    #O_STATUS=1
+
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OPC_node> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<OPC_node>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        if True: #try:
+            #print ("<OPC_node> après récup et validation standard_____________________________________________________")
+            #for i, input in enumerate(cesubloc.inputs): print (f"<OPC_node> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
+            #for i, output in enumerate(cesubloc.outputs): print (f"<OPC_node> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
+            if cesubloc.inputs[0]['var'] is not None: # cas serveur déjà configuré
+                if cesubloc.inputs[1]['var'] is not None: # cas noeud parent déjà configuré
+                    if cesubloc.outputs[0]['var'] is None: # cas noeud fille pas encore configuré
+                        # populating our address space
+                        idx = cesubloc.inputs[0]['var'].register_namespace(PARAM_OPC_URI)
+                        print(f"<OPC_node> idx={idx}")
+                        cesubloc.outputs[0]['var'] = cesubloc.inputs[1]['var'].add_object(idx, cesubloc.inputs[2]['var'])
+                        print(f"<OPC_node> create a new node={cesubloc.outputs[0]['var']}")
+                        cesubloc.outputs[1]['var'] = 0
+                    else:
+                        print(f"<OPC_node> ne rien faire")
+                        pass # ne rien faire c'est déjà fait!
+                else:
+                    print(f"<OPC_node> cas serveur déjà configuré mais noeud parent pas configuré")
+                    cesubloc.outputs[1]['var'] = -3
+                    cesubloc.outputs[0]['var'] = None
+            else:
+                print(f"<OPC_node> cas serveur pas configuré")
+                cesubloc.outputs[1]['var'] = -2
+                cesubloc.outputs[0]['var'] = None
+
+
+        else: #except:
+            print ("<OPC_node>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[1]['var'] = -1
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OPC_node> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+
+
+def c_exesubloc_opc_var (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc OPC_VAR crée une variable OPC AU (dans la boucler écurcive)"""
+    #les index IOs
+    #I_SERVER_OBJ=0
+    #I_NODE_OBJ=1
+    #I_NAME=2
+    #I_INIT_VALUE=3
+    #I_WRITABLE=4
+    #O_SERVER_OBJ=0
+    #O_STATUS=1
+
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OPC_var> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<OPC_var>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        if True: #try:
+            #print ("<OPC_var> après récup et validation standard_____________________________________________________")
+            #for i, input in enumerate(cesubloc.inputs): print (f"<OPC_var> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
+            #for i, output in enumerate(cesubloc.outputs): print (f"<OPC_var> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
+            if cesubloc.inputs[0]['var'] is not None: # cas serveur déjà configuré
+                if cesubloc.inputs[1]['var'] is not None: # cas noeud parent déjà configuré
+                    if cesubloc.outputs[0]['var'] is None: # cas variable pas encore configuré
+                        # populating our address space
+                        idx = cesubloc.inputs[0]['var'].register_namespace(PARAM_OPC_URI)
+                        print(f"<OPC_var> idx={idx}")
+                        cesubloc.outputs[0]['var'] = cesubloc.inputs[1]['var'].add_variable(idx, cesubloc.inputs[2]['var'], cesubloc.inputs[3]['var'])
+                        print(f"<OPC_var> create a new var={cesubloc.outputs[0]['var'] }")
+                        if cesubloc.inputs[4]['var']:
+                            cesubloc.outputs[O]['var'].set_writable()
+                        cesubloc.outputs[1]['var'] = 0
+                    else: pass # ne rien faire c'est déjà fait!
+                else:
+                    print(f"<OPC_node> cas serveur déjà configuré mais noeud parent pas configuré")
+                    cesubloc.outputs[1]['var'] = -3
+                    cesubloc.outputs[0]['var'] = None
+            else:
+                print(f"<OPC_node> cas serveur configuré")
+                cesubloc.outputs[1]['var'] = -2
+                cesubloc.outputs[0]['var'] = None
+        else: #except:
+            print ("<OPC_var>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[1]['var'] = -1
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OPC_var> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+
+def c_exesubloc_opc_write (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc OPC_write affecte une variable OPC AU (dans la boucler écurcive)"""
+    #les index IOs
+    #I_VARIABLE_OBJ=0
+    #I_VALUE=1
+    #O_STATUS=0
+
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OPC_write> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<OPC_write>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        if True: #try:
+            #print ("<OPC_write> après récup et validation standard_____________________________________________________")
+            #for i, input in enumerate(cesubloc.inputs): print (f"<OPC_write> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
+            #for i, output in enumerate(cesubloc.outputs): print (f"<OPC_write> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
+            if cesubloc.inputs[0]['var'] is not None: # cas variable déjà configurée
+                cesubloc.inputs[0]['var'].set_value(cesubloc.inputs[1]['var'])
+                cesubloc.outputs[0]['var'] = 0
+            else:
+                print(f"<OPC_write> cas variable pas configuré")
+                cesubloc.outputs[0]['var'] = -2
+        else: #except:
+            print ("<OPC_write>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[0]['var'] = -1
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OPC_write> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+
+def c_exesubloc_opc_read (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc OPC_write affecte une variable OPC AU (dans la boucler écurcive)"""
+    #les index IOs
+    #I_VARIABLE_OBJ=0
+    #O_VALUE=1
+    #O_STATUS=0
+
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<OPC_read> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<OPC_read>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        if True: #try:
+            #print ("<OPC_read> après récup et validation standard_____________________________________________________")
+            #for i, input in enumerate(cesubloc.inputs): print (f"<OPC_read> les entrées [{i}]: name={input['name']},  validité={input['valide']},  value={input['var']}")
+            #for i, output in enumerate(cesubloc.outputs): print (f"<OPC_read> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
+            if cesubloc.inputs[0]['var'] is not None: # cas variable déjà configurée
+                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'].get_value()
+                cesubloc.outputs[1]['var'] = 0
+            else:
+                print(f"<OPC_read> cas variable pas configurée")
+                cesubloc.outputs[1]['var'] = -2
+        else: #except:
+            print ("<OPC_read>", PARAM_TEXT_EXCEPTION)
+            cesubloc.outputs[1]['var'] = -1
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<OPC_read> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
