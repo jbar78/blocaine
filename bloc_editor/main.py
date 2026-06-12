@@ -981,9 +981,9 @@ def routage ():
                         index_parent = find_index_bloc (bloc, io['lien']['id_parent'])
                         bloc_parent = bloc.sublocs[index_parent]
                         if bloc_parent.header['name'] == PARAM_NAME_BLOC_INPUT:
-                            #print (proc_name, f"bloc <input> (id{bloc_parent.header['id']}), posx={bloc_parent.header['position'][0]},    posx={elem.header['position'][0]} du bloc suivant <{elem.header['name']}>  (id{elem.header['id']})")
+                            #print (proc_name, f"bloc <input> (id={bloc_parent.header['id']}), posx={bloc_parent.header['position'][0]},    posx={elem.header['position'][0]} du bloc suivant <{elem.header['name']}>  (id={elem.header['id']})")
                             if elem.header['position'][0] <= bloc_parent.header['position'][0]:
-                                #print (proc_name, f"bloc <input> (id{bloc_parent.header['id']}), posx={bloc_parent.header['position'][0]} < à posx={elem.header['position'][0]} du bloc suivant <{elem.header['name']}>  (id{elem.header['id']})")
+                                #print (proc_name, f"bloc <input> (id={bloc_parent.header['id']}), posx={bloc_parent.header['position'][0]} < à posx={elem.header['position'][0]} du bloc suivant <{elem.header['name']}>  (id={elem.header['id']})")
                                 x = min (bloc_parent.header['position'][0], elem.header['position'][0] - PARAM_ROUTAGE_DX)
                                 y = bloc_parent.header['position'][1]
                                 #print(proc_name, f"ancien x={bloc_parent.header['position'][0]} nouveau x={x}")

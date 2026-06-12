@@ -165,7 +165,7 @@ def handle_clientTCP(client_socket, addr):
                                             avec_gpio_type = True
                                     if PARAM_CONFIG_MODULE_OPC:
                                         if isinstance(input['var'], OPC_Server) or isinstance(input['var'], OPC_Node):
-                                            print (proc_name, opc_bloc, f"in input, var=<{input['name']}> Objet OPC trouvé")
+                                            #print (proc_name, opc_bloc, f"in input, var=<{input['name']}> Objet OPC trouvé")
                                             avec_opc_type = True
                                 for output in subloc.outputs:
                                     if PARAM_CONFIG_MODULE_MODBUS:
@@ -178,7 +178,7 @@ def handle_clientTCP(client_socket, addr):
                                             avec_gpio_type = True
                                     if PARAM_CONFIG_MODULE_OPC:
                                         if isinstance(output['var'], OPC_Server) or isinstance(output['var'], OPC_Node):
-                                            print (proc_name, opc_bloc, f"in output, var=<{output['name']}> Objet OPC trouvé")
+                                            #print (proc_name, opc_bloc, f"in output, var=<{output['name']}> Objet OPC trouvé")
                                             avec_opc_type = True
                                             
                                             
@@ -255,7 +255,7 @@ def handle_clientTCP(client_socket, addr):
                                     #            print (proc_name, f" outputs: vérif non ok: id(c_subloc.outputs[{i}])={id(c_output)}) #, ['var']={c_output['var']}")
                                 elif avec_opc_type:
                                     def opc_io (io):
-                                        print ("opc_io: ", opc_bloc, f" name=<{io['name']}>,  (id={io['id']} var=<{io['var']}>")
+                                        #print ("opc_io: ", opc_bloc, f" name=<{io['name']}>,  (id={io['id']} var=<{io['var']}>")
                                         #io_dic = io['var'].__dict__
                                         #return  c_opc(io_dic)
                                         if isinstance(io['var'], OPC_Server): return  c_opc_server(io['var'])

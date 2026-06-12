@@ -1633,36 +1633,36 @@ def c_exesubloc_opc_server (pebloc, pieb, pio, pthread): #______________________
             if cesubloc.outputs[0]['var'] is None: # cas serveur non configuré
 
                 if not cesubloc.inputs[2]['var']: # si il n'y a pas de cmd Stop
-                    print( f"<OPC_server> openning a new OPC server", "endpoint=opc.tcp://0.0.0.0:"+str(cesubloc.inputs[0]['var'])+"/freeopcua/server/")
+                    #print( f"<OPC_server> openning a new OPC server", "endpoint=opc.tcp://0.0.0.0:"+str(cesubloc.inputs[0]['var'])+"/freeopcua/server/")
                     cesubloc.outputs[0]['var'] = OPC_Server()
                     cesubloc.outputs[0]['var'].set_endpoint("opc.tcp://0.0.0.0:"+str(cesubloc.inputs[0]['var'])+"/freeopcua/server/")
-                    print( f"<OPC_server> oserver={cesubloc.outputs[0]['var']}")
-                    print( f"<OPC_server> oserver type={type(cesubloc.outputs[0]['var'])}")
+                    #print( f"<OPC_server> oserver={cesubloc.outputs[0]['var']}")
+                    #print( f"<OPC_server> oserver type={type(cesubloc.outputs[0]['var'])}")
 
 
                     # setup our own namespace, not really necessary but should as spec
                     idx = cesubloc.outputs[0]['var'].register_namespace(PARAM_OPC_URI)
-                    print(f"<OPC_server> idx={idx}")
+                    #print(f"<OPC_server> idx={idx}")
                     # get Objects node, this is where we should put our nodes
                     cesubloc.outputs[1]['var'] = cesubloc.outputs[0]['var'].get_objects_node()
-                    print(f"<OPC_server> new node={cesubloc.outputs[1]['var']}")
-                    cesubloc.outputs[3]['var'] = -3
+                    #print(f"<OPC_server> new node={cesubloc.outputs[1]['var']}")
+                    cesubloc.outputs[3]['var'] = 2
                 else:
-                    cesubloc.outputs[3]['var'] = -4
-            elif cesubloc.inputs[1]['var'] and not cesubloc.inputs[2]['var']: #si Start ET PAS Stop
-                print(f"<OPC_server> lSTART:")
+                    cesubloc.outputs[3]['var'] = -2
+            elif cesubloc.inputs[1]['var'] and not cesubloc.inputs[2]['var'] and not cesubloc.outputs[2]['var']: #si Start ET /Stop ET /started
+                #print(f"<OPC_server> lSTART:")
                 cesubloc.outputs[0]['var'].start()
                 cesubloc.outputs[2]['var'] = True
-                cesubloc.outputs[3]['var'] = 0
+                cesubloc.outputs[3]['var'] = 1
 
             elif cesubloc.inputs[2]['var']: #si Stop
-                print(f"<OPC_server> lSTOP:")
+                #print(f"<OPC_server> lSTOP:")
                 cesubloc.outputs[0]['var'].stop()
                 cesubloc.outputs[2]['var'] = False
-                cesubloc.outputs[3]['var'] = +5
+                cesubloc.outputs[3]['var'] = 3
             else: 
-                print(f"<OPC_server> ne rien faire")
-                cesubloc.outputs[3]['var'] = 1
+                #print(f"<OPC_server> ne rien faire")
+                cesubloc.outputs[3]['var'] = 0
                 pass # ne rien faire c'est déjà fait!
 
         else: #except:
@@ -1701,19 +1701,19 @@ def c_exesubloc_opc_node (pebloc, pieb, pio, pthread): #________________________
                     if cesubloc.outputs[0]['var'] is None: # cas noeud fille pas encore configuré
                         # populating our address space
                         idx = cesubloc.inputs[0]['var'].register_namespace(PARAM_OPC_URI)
-                        print(f"<OPC_node> idx={idx}")
+                        #print(f"<OPC_node> idx={idx}")
                         cesubloc.outputs[0]['var'] = cesubloc.inputs[1]['var'].add_object(idx, cesubloc.inputs[2]['var'])
-                        print(f"<OPC_node> create a new node={cesubloc.outputs[0]['var']}")
+                        #print(f"<OPC_node> create a new node={cesubloc.outputs[0]['var']}")
                         cesubloc.outputs[1]['var'] = 0
                     else:
-                        print(f"<OPC_node> ne rien faire")
+                        #print(f"<OPC_node> ne rien faire")
                         pass # ne rien faire c'est déjà fait!
                 else:
-                    print(f"<OPC_node> cas serveur déjà configuré mais noeud parent pas configuré")
+                    #print(f"<OPC_node> cas serveur déjà configuré mais noeud parent pas configuré")
                     cesubloc.outputs[1]['var'] = -3
                     cesubloc.outputs[0]['var'] = None
             else:
-                print(f"<OPC_node> cas serveur pas configuré")
+                #print(f"<OPC_node> cas serveur pas configuré")
                 cesubloc.outputs[1]['var'] = -2
                 cesubloc.outputs[0]['var'] = None
 
@@ -1757,19 +1757,19 @@ def c_exesubloc_opc_var (pebloc, pieb, pio, pthread): #_________________________
                     if cesubloc.outputs[0]['var'] is None: # cas variable pas encore configuré
                         # populating our address space
                         idx = cesubloc.inputs[0]['var'].register_namespace(PARAM_OPC_URI)
-                        print(f"<OPC_var> idx={idx}")
+                        #print(f"<OPC_var> idx={idx}")
                         cesubloc.outputs[0]['var'] = cesubloc.inputs[1]['var'].add_variable(idx, cesubloc.inputs[2]['var'], cesubloc.inputs[3]['var'])
-                        print(f"<OPC_var> create a new var={cesubloc.outputs[0]['var'] }")
+                        #print(f"<OPC_var> create a new var={cesubloc.outputs[0]['var'] }")
                         if cesubloc.inputs[4]['var']:
                             cesubloc.outputs[O]['var'].set_writable()
                         cesubloc.outputs[1]['var'] = 0
                     else: pass # ne rien faire c'est déjà fait!
                 else:
-                    print(f"<OPC_node> cas serveur déjà configuré mais noeud parent pas configuré")
+                    #print(f"<OPC_node> cas serveur déjà configuré mais noeud parent pas configuré")
                     cesubloc.outputs[1]['var'] = -3
                     cesubloc.outputs[0]['var'] = None
             else:
-                print(f"<OPC_node> cas serveur configuré")
+                #print(f"<OPC_node> cas serveur configuré")
                 cesubloc.outputs[1]['var'] = -2
                 cesubloc.outputs[0]['var'] = None
         else: #except:
@@ -1806,7 +1806,7 @@ def c_exesubloc_opc_write (pebloc, pieb, pio, pthread): #_______________________
                 cesubloc.outputs[0]['var'] = 0
             else:
                 print(f"<OPC_write> cas variable pas configuré")
-                cesubloc.outputs[0]['var'] = -2
+                #cesubloc.outputs[0]['var'] = -2
         else: #except:
             print ("<OPC_write>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['var'] = -1
@@ -1840,7 +1840,7 @@ def c_exesubloc_opc_read (pebloc, pieb, pio, pthread): #________________________
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'].get_value()
                 cesubloc.outputs[1]['var'] = 0
             else:
-                print(f"<OPC_read> cas variable pas configurée")
+                #print(f"<OPC_read> cas variable pas configurée")
                 cesubloc.outputs[1]['var'] = -2
         else: #except:
             print ("<OPC_read>", PARAM_TEXT_EXCEPTION)
