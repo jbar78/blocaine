@@ -365,13 +365,12 @@ def run_serverTCP():
         #print(proc_name, f"après création soket d'écoute")
         # bind the socket to the host and port
         #print(proc_name, f"avant bind sur soket d'écoute")
-        #serverTCP.bind((PARAM_TCP_TARGET_IP, PARAM_TCP_TARGET_PORT )
         serverTCP.bind(('', PARAM_TCP_TARGET_PORT ))
         #print(proc_name, f"apès bind sur soket d'écoute")
         # listen for incoming connections
-        #print(proc_name, f"avant Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
+        #print(proc_name, f"avant Listening on port:{PARAM_TCP_TARGET_PORT }")
         serverTCP.listen()
-        print(f"TCP server: Listening on {PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT }")
+        print(f"TCP server: Listening on port:{PARAM_TCP_TARGET_PORT }")
 
         while True:
             # accept a client connection

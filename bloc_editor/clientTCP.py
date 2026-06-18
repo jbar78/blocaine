@@ -8,6 +8,7 @@ parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier p
 path_commun = os.path.join(parent_dir, "commun")         # Redescendre au répertoire "commun"
 sys.path.append(path_commun)                             # Ajouter le répertoire "commun" au sys.path
 from PARAM_NETWORK import *
+from PARAM_TARGET_ADDRESS import PARAM_TCP_TARGET_IP
 
 
 
