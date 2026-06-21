@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Blocaine 是一个专为工业流程自动化设计的软件平台。它包含两个主要组件：
+    • 块编辑器：通过组装功能块来创建程序。
+    • 解释器：执行通过块编辑器创建的程序，从而通过远程输入/输出控制工业设备。">
+  <meta name="keywords" content="Blocaine, 布洛凯恩, 自动化, 自动控制, 块, 功能块">
+  <title>布洛凯恩 (Blocaine)</title>
+</head>
+<body>
+  <center>
+    <table border="0" style="background-color: lightblue;">
+      <tr>
+        <td style= "width: 100%;">
+          <table border="0" style="background-color: #618685; width: 100%;">
+            <tr>
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
+              </td>
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
+                <a href="http://blocaine.org"><img style="width: 217px; height:67px;" alt="Blocaine 标志" title="blocaine.org" src="logo_Blocaine_410_100.png"></a><br>
+                <!--<a href="http://blocaine.org"><img style="width: 699px; height:126px;" alt="Blocaine 标志" title="blocaine.org" src="user_blocs_699_126.png"></a><br>-->
+              </td>
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; font-size: 1.3em; width: 33%;">
+                <a href="index.html">FR</a>&nbsp;&nbsp;
+                <a href="anglais.html">EN</a>&nbsp;&nbsp;
+                中文
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: center; padding: 10px; font-size: 1.5em;">
+          <strong>布洛凯恩 (Blocaine)</strong> 是一个专用于<br>工业流程自动化的软件平台。<br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <img style="width: 759px; height:661px;" alt="Blocaine 总体架构" title="总体架构" src="Architecture_en.png"><br><br>
+          </center>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div style="margin-left:50px;">
+            <ul>
+              <li><strong>块编辑器</strong> 允许通过组装功能块来创建程序。</li>
+              <li><strong>解释器</strong> 执行通过 <strong>块编辑器</strong> 创建的程序，从而通过远程 I/O 控制工业设备。</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px;">
+          <center>
+            <p style="font-size: 1.5em;">
+              <iframe width="960" height="540" src="https://www.youtube.com/embed/yML1Y1ONKHk?autoplay=1&mute=1" title="YouTube 视频播放器" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+              </iframe>
+              <br>演示...
+            </p>
+          </center>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: left; padding: 10px;">
+          <div style="font-size: 2em;">
+            <strong>功能特性</strong>
+          </div>
+          <div style="margin-left:50px;">
+            <ul>
+              <li><span title="热重载">" <b>热重载<sup>*</sup></b> "：程序的新版本可以在不停止安装的情况下加载<br></li>
+              <li>以链式功能块形式进行图形化编程<br></li>
+              <li>每个变量原生具有有效位<br></li>
+              <li>布洛凯恩基于 Python：<br></li>
+              <div style="margin-left:50px;">
+                <ul>
+                  <li>功能块可以用 Python 编写<br></li>
+                  <li>变量的动态类型<br></li>
+                </ul>
+              </div>
+              <li>调试：<br></li>
+              <div style="margin-left:50px;">
+                <ul>
+                  <li>变量的实时可视化<br></li>
+                  <li>所有变量都可以强制设置<br></li>
+                </ul>
+              </div>
+              <li>块的执行顺序自动生成<br></li>
+              <li>布局自动排列<br></li>
+              <li>一个 Web 服务器显示目标计算机上当前运行任务的状态<br></li>
+              <li>一个 OPC UA 服务器提供与潜在 HMI/SCADA 系统的接口<br></li>
+              <li>布洛凯恩是多平台的（Windows、Linux、macOS...）<br></li>
+              <li>布洛凯恩是免版税且“开源”的<br></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: left; padding: 10px;">
+          <div style="font-size: 2em;">
+            <strong>优势</strong>
+          </div>
+          <div style="margin-left:50px;">
+            <ul>
+              <li>布洛凯恩是一款 <span title="Keep It Simple, Stupid">" <b>KISS<sup>*</sup></b> " </span> 软件</li>
+              <li>得益于永恒标准（PC、以太网、Python），最大限度减少过时风险</li>
+              <li>无需许可证</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: left; padding: 10px;">
+          <div style="font-size: 2em;">
+            <strong>项目状态</strong>
+          </div>
+          <div style="margin-left:50px;">
+            <ul>
+              <li>布洛凯恩处于“功能原型”阶段（Alpha 版本）</li>
+              <li>布洛凯恩可从 github.com 下载（见 <a href="evaluation_en.pdf" target="_blank">安装和评估流程</a>）</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: left; padding: 10px;">
+          <div style="font-size: 2em;">
+            <strong>评估</strong>
+          </div>
+          由于可下载版本已配置好，因此 <a href="evaluation_en.pdf" target="_blank">布洛凯恩的评估</a> 变得非常简单：
+          <div style="margin-left:50px;">
+            <ul>
+              <li><strong>块编辑器</strong> 和 <strong>解释器</strong> 在同一台计算机上运行，因此无需网络配置</li>
+              <li>多个功能被禁用（OPC、GPIO、Modbus/TCP），因此无需安装任何特定的 Python 模块</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: middle; text-align: left; padding: 10px;">
+          <div style="font-size: 2em;">
+            <strong>文档</strong>
+          </div>
+          通用文档：<br>
+          <div style="margin-left:50px;">
+            <ul>
+              <li><a href="general_en.pdf" target="_blank">操作手册</a><br></li>
+              <li><a href="evaluation_en.pdf" target="_blank">安装</a><br></li>
+            </ul>
+          </div>
+          <br><br>
+          系统块：<br>
+          <div style="margin-left:50px;">
+            <ul>
+              <li><a href="bloc_system_add.html" target="_blank">add</a> 加法<br></li>
+              <li><a href="bloc_system_and.html" target="_blank">and</a> 逻辑与<br></li>
+              <li><a href="bloc_system_append.html" target="_blank">append</a> 在列表末尾添加元素<br></li>
+              <li><a href="bloc_system_cablin.html" target="_blank">cablin</a> 向结构中添加元素<br></li>
+              <li><a href="bloc_system_cablout.html" target="_blank">cablout</a> 从结构中提取元素<br></li>
+              <li><a href="bloc_system_clock.html" target="_blank">clock</a> 时钟<br></li>
+              <li><a href="bloc_system_comp.html" target="_blank">comp</a> 比较<br></li>
+              <li><a href="bloc_system_const.pi.html" target="_blank">const.pi</a> π 常数<br></li>
+              <li><a href="bloc_system_delay.html" target="_blank">delay</a> 上升沿或下降沿延时<br></li>
+              <li><a href="bloc_system_differencial.html" target="_blank">differential</a> 微分<br></li>
+              <li><a href="bloc_system_div.html" target="_blank">div</a> 除法<br></li>
+              <li><a href="bloc_system_dt.html" target="_blank">dt</a> 任务周期时间<br></li>
+              <li><a href="bloc_system_edge.html" target="_blank">edge</a> 上升沿和/或下降沿检测<br></li>
+              <li><a href="bloc_system_filter_FO.html" target="_blank">filter_FO</a> 一阶滤波器<br></li>
+              <li><a href="bloc_system_geti.html" target="_blank">geti</a> 返回元素 [n]<br></li>
+              <li><a href="bloc_system_GPIO_DI.html" target="_blank">GPIO_DI</a> 读取 GPIO 数字输入<br></li>
+              <li><a href="bloc_system_GPIO_DO.html" target="_blank">GPIO_DO</a> 写入 GPIO 数字输出<br></li>
+              <li><a href="bloc_system_GPIO_PWM.html" target="_blank">GPIO_PWM</a> 写入 GPIO PWM 输出<br></li>
+              <li><a href="bloc_system_information.html" target="_blank">information</a> 返回变量信息<br></li>
+              <li><a href="bloc_system_input.html" target="_blank">input</a> 块输入<br></li>
+              <li><a href="bloc_system_input_output.html" target="_blank">input_output</a> 访问另一个进程的输出<br></li>
+              <li><a href="bloc_system_insert.html" target="_blank">insert</a> 将元素插入列表<br></li>
+              <li><a href="bloc_system_integrator.html" target="_blank">integrator</a> 基于时间的积分器<br></li>
+              <li><a href="bloc_system_len.html" target="_blank">len</a> 返回元素数量<br></li>
+              <li><a href="bloc_system_limit.html" target="_blank">limit</a> 上下限<br></li>
+              <li><a href="bloc_system_memory.html" target="_blank">memory</a> 存储器（RS 触发器）<br></li>
+              <li><a href="bloc_system_minmax.html" target="_blank">minmax</a> 最小值和最大值<br></li>
+              <li><a href="bloc_system_modbus_conn.html" target="_blank">modbus_conn</a> ModBus/TCP 连接<br></li>
+              <li><a href="bloc_system_modbus_read.html" target="_blank">modbus_read</a> ModBus/TCP 输入读取<br></li>
+              <li><a href="bloc_system_modbus_write.html" target="_blank">modbus_write</a> ModBus/TCP 输出分配<br></li>
+              <li><a href="bloc_system_mult.html" target="_blank">mult</a> 乘法<br></li>
+              <li><a href="bloc_system_not.html" target="_blank">not</a> 逻辑非<br></li>
+              <li><a href="bloc_system_OPC_node.html" target="_blank">OPC_node</a> 创建 OPC UA 节点<br></li>
+              <li><a href="bloc_system_OPC_read.html" target="_blank">OPC_read</a> 获取 OPC UA 变量<br></li>
+              <li><a href="bloc_system_OPC_server.html" target="_blank">OPC_server</a> 配置 OPC UA 服务器<br></li>
+              <li><a href="bloc_system_OPC_var.html" target="_blank">OPC_var</a> 创建 OPC UA 变量<br></li>
+              <li><a href="bloc_system_OPC_write.html" target="_blank">OPC_write</a> 设置 OPC UA 变量<br></li>
+              <li><a href="bloc_system_or.html" target="_blank">or</a> 逻辑或<br></li>
+              <li><a href="bloc_system_output.html" target="_blank">output</a> 块输出<br></li>
+              <li><a href="bloc_system_pop.html" target="_blank">pop</a> 从列表中移除元素<br></li>
+              <li><a href="bloc_system_previous.html" target="_blank">previous</a> 存储的变量<br></li>
+              <li><a href="bloc_system_puti.html" target="_blank">puti</a> 在列表中设置一个元素<br></li>
+              <li><a href="bloc_system_range.html" target="_blank">range</a> 循环迭代<br></li>
+              <li><a href="bloc_system_select.html" target="_blank">select</a> 选择（if then else）<br></li>
+              <li><a href="bloc_system_sub.html" target="_blank">sub</a> 减法<br></li>
+              <li><a href="bloc_system_time.html" target="_blank">time</a> 系统时钟读取<br></li>
+              <li><a href="bloc_system_type.html" target="_blank">type</a> 类型转换<br></li>
+              <li><a href="bloc_system_validRead.html" target="_blank">validRead</a> 有效位读取<br></li>
+              <li><a href="bloc_system_validWrite.html" target="_blank">validWrite</a> 有效位写入<br></li>
+            </ul>
+          </div>
+          <br><br>
+          用户块：<br>
+          <div style="margin-left:50px;">
+            <ul>
+              <li><a href="bloc_user_loop.html" target="_blank">loop</a> 增量<br></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr style="background-color: #618685;">
+        <td>
+          联系方式: <a href="mailto:contact@blocaine.org?subject=Information%20request">contact@blocaine.org</a>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+</html>
+```
