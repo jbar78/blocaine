@@ -1040,12 +1040,6 @@ def open_bloc_new_window(name, id, pos):
     #f_name= add_point_bloc_to_file_name(name)
     if flag_monitoring: monitoring_str = PARAM_MODE_MONITORING
     else: monitoring_str = PARAM_MODE_EDITION
-    #if name==None: name=""
-    #subprocess.Popen([sys.executable, "main.py", name, str(config_window['pos_x']), str(config_window['pos_y']), monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"])
-    #if name==None:
-    #    subprocess.Popen([sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y'])])
-    #else:
-    #    subprocess.Popen([sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y']), name, monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"])
     list_param_commun = [sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y'])]
     if name==None:
         list_param_subprocess = list_param_commun
@@ -1989,12 +1983,29 @@ def find_bloc_under_event(event):
                                     print (proc_name, f" en y")
                                     return elem
     return None
-def doc_file_name (pelem):
+def doc_file_name(pelem):
     if 'system' in pelem.header['key_word']:
         txt_type = "system_"
     else:
         txt_type = "user_"
     return "../docs/bloc_"+txt_type+pelem.header['name']+".html"
+
+def open_doc_file(doc_file):
+    porc_name ="open_doc_file: "
+    print (proc_name, f"paramètre: doc_file={doc_file}")
+    abs_doc_file = os.path.abspath(doc_file)
+    print (proc_name, f"abs_doc_file={abs_doc_file}")
+    if os.path.isfile(abs_doc_file):
+        print (proc_name, f"nom du fichier d'aide={abs_doc_file}")
+        if sys.platform == "linux":
+            print (proc_name, f"system: Linux")
+            subprocess.Popen(['xdg-open', abs_doc_file])
+        else:
+            print (proc_name, f"system: not Linux")
+            os.startfile(abs_doc_file)
+    else:
+        message_txt = "The documentaion file:\n"+abs_doc_file+"\nis not available"
+        messagebox.showinfo("❌ERROR", message_txt)
 
 def event_key_F1(event):
     """callback: sur evenement"""
@@ -2004,15 +2015,7 @@ def event_key_F1(event):
     elem = find_bloc_under_event(event)
     if elem != None:
         doc_file = doc_file_name (elem)
-        if os.path.isfile(doc_file):
-            print (proc_name, f"nom du fichier d'aide={doc_file}")
-            if sys.platform == "linux":
-                subprocess.Popen(['xdg-open', doc_file])
-            else:
-                os.startfile(doc_file)
-        else:
-            message_txt = "The documentaion file:\n"+doc_file+"\nis not available for this bloc"
-            messagebox.showinfo("❌ERROR", message_txt)
+        open_doc_file(doc_file)
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -2156,13 +2159,9 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Reset draw", command = bloc.c_bloc_erase_draw)
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
-    doc_txt  = 'of line Documentation'
-    doc_file = '../docs/Documentation_générale.html'
+    doc_txt  = 'off line Documentation'
     doc_file = '../docs/general_en.pdf'
-    if sys.platform == "linux":
-        help_menubar.add_command(label = doc_txt, command = lambda: subprocess.Popen(['xdg-open', doc_file]))
-    else:
-        help_menubar.add_command(label = doc_txt, command = lambda: os.startfile(doc_file))
+    help_menubar.add_command(label = doc_txt, command = lambda: open_doc_file(doc_file))
     blocaine_web_pages = "HTTPs://blocaine.org"
     help_menubar.add_command(label = "Open Blocaïne web pages", command = lambda: subprocess.Popen(['xdg-open', blocaine_web_pages]))
     help_menubar.add_separator()
@@ -2259,15 +2258,7 @@ def menu_header(event, elem):
             menu_contextuel.add_command(label = "move down", command = lambda: io_interface_move(elem, "down"))
         menu_contextuel.add_separator()
     doc_file = doc_file_name(elem)
-    #doc_file = "Documentation/bloc_"+elem.header['name']+".html"
-    if os.path.isfile(doc_file):
-        if sys.platform == "linux":
-            menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: subprocess.Popen(['xdg-open', doc_file]))
-        else:
-            menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: os.startfile(doc_file))
-    else:
-        menu_contextuel.add_command(label = "Documentation not available")
-
+    menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: open_doc_file(doc_file))
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_header(event.x_root, event.y_root, elem, modification=0))#0
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
