@@ -1990,22 +1990,27 @@ def doc_file_name(pelem):
         txt_type = "user_"
     return "../docs/bloc_"+txt_type+pelem.header['name']+".html"
 
-def open_doc_file(doc_file):
-    porc_name ="open_doc_file: "
-    print (proc_name, f"paramètre: doc_file={doc_file}")
-    abs_doc_file = os.path.abspath(doc_file)
-    print (proc_name, f"abs_doc_file={abs_doc_file}")
-    if os.path.isfile(abs_doc_file):
-        print (proc_name, f"nom du fichier d'aide={abs_doc_file}")
-        if sys.platform == "linux":
-            print (proc_name, f"system: Linux")
-            subprocess.Popen(['xdg-open', abs_doc_file])
-        else:
-            print (proc_name, f"system: not Linux")
-            os.startfile(abs_doc_file)
+def open_doc(document):
+    porc_name ="open_doc: "
+    #print (proc_name, f"paramètre: document={document}")
+    #print (proc_name, f"paramètre: document[0:4]={document[0:4]}")
+    doc_web = document[0:4]=='http'
+    if doc_web:
+        abs_document = document
     else:
-        message_txt = "The documentaion file:\n"+abs_doc_file+"\nis not available"
+        abs_document = os.path.abspath(document)
+    #print (proc_name, f"abs_document={abs_document}, doc_web={doc_web}")
+    if not doc_web and not os.path.isfile(abs_document):
+        message_txt = "The documentaion file:\n"+document+"\nis not available"
         messagebox.showinfo("❌ERROR", message_txt)
+    else:
+        #print (proc_name, f"nom du fichier d'aide={abs_document}")
+        if sys.platform == "linux":
+            #print (proc_name, f"system: Linux")
+            subprocess.Popen(['xdg-open', abs_document])
+        else:
+            #print (proc_name, f"system: not Linux")
+            os.startfile(abs_document)
 
 def event_key_F1(event):
     """callback: sur evenement"""
@@ -2015,7 +2020,7 @@ def event_key_F1(event):
     elem = find_bloc_under_event(event)
     if elem != None:
         doc_file = doc_file_name (elem)
-        open_doc_file(doc_file)
+        open_doc(doc_file)
 def event_key_F3(event):
     """callback: sur evenement"""
     proc_name = "event_key_F3: "
@@ -2159,11 +2164,11 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Reset draw", command = bloc.c_bloc_erase_draw)
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
-    doc_txt  = 'off line Documentation'
+    doc_txt  = 'User Manual (off line)'
     doc_file = '../docs/general_en.pdf'
-    help_menubar.add_command(label = doc_txt, command = lambda: open_doc_file(doc_file))
-    blocaine_web_pages = "HTTPs://blocaine.org"
-    help_menubar.add_command(label = "Open Blocaïne web pages", command = lambda: subprocess.Popen(['xdg-open', blocaine_web_pages]))
+    help_menubar.add_command(label = doc_txt, command = lambda: open_doc(doc_file))
+    blocaine_web_pages = "https://blocaine.org"
+    help_menubar.add_command(label = "Blocaïne web pages (on line)", command = lambda: open_doc(blocaine_web_pages))
     help_menubar.add_separator()
     help_menubar.add_command(label = "Debug: print bloc", command = lambda: bloc.c_bloc_print())
     help_menubar.add_command(label = "Debug: print list_compiled", command = lambda: print_exeblocs())
@@ -2258,7 +2263,7 @@ def menu_header(event, elem):
             menu_contextuel.add_command(label = "move down", command = lambda: io_interface_move(elem, "down"))
         menu_contextuel.add_separator()
     doc_file = doc_file_name(elem)
-    menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: open_doc_file(doc_file))
+    menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: open_doc(doc_file))
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_header(event.x_root, event.y_root, elem, modification=0))#0
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
