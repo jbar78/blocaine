@@ -51,11 +51,17 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_MODBUS_WRITE: procedure= c_exesubloc_modbus_write
     elif psubloc.header['name'] == PARAM_NAME_BLOC_MULT:         procedure= c_exesubloc_mult
     elif psubloc.header['name'] == PARAM_NAME_BLOC_NOT:          procedure= c_exesubloc_not
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_NODE:     procedure= c_exesubloc_opc_node
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_READ:     procedure= c_exesubloc_opc_read
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_SERVER:   procedure= c_exesubloc_opc_server
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_VAR:      procedure= c_exesubloc_opc_var
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_WRITE:    procedure= c_exesubloc_opc_write
     elif psubloc.header['name'] == PARAM_NAME_BLOC_OR:           procedure= c_exesubloc_or
     elif psubloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:       procedure= c_exesubloc_output
     elif psubloc.header['name'] == PARAM_NAME_BLOC_PREVIOUS:     procedure= c_exesubloc_previous
     elif psubloc.header['name'] == PARAM_NAME_BLOC_POP:          procedure= c_exesubloc_pop
     elif psubloc.header['name'] == PARAM_NAME_BLOC_PUTI:         procedure= c_exesubloc_puti
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_READBIT:      procedure= c_exesubloc_readbit
     elif psubloc.header['name'] == PARAM_NAME_BLOC_RANGE:        procedure= c_exesubloc_range
     elif psubloc.header['name'] == PARAM_NAME_BLOC_SELECT:       procedure= c_exesubloc_select
     elif psubloc.header['name'] == PARAM_NAME_BLOC_SUB:          procedure= c_exesubloc_sub
@@ -66,11 +72,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GPIO_DI:      procedure= c_exesubloc_gpio_di
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GPIO_DO:      procedure= c_exesubloc_gpio_do
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GPIO_PWM:     procedure= c_exesubloc_gpio_pwm
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_SERVER:   procedure= c_exesubloc_opc_server
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_NODE:     procedure= c_exesubloc_opc_node
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_VAR:      procedure= c_exesubloc_opc_var
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_READ:     procedure= c_exesubloc_opc_read
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_WRITE:    procedure= c_exesubloc_opc_write
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_WRITEBIT:     procedure= c_exesubloc_writebit
     else:
         print (proc_name, "❌ERROR: function not defined for this bloc <"+psubloc.header['name']+">")
     return procedure
@@ -1946,3 +1948,56 @@ def c_exesubloc_opc_read (pebloc, pieb, pio, pthread): #________________________
     #print ("<OPC_read> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
 
+def c_exesubloc_readbit (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc lecture dun bit dans un entier (dans la boucler écurcive)"""
+    # les index des IOs
+    #I_IN = 0
+    #I_BIT# = 1
+    #O_OUT = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<READBIT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<READBIT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        try:
+            cesubloc.outputs[0]['var'] = (cesubloc.inputs[0]['var'] >> cesubloc.inputs[1]['var']) & 1 == 1 # si bit(n) est vrai
+        except: #else: #except:
+            print ("<READBIT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<READBIT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+    
+def c_exesubloc_writebit (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc écriture dun bit dans un entier (dans la boucler écurcive)"""
+    # les index des IOs
+    #I_IN = 0
+    #I_BIT# = 1
+    #I_VALUE = 2
+    #O_OUT = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<WRITEBIT> les paramètres reçus sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<WRITEBIT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        cesubloc.c_exesubloc_validation_standard()
+        try:
+            if cesubloc.inputs[2]['var']:
+                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] | (1 << cesubloc.inputs[1]['var']) # 
+            else:
+                cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] & ~(1 << cesubloc.inputs[1]['var']) #             
+        except: #else: #except:
+            print ("<WRITEBIT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<WRITEBIT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
