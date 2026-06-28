@@ -1517,7 +1517,7 @@ def c_exesubloc_select (pebloc, pieb, pio, pthread): #__________________________
             else:                         index = 1
         except:
             exception()
-            pebloc.c_exebloc_recup_input (pieb, pthread, index)
+        pebloc.c_exebloc_recup_input (pieb, pthread, index)
         try:
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[index]['valide']
             cesubloc.outputs[0]['var']    = cesubloc.inputs[index]['var']
