@@ -275,13 +275,12 @@ class MyServer(BaseHTTPRequestHandler):
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
 
-        elif self.path == "/outputs": #____________________________liste des outputs
+        elif self.path == "/outputs" or self.path == "/outputs_running": #____________________________liste des outputs
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
             #self.send_header("Keep-Alive", "timeout=5, max=100")
             self.end_headers()
-            # page: thread list
             html = html_debut
             html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
@@ -298,14 +297,6 @@ class MyServer(BaseHTTPRequestHandler):
                         txt_value = value
                         txt_type = type(value).__name__
                         #print (proc_name, f"txt_type={txt_type},  txt_value={txt_value}")
-                        #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'], tuple):
-                            #nbr_wire = 2
-                            #if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'][0], tuple):
-                            #    nbr_wire += 1
-                            #    if isinstance(exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var'][0][0], tuple):
-                            #        nbr_wire += 1
-                            #txt_value = "<<<nbr wires =" + str(nbr_wire) + ">>>"
-                        #else:   
                         #    txt_value = exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['var']
                         txt_validity, txt_validity_style = return_validity (exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['valide'])
                     else:
@@ -313,17 +304,23 @@ class MyServer(BaseHTTPRequestHandler):
                         txt_value = txt_validity = "..."
                         txt_validity_style = ""
                         txt_type    = "..."
-                    txt_building= exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
-                    html += "<tr>"
-                    html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
-                    html += f"<td>{txt_status}</td>"
-                   #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
-                    html += f"<td>{thread['name']}</td><td>{thread['id']}</td><td>{iexe}</td>"
-                    html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
-                    html += f"<td>{txt_type}</td><td "+txt_validity_style+">"+txt_validity+f"</td><td>{txt_value}</td>"
-                    html += "</tr>"
+                    if self.path == "/outputs" or txt_status == "Running":
+                        txt_building= exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
+                        html += "<tr>"
+                        html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
+                        html += f"<td>{txt_status}</td>"
+                       #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
+                        html += f"<td>{thread['name']}</td><td>{thread['id']}</td><td>{iexe}</td>"
+                        html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
+                        html += f"<td>{txt_type}</td><td "+txt_validity_style+">"+txt_validity+f"</td><td>{txt_value}</td>"
+                        html += "</tr>"
             html +="</table>"
-            html +="<a href='/outputs'>Refresh</a>"
+            if self.path == "/outputs_running":
+                html +="<a href='/outputs'>Show all shifts</a><br>"
+                html +="<a href='/outputs_running'>Refresh</a>"
+            else:
+                html +="<a href='/outputs_running'>Show only Running shifts</a><br>"
+                html +="<a href='/outputs'>Refresh</a>"
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
 

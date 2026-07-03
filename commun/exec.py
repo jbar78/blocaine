@@ -34,6 +34,7 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_DIV:          procedure= c_exesubloc_div
     elif psubloc.header['name'] == PARAM_NAME_BLOC_DT:           procedure= c_exesubloc_dt
     elif psubloc.header['name'] == PARAM_NAME_BLOC_EDGE:         procedure= c_exesubloc_edge
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_EXEC:         procedure= c_exesubloc_exec
     elif psubloc.header['name'] == PARAM_NAME_BLOC_FILTER_FO:    procedure= c_exesubloc_filter_FO
     elif psubloc.header['name'] == PARAM_NAME_BLOC_GETI:         procedure= c_exesubloc_geti
     elif psubloc.header['name'] == PARAM_NAME_BLOC_HOLD:         procedure= c_exesubloc_hold
@@ -466,6 +467,33 @@ def c_exesubloc_edge (pebloc, pieb, pio, pthread): #____________________________
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<EDGE> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+    
+def c_exesubloc_exec (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc qui cré un evenement l'orque il est executé (dans la boucle récurcive)"""
+    # les index des IOs
+    #I_IN = 0
+    #I_EXEC = 1
+    #O_OUT = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<EXEC> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<EXEC>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_inputs(pieb, pthread)
+        try:
+            cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
+            cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
+            # l'entré I_EXEC n'est pas utilisé!
+            cesubloc.c_exesubloc_overwriting_outputs()
+        except:
+            print ("<EXEC>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<EXEC> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
     
 def c_exesubloc_filter_FO (pebloc, pieb, pio, pthread): #__________________________________________________________
@@ -1175,19 +1203,19 @@ def c_exesubloc_modbus_read (pebloc, pieb, pio, pthread): #_____________________
             if connected:
                 read_result = None
                 if num_fonction  == 1: #n° de fonction
-                    read_result = cesubloc.inputs[0]['var'].read_coils(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    read_result = cesubloc.inputs[0]['var'].read_coils(address=cesubloc.inputs[3]['var'], count=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                     if not read_result.isError():
                         cesubloc.outputs[0]['var'] = read_result.bits
                 elif num_fonction== 2: #n° de fonction
-                    read_result = cesubloc.inputs[0]['var'].read_discrete_inputs(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    read_result = cesubloc.inputs[0]['var'].read_discrete_inputs(address=cesubloc.inputs[3]['var'], count=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                     if not read_result.isError():
                         cesubloc.outputs[0]['var'] = read_result.bits
                 elif num_fonction== 3: #n° de fonction
-                    read_result = cesubloc.inputs[0]['var'].read_holding_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    read_result = cesubloc.inputs[0]['var'].read_holding_registers(address=cesubloc.inputs[3]['var'], count=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                     if not read_result.isError():
                         cesubloc.outputs[0]['var'] = read_result.registers
                 elif num_fonction== 4: #n° de fonction
-                    read_result = cesubloc.inputs[0]['var'].read_input_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    read_result = cesubloc.inputs[0]['var'].read_input_registers(address=cesubloc.inputs[3]['var'], count=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                     if not read_result.isError():
                         cesubloc.outputs[0]['var'] = read_result.registers
                 if read_result != None:
@@ -1249,13 +1277,13 @@ def c_exesubloc_modbus_write (pebloc, pieb, pio, pthread): #____________________
             write_result = None
             if connected:
                 if num_fonction   == 5: #n° de fonction
-                    write_result = cesubloc.inputs[0]['var'].write_coil(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    write_result = cesubloc.inputs[0]['var'].write_coil(address=cesubloc.inputs[3]['var'], value=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                 elif num_fonction == 6: #n° de fonction
-                    write_result = cesubloc.inputs[0]['var'].write_register(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    write_result = cesubloc.inputs[0]['var'].write_register(address=cesubloc.inputs[3]['var'], value=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                 elif num_fonction == 15: #n° de fonction
-                    write_result = cesubloc.inputs[0]['var'].write_coils(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    write_result = cesubloc.inputs[0]['var'].write_coils(address=cesubloc.inputs[3]['var'], values=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                 elif num_fonction == 16: #n° de fonction
-                    write_result = cesubloc.inputs[0]['var'].write_registers(cesubloc.inputs[3]['var'], cesubloc.inputs[4]['var'], slave=cesubloc.inputs[1]['var'])
+                    write_result = cesubloc.inputs[0]['var'].write_registers(address=cesubloc.inputs[3]['var'], values=cesubloc.inputs[4]['var'], device_id=cesubloc.inputs[1]['var'])
                 if write_result != None:        
                     if write_result.isError():
                         cesubloc.outputs[0]['var'] = False
