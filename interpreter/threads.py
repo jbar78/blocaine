@@ -15,7 +15,9 @@ class Intervallometre(threading.Thread):
         print ("thread__run__", self.args[0]['period'], "(s)")
         while self.encore:
             #print ("thread__run_while__")
-            self.timer = threading.Timer(self.duree, self.fonction, self.args)
+            #print (f"self.args[0]['id']{self.args[0]['id']},     self.args[0]['name']{self.args[0]['name']}")
+            rearmement = max(0.002, self.duree - self.args[0]['run_time'])
+            self.timer = threading.Timer(rearmement, self.fonction, self.args)
             self.timer.setDaemon(True)
             self.timer.start()
             self.timer.join()

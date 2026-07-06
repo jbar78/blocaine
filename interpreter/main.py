@@ -16,10 +16,10 @@ from sharedata import list_threads
 
 def motor(pthread):
     """ moteur d'exécution """
+    pthread['cycle_time'] = time.time() - pthread['start_time']
     pthread['start_time'] = time.time()
     proc_name= "motor: "
     #print (proc_name, "début-----Periode="+str(pthread['period'])+"(s)")
-    pthread['idle_time'] = pthread['start_time'] - pthread['end_time']
     #_________________________________début
     FLAG_PRINT_OUTPUTS = False
     FLAG_PRINT_EN_COURS = False
@@ -54,11 +54,9 @@ def motor(pthread):
     #print (proc_name, "fin-----Periode="+str(pthread['period'])+"(s)\n")
     pthread['end_time'] = time.time()
     pthread['run_time'] = pthread['end_time'] - pthread['start_time']
-    pthread['cycle_time'] = pthread['idle_time'] + pthread['run_time']
     pthread['min_max']['min'] = min(pthread['min_max']['min'], pthread['cycle_time'])
     pthread['min_max']['max'] = max(pthread['min_max']['max'], pthread['cycle_time'])
-    pthread['load_%'] = 100*(pthread['run_time'] / pthread['idle_time'])
-
+    
 
 
 

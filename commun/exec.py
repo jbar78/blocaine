@@ -998,35 +998,6 @@ def c_exesubloc_limit (pebloc, pieb, pio, pthread): #___________________________
     #print ("<LIMIT>", " LIMIT retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
     
-def c_exesubloc_memoryxxx (pebloc, pieb, pio, pthread): #__________________________________________________________
-    """ exécution du bloc bascule RS (dans la boucle récurcive)"""
-    # les index des IOs
-    #I_SET = 0
-    #I_RESET = 1
-    #I_RESET_PRIORITAIRE = 2
-    #O_OUT = 0
-    cesubloc = pebloc.sublocs[pieb]
-    #print ("<MEMORY> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
-    if cesubloc.header['counter'] == pthread['counter']:
-        pass
-        #print ("<MEMORY>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
-    else:
-        cesubloc.header['counter'] = pthread['counter']
-        pebloc.c_exebloc_recup_inputs(pieb, pthread)
-        cesubloc.c_exesubloc_validation_standard()
-        try:
-            if cesubloc.inputs[0]['var'] and (not cesubloc.inputs[2]['var'] or not cesubloc.inputs[1]['var']):
-                cesubloc.outputs[0]['var'] = True
-            if cesubloc.inputs[1]['var'] and (cesubloc.inputs[2]['var']  or not cesubloc.inputs[0]['var']):
-                cesubloc.outputs[0]['var'] = False
-        except:
-            print ("<MEMORY>", PARAM_TEXT_EXCEPTION)
-            for output in cesubloc.outputs:
-                output['valide'] = False
-        cesubloc.c_exesubloc_overwriting_outputs()
-    #print ("<MEMORY> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
-    return cesubloc.outputs[pio]
-
 def c_exesubloc_memory (pebloc, pieb, pio, pthread): #__________________________________________________________
     """ exécution du bloc bascule RS (dans la boucle récurcive)"""
     # les index des IOs

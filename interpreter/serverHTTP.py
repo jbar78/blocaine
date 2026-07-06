@@ -209,7 +209,7 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<table>"
             html += f"""<tr><th colspan="9";>Task list</th></tr>"""
             html += f"""<tr><th colspan="3"; style="vertical-align: bottom;">Setting</th><th colspan="6";>Feedback</th></tr>"""
-            html += f"""<tr><th>name</th><th>id</th><th>period</th><th>cycle time</th><th>cycle time<br>min</th><th>cycle time<br>max</th><th>counter</th><th>number of<br>output</th><th>CPU load</th></tr>"""
+            html += f"""<tr><th>name</th><th>id</th><th>period</th><th>cycle time</th><th>cycle time<br>min</th><th>cycle time<br>max</th><th>counter</th><th>number of<br>output</th><th>duration</th></tr>"""
             for i, thread in enumerate(list_threads):
                 if thread['period'] < 1:
                     txt_period = f"{1000*thread['period']:3.0f}ms"
@@ -228,15 +228,15 @@ class MyServer(BaseHTTPRequestHandler):
                 txt_nbr_output = f"{nbr_output}"
                 html += "<tr>"
                 html += f"<td>{thread['name']}</td><td>{thread['id']}</td><td>"+txt_period+"</td>"
-                html += "<td>"+txt_cycle+"</td><td>"+txt_cycle_min+"</td><td>"+txt_cycle_max+f"</td><td>{thread['counter']}</td><td>"+txt_nbr_output+f"</td><td>{thread['load_%']:2.3f}%</td>"
+                html += "<td>"+txt_cycle+"</td><td>"+txt_cycle_min+"</td><td>"+txt_cycle_max+f"</td><td>{thread['counter']}</td><td>"+txt_nbr_output+f"</td><td>{1000*thread['run_time']:2.3f}ms</td>"
                 html += "</tr>"
                 thread['min_max']['min'] = thread['cycle_time']
                 thread['min_max']['max'] = thread['cycle_time']
             html +="</table>"
-            thread_load = 0
-            for thread in list_threads:
-                thread_load += thread['load_%']
-            html +=f"User tasks CPU load = {thread_load:3.2f}%<br>"
+            #thread_load = 0
+            #for thread in list_threads:
+            #    thread_load += thread['load_%']
+            #html +=f"User tasks CPU load = {thread_load:3.2f}%<br>"
             html +="<a href='/threads'>Refresh</a>"
             html += html_fin
             #print ("HTML=", html)

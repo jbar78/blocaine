@@ -84,6 +84,25 @@ def io_text(io):
         io_name = io['name']
     return val+io_name+evt
 
+def io_alignement (pio, ptexte):
+    global canvas
+    coords_cadre = canvas.coords(pio['id_cadre'])
+    coords_texte = canvas.coords(pio['id_texte'])
+    if 'type' in pio:
+        bloc_parent = find_parent(pio)
+        if (pio['type'] == "in") ^ (len(ptexte) > 10 and (bloc_parent.header['name'] != PARAM_NAME_BLOC_OUTPUT and (bloc_parent.header['name'] != PARAM_NAME_BLOC_INPUT))):
+            anchor = "w"
+            posx = coords_cadre[0]+2
+        else:
+            anchor = "e"
+            posx = coords_cadre[2]-1
+
+    else: #c'est pas un IO mais un header
+        anchor = "center"
+        posx = (coords_cadre[0]+coords_cadre[2])/2
+    canvas.coords(pio['id_texte'], posx, (coords_cadre[1]+coords_cadre[3])/2)
+    canvas.itemconfig(pio['id_texte'], text=ptexte, anchor=anchor)
+
 class c_mire:
     """dessine la mire"""
     def __init__(self, can):
@@ -398,10 +417,14 @@ class c_sublocs:
             font = ( PARAM_FONT, int(max(1,  coeff * PARAM_FONT_SIZE)))
             tags_cadre = ptags + ("cadre",)
             tags_texte = ptags + ("texte",)
+            if not 'header' in ptags:
+                bloc_parent = find_parent(sobj)
             #print ("tags_texte =", tags_texte)
-            sobj['id_cadre'] = canvas.create_rectangle (x, y, x+largeur, y+hauteur, tags=tags_cadre, fill=color)
+            sobj['id_cadre'] = canvas.create_rectangle (x, y, x+largeur, y+hauteur, tags=tags_cadre, fill=color)    
+            texte = io_text(sobj)
+            sobj['id_texte'] = canvas.create_text (x+largeur/2, y+hauteur/2, text=texte , tags=tags_texte, font=font, anchor="center")
+            io_alignement(sobj, texte)
 
-            sobj['id_texte'] = canvas.create_text (x+largeur/2, y+hauteur/2, text = io_text(sobj), tags=tags_texte, font=font)
         proc_name = "c_sublocs_draw_bloc: "
         largeur = coeff * PARAM_HEADER_LARGEUR
         hauteur = coeff * PARAM_HEADER_HAUTEUR
@@ -1515,56 +1538,6 @@ def delete_local_defaut_value_io(px, py, io):
     proc_name = "delete_local_defaut_value_io: "
     print (proc_name, "supprime io['local_defaut_value']=", io['local_defaut_value'])
     del io['local_defaut_value']
-#def set_defaut_value_io_old(px, py, io, pdic):
-#    """pour definir la valeur par défaut d'une entrée"""
-#    global PARAM_TYPE_LIST
-#    proc_name = "defaut_value: "
-#    print (proc_name, f"début: paramêtres: x={px}, y={py}, io={io}, pdic={pdic}, ")
-#    def proc_null():
-#        return
-#    def validation():
-#        global bloc
-#        #io['defaut_value'] = float(io_defaut_value.get())
-#        if combox_type.get() == "float":  io[pdic] = float(io_defaut_value.get())
-#        if combox_type.get() == "int":    io[pdic] = int(io_defaut_value.get())
-#        if combox_type.get() == "bool":
-#            #print (proc_name, " type=BOOL    value brute=",io_defaut_value.get())
-#            io[pdic] = io_defaut_value.get() == "True" or io_defaut_value.get() == "1"
-#        if combox_type.get() == "str": io[pdic] = (io_defaut_value.get())
-#
-#        pop.popup.destroy()
-#        bloc.c_bloc_redraw()
-#    pop = c_popup(pdic, 25+px, 75+py)
-#    if not pdic in io: io[pdic]=0
-#    io_defaut_value = pop.c_popup_add_une_propriete("Défaut value:", io[pdic], proc_null)
-#    label_type = tk.Label(pop.popup, text="type:")
-#    label_type.grid(row = pop.ligne, column = 0)
-#    combox_type = ttk.Combobox(pop.popup, values=PARAM_TYPE_LIST) #new
-#    print (proc_name, f"existing type={type(io[pdic])}")
-#    print (proc_name, f"existing type.__name__={type(io[pdic]).__name__}")
-#    index_type = 0
-#    for i, typ in enumerate(PARAM_TYPE_LIST):
-#        print (proc_name, f"loop type={typ}")
-#        if type(value).__name__ == typ:
-#            print (proc_name, f"io([pdic]==typ")
-#            index_type = i
-#            break
-#    combox_type.set(PARAM_TYPE_LIST[index_type])
-#    combox_type.grid(row = pop.ligne, column = 1)
-#    pop.ligne += 1
-#    BP_escape = tk.Button(pop.popup, text = 'Escape', width = 25, command = pop.popup.destroy)
-#    BP_escape.grid(row = pop.ligne, column = 0)
-#    BP_validation = tk.Button(pop.popup, text='Validation', width = 25, command = validation)
-#    BP_validation.grid(row = pop.ligne, column = 1)
-#    #BP_escape.focus()
-#    BP_validation.bind("<Return>", lambda event: BP_validation.invoke())
-#    BP_validation.bind("<KP_Enter>", lambda event: BP_validation.invoke())
-#    BP_escape.bind("<Return>", lambda event: BP_escape.invoke())
-#    BP_escape.bind("<KP_Enter>", lambda event: BP_escape.invoke())
-#
-#    pop.entry[0].focus()
-#    pop.entry[0].bind("<Return>", lambda event: BP_validation.invoke())
-#    pop.entry[0].bind("<KP_Enter>", lambda event: BP_validation.invoke())
 def set_value_io(px, py, io, pdic, pmsg, pbool, pproc):
     """pour definir la valeur par défaut d'une entrée"""
     global PARAM_TYPE_LIST, bloc
@@ -2418,7 +2391,7 @@ def save_file(save_as):
     proc_name = "save_file: "
     bloc_a_sauver = pickle.loads(pickle.dumps(bloc))
     if save_as:
-        fullname = tk.filedialog.asksaveasfilename(title="Please new bloc name", filetypes = [("Fichiers Bloc", "*.bloc")])
+        fullname = tk.filedialog.asksaveasfilename(title="Save as:", filetypes = [("Fichiers Bloc", "*.bloc")])
         #print (proc_name, "file name=", fullname)
         if not fullname: return
         fname_sans_chemin = os.path.basename(fullname)
@@ -3080,7 +3053,7 @@ def monitoring_bloc():
             return f".dict."
         elif isinstance(var, c_modbus):
             #print (proc_name, "type=c_modbus")
-            return f".ModbusTcpClient."
+            return f".ModbusClt."
         elif isinstance(var, c_gpio):
             #print (proc_name, "type=c_gpio")
             return f".GPIO."
@@ -3093,26 +3066,29 @@ def monitoring_bloc():
         elif var==None:
             return f"None"
         else:
-            return var
+            return f"{var}"
     def show_monitored_io(ptype, pio, pmsb, pid):
         proc_name = "show_monitored_io: "
         #print (proc_name, f"parametres: type={ptype},     pio(name={pio['name']} (type={pio['type']}, id={pio['id']}),     pmsb_name={pmsb.header['name']},   pid={pid}")
         if ptype == 'in':
-            for minput in pmsb.inputs:
-                if minput['id'] == pid:
-                    #print (proc_name, f" var={minput['var']}")
-                    #canvas.itemconfig(io['id_cadre'], fill=bg_color(minput['valide']))
-                    canvas.itemconfig(io['id_cadre'], fill=bg_color(minput))
-                    canvas.itemconfig(io['id_texte'], fill=tx_color(minput), text=formatage(minput['var']))
+            msbio = pmsb.inputs
         elif ptype == 'out':
-            for moutput in pmsb.outputs:
-                if moutput['id'] == pid:
-                    #print (proc_name, f" var={moutput['var']}")
-                    #canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput['valide']))
-                    canvas.itemconfig(io['id_cadre'], fill=bg_color(moutput))
-                    canvas.itemconfig(io['id_texte'], fill=tx_color(moutput), text=formatage(moutput['var']))
+            msbio = pmsb.outputs
         else:
             messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={pio}")
+            return
+        bloc_parent = find_parent(io)
+        #print(proc_name, f"bloc_parent.header['name']={bloc_parent.header['name']}") 
+        for mio in msbio:
+            if mio['id'] == pid:
+                #print (proc_name, f" io name={mio['name']}", f" var={mio['var']}")
+                #canvas.itemconfig(io['id_cadre'], fill=bg_color(mio['valide']))
+                canvas.itemconfig(io['id_cadre'], fill=bg_color(mio))
+                texte = formatage(mio['var'])
+                #print (proc_name, f"texte formaté={texte}")
+                io_alignement(io, texte)
+
+
     def show_normal_io(pio):
         proc_name = "show_normal_io: "
         #print (proc_name, f"parametres:  io(name={pio['name']}, type={pio['type']}, id={pio['id']})")
@@ -3128,7 +3104,7 @@ def monitoring_bloc():
             messagebox.showinfo("❌ERROR", f"Showing normal IO 'type' is not 'in' or 'out',  io={pio}")
         #print (proc_name, f"io name={pio['name']}")
         canvas.itemconfig(io['id_cadre'], fill= color)
-        canvas.itemconfig(io['id_texte'], text= io_text(pio))
+        io_alignement(io, io_text(pio))
 
     def bloc_a_monitorer():
         ''' retour le nom du bloc et l'arborésence du bloc à déboger'''
