@@ -8,20 +8,19 @@
   <meta name="keywords" content="Blocaine, Blocaïne, automatisme, automation, block, bloc">
   <title>blocaïne</title>
 </head>
-<body>
+<body style="font-size: 1.25rem;">
   <center>
     <table border="0" style="background-color: lightblue;">
       <tr>
         <td>
           <table border="0" style="background-color: #618685; width: 100%;">
             <tr>
-              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 10%;">
               </td>
-              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
-                <a href="http://blocaine.org"><img style="width: 217px; height:67px;" alt="Blocaine logo" title="blocaine.org" src="logo_Blocaine_410_100.png"></a><br>
-                <!--<a href="http://blocaine.org"><img style="width: 699px; height:126px;" alt="Blocaine logo" title="blocaine.org" src="user_blocs_699_126.png"></a><br>-->
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 80%;">
+                <a href="https://blocaine.org"><img style="width: 903px; height:144px;" alt="Blocaine logo" title="blocaine.org" src="logo_automate.png"></a><br>
               </td>
-              <td align="center" style="vertical-align: middle; text-align: right; padding: 10px; background-color: #618685; font-size: 1.3em; width: 33%;">
+              <td align="center" style="vertical-align: middle; text-align: right; padding: 10px; background-color: #618685; width: 10%;">
                 FR&nbsp;&nbsp;
                 <a href="anglais.html">EN</a>&nbsp;&nbsp;
                 <a href="china.html">中文</a>&nbsp;&nbsp;&nbsp;&nbsp;              
@@ -46,19 +45,19 @@
         <td>
           <div style="margin-left:50px;">
             <ul>
-              <li>L'<strong>Éditeur de bloc</strong> vous permet de créer des programmes en assemblant des blocs fonctionnels.</li>
+              <li>L'<strong>Éditeur de bloc</strong> permet de créer des programmes en assemblant des blocs fonctionnels.</li>
               <li>L'<strong>Exécuteur</strong>, exécute les programmes créés avec l’<strong>Éditeur de bloc</strong>, pilotant ainsi l’équipement industriel via des entrées/sorties déportées.</li>
             </ul>
           </div>
         </td>
       </tr>
       <tr>
-        <td style="padding: 10px;">
+        <td style="padding:10px;">
           <center>
             <p style="font-size: 1.5em;">
               <iframe width="960" height="540" src="https://www.youtube.com/embed/yML1Y1ONKHk?autoplay=1&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
               </iframe>
-              <br>Démo...
+              <br><a href="https://www.youtube.com/watch?v=QiBpgAID3X0&pp=ygUJYmxvY2HDr25l">voir aussi le Tuto d'installation (en moins de 3 minutes)</a><br>
             </p>
           </center>
         </td>
@@ -104,9 +103,24 @@
           </div>
           <div style="margin-left:50px;">
             <ul>
-              <li>Blocaïne est un logiciel <span title="Keep It Simple, Stupid">« <b>KISS<sup>*</sup></b> » </span></li>
+              <li>Philosophie « <b>KISS</b> » (Keep It Simple, Stupid)</li>
+              <li>Low cost</li>
               <li>Minimise l'obsolesence grace à des standards pérennes (PC, Ethernet, Python)</li>
               <li>Pas de licence</li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: left; padding: 10px;">
+          <div style="font-size: 2em;">
+            <strong>Limitations</strong>
+          </div>
+          <div style="margin-left:50px;">
+            <ul>
+              <li><strong>Ressources CPU:</strong>  Blocaïne n'est pas adapté au gros projets demandant beaucoup de temps CPU, le temps d'exécution d'un bloc est de l'ordre de 2µs sur Raspberry pi 5, soit un maximum d'un demi-million de blocs/s</li>
+              <li><strong>Temps réel:</strong>  Blocaïne n'étant pas basé sur un system temps réel "dur", il faut accepter une certaine latence qui reste cependant inférieur à 1µs sur Raspberry pi 5</li>
+              <li><strong>Bibliothéques:</strong>  comme le projet est récent vous risquez de ne pas trouver tous les blocs "system" que vous souhaitez (voir list ci-dessous)</li>
             </ul>
           </div>
         </td>
@@ -231,6 +245,14 @@
           </table>
         </td>
       </tr>
+      <tr  background="frise1.png">
+        <td style="vertical-align: top; text-align: left; padding: 10px;"> 
+        <br>
+        <br>
+        <br>
+        <br>
+        </td>
+      </tr>    
     </table>
   </center>
 </body>
