@@ -8,8 +8,9 @@ debug_c_exe = False
 class c_modbus:
     """pour ne pas sérialisation des objets ModbusTcpClient"""
     def __init__(self, client):
-        self.host = client['comm_params'].host
-        self.port = client['comm_params'].port
+        pass
+        #self.host = client['comm_params'].host
+        #self.port = client['comm_params'].port
 
 class c_gpio:
     """pour ne pas sérialisation des objets GPIOZERO"""
