@@ -1066,14 +1066,24 @@ def open_bloc_new_window(name, id, pos):
     list_param_commun = [sys.executable, "main.py", str(config_window['pos_x']), str(config_window['pos_y'])]
     if name==None:
         list_param_subprocess = list_param_commun
+        title = "New Window"
     else:
         list_param_bloc = [name, monitoring_str, str(-pos[0]), str(-pos[1]), arborescence + bloc.header['name'] + "/(" + str(id) + ")"]
         list_param_subprocess = list_param_commun+list_param_bloc
+        title = name
+    commande_shell = (
+    f'echo -ne "\\033]0;{title}\\007"; '
+    + " ".join(repr(x) for x in list_param_subprocess)
+    + "; exit"
+    )
     if sys.platform == "linux":
         #subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exec bash"])
-        subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exit"])
+        #subprocess.Popen(["gnome-terminal", "--","bash", "-lc"," ".join(repr(x) for x in list_param_subprocess) + "; exit"])
+        subprocess.Popen(["gnome-terminal", "--","bash", "-lc", commande_shell])
     else:
-        subprocess.Popen(list_param_subprocess,  creationflags=subprocess.CREATE_NEW_CONSOLE)
+        #subprocess.Popen(list_param_subprocess,  creationflags=subprocess.CREATE_NEW_CONSOLE)
+        commande = f'title {titre} & ' + " ".join(list_param_subprocess)
+        subprocess.Popen(["cmd", "/c", commande],  creationflags=subprocess.CREATE_NEW_CONSOLE)
 def open_io_new_window(io):
     """ouvre un autre interpréteur Python pour permettre d'éditer le bloc passé en paramètre"""
     proc_name = "open_io_new_window: "
