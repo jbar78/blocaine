@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Blocaïne est une plateforme logicielle conçue pour l'automatisation des procédés industriels. Elle comprend deux composants principaux :
+    • Un Éditeur de blocs, qui permet de créer des programmes en assemblant des blocs fonctionnels.
+    • Un Exécuteur , qui exécute les programmes créés avec l’Éditeur de blocs, pilotant ainsi l’équipement industriel via des entrées/sorties déportées. ">
+  <meta name="keywords" content="Blocaine, Blocaïne, automatisme, automation, block, bloc, blocaine-automation">
+  <title>blocaïne</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <center>
+    <table border="0" style="background-color: #81A6A5; max-width: 1280px;">
+      <tr>
+        <td>
+          <table border="0"  style="background-color: #618685; width: 100%;">
+            <tr>
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
+              </td>
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
+                <a href="https://blocaine.org"><img style="width: 903px; height:144px;" alt="Blocaine logo" title="blocaine.org" src="logo_automate.png"></a><br>
+              </td>
+              <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
+                <span style="white-space: nowrap;">fr</span><br>
+                <a href="index.html" class="btn-lien"><span style="white-space: nowrap;">en</span></a><br>
+                <a href="china.html" class="btn-lien"><span style="white-space: nowrap;">中文</span></a><br>              
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" align="center" style="vertical-align: middle; text-align: right; padding: 10px; background-color: #618685; width: 100%;">
+                &nbsp;<a href="general_fr.pdf"  class="btn-lien" target="_blank">Manuel Utilisateur</a>&nbsp;
+                &nbsp;<a href="evaluation_fr.pdf"  class="btn-lien" target="_blank">Téléchargement</a>&nbsp;
+                &nbsp;<a href="mailto:contact@blocaine.org?subject=Demande%20d'informations" class="btn-lien">contact@blocaine.org</a>&nbsp;
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="table-style" style="vertical-align: top; text-align: center; padding: 10px; font-size: 1.5em;">
+          <table class="table-style" border="0" style="background-color: #81A6A5;   padding: 20px;">
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  colspan="2" align="center" style="vertical-align: top; text-align: center; padding: 20px; background-color: #618685; width: 10%;">          
+                <strong>Blocaïne</strong> est une plateforme logicielle<br> dédiée à<br> l'automatisation des procédés industriels<br>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <center>
+            <img style=" width: 630px; height:602px;" alt="Blocaïne achitecture générale" title="achithecture générale" src="Architecture_fr.png"><br><br>
+          </center>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="table-style" border="0" style="background-color: #81A6A5;   padding: 20px; width: 100%;">
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  colspan="2" align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #81A6A5; width: 50%;">          
+                <div style="font-size: 1.5em;">
+                  <strong>Blocaïne</strong> sépare la conception du programme de son exécution
+                </div>
+              </td>
+            </tr>
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">          
+                <div style="font-size: 0.8em; text-align: right; color: black;">
+                  <strong>Pc de développement</strong>
+                </div>
+                <div style="font-size: 2em; color: #FFC099;">
+                  <strong>Éditeur de bloc</strong>
+                </div>
+                <ul>
+                  <li>Création de programmes par chaînage de blocs fonctionnels.<br></li>
+                  <li>Compilation.<br></li>
+                  <li>Chargement de programmes dans la Machine Cibe.<br></li>
+                  <li>Visualisation des variables en temps réel.<br></li>
+                  <li>Forçage des variables.<br></li>
+                </ul>
+              </td>
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">          
+                <div style="font-size: 0.8em; text-align: right; color: black;">
+                  <strong>Machine Cible (faisant office de PLC).</strong>
+                </div>
+                <div style="font-size: 2em; color: #FFC099;">
+                  <strong>Exécuteur</strong>
+                </div>
+                <ul>
+                  <li>Exécution les programmes créés avec l’<strong>Éditeur de bloc</strong>.<br></li>
+                  <li>Pilotage de l’équipement industriel via des entrées/sorties déportées.<br></li>
+                  <li>Communication avec un éventuel IHM/SCADA via OPC UA.<br></li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:10px;">
+          <center>
+            <p style="font-size: 1.5em;">
+              <iframe width="960" height="540" src="https://www.youtube.com/embed/yML1Y1ONKHk?autoplay=1&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+              </iframe>
+              <br><a href="https://www.youtube.com/watch?v=QiBpgAID3X0&pp=ygUJYmxvY2HDr25l" class="btn-lien">Tuto d'installation</a><br>
+            </p>
+          </center>
+        </td>
+      </tr>
+      <tr>
+
+        <td>
+          <table class="table-style" border="0" style="background-color: #81A6A5;   padding: 20px; width: 100%;">
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  colspan="2" align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #81A6A5; width: 50%;">          
+                <div style="font-size: 2em;">
+                  Caractéristiques
+                </div>
+              </td>
+            </tr>
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">          
+                <table border="0" style="background-color: #618685;   padding: 20px; width: 100%;">
+                  <tr  style="padding: 20px;">
+                    <td>Chargement à chaud</td><td>Une nouvelle version d'un programme peut être chargée à la volée, donc sans arrêter l'installation</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td>Édition</td>
+                    <td>
+                      - Programmation graphique sous forme de blocs fonctionnels chaînés<br>
+                      - L’ordre d’exécution des blocs est généré automatiquement<br>
+                      - La mise en page est automatique<br>
+                    </td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td>Bit de validité</td><td>Chaque variable possède nativement un bit de validité, qui se propage de bloc en bloc</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td>Python</td>
+                    <td>
+                      - Typage dynamique des variables<br>
+                      - Écriture possible de blocs fonctionnels en Python<br>
+                    </td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td>Débogage</td>
+                    <td>
+                      - Visualisation en temps réel des variables<br>
+                      - Forçage des variables<br>
+                      </td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td>Connectivité</td>
+                    <td>
+                      - Un serveur web, permet la visualisation de l'état de la cible<br>
+                      - Un serveur OPC UA, permet l'interfacage avec un IHM/SCADA<br>
+                      - Un client ModBus, permet le pilotage de remotes I/O<br>
+                    </td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td>open source</td><td>Blocaïne est libre de droits et en sources ouvertes</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+        <td>
+          <table class="table-style" border="0" style="background-color: #81A6A5;   padding: 20px; width: 100%;">
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  colspan="2" align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #81A6A5; width: 50%;">          
+                <div style="font-size: 2em;">
+                  Fiche technique
+                </div>
+              </td>
+            </tr>
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">          
+                <div style="font-size: 2em; color: #00bf63;">
+                  Avantages
+                </div>
+                <table border="0" style="background-color: #618685;   padding: 20px; width: 100%;">
+                  <tr  style="padding: 20px;">
+                    <td style="color: #00bf63;">Philosophie</td><td>KISS - Keep It Simple Stupid</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td style="color: #00bf63;">Fonctionnalités avancées</td><td>"Chargement à chaud", bit de validité, typage dynamique...</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td style="color: #00bf63;">Coût</td><td>low cost (matériel & logiciel)</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td style="color: #00bf63;">Licence</td><td>Libre et open source. Le code est intégralement disponible et modifiable.</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td style="color: #00bf63;">Pérennité</td><td>Mimimise l'obsolescence grâce à des standards pérennes (Python, Ethernet, PC)</td>
+                  </tr>
+                </table>
+              </td>
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">          
+                <div style="font-size: 2em; color: #ff751f;">
+                  Limitations
+                </div>
+                <table border="0" style="background-color: #618685;   padding: 20px; width: 100%;">
+                  <tr  style="padding: 20px;">
+                    <td style="color: #ff751f;">Ressources CPU</td><td>Pas adapté aux gros projets gourmands en CPU — un bloc «&nbsp;System&nbsp;» de base s'exécute en ~2 µs sur Raspberry&nbsp;Pi&nbsp;5 (max ~0,5 M blocs/s).</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td style="color: #ff751f;">Temps réel</td><td>Pas de système temps réel «&nbsp;dur&nbsp;» — la latence restant sous 1 ms sur Raspberry&nbsp;Pi&nbsp;5.</td>
+                  </tr>
+                  <tr  style="padding: 20px;">
+                    <td style="color: #ff751f;">Bibliothèque</td><td>Certains blocs «&nbsp;System&nbsp;» attendus peuvent encore manquer.</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </ul>
+      <tr>
+        <td>
+          <table class="table-style" border="0" style="background-color: #81A6A5;   padding: 20px; width: 100%;">
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  colspan="2" align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #81A6A5; width: 50%;">          
+                <div style="font-size: 2em;">
+                  Avancement du projet
+                </div>
+              </td>
+            </tr>
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">
+                <div style="margin-left:50px;">
+                  La version "Béta" de <strong>Blocaïne</strong> est disponible sur github, afin de faciliter son installation dans un but d'évaluation, la version téléchargeable est configurée pour que:
+                  <ul>
+                    <li> l'<strong>Éditeur de bloc</strong> et l'<strong>Exécuteur</strong> s'exécutent sur le même PC, ce qui élimine toute configuration réseau</li>
+                    <li> Certaines fonctionnalités sont déactivées (OPC, GPIO, MudBus/TCP), ce qui élimine toute installation de modules Python spécifiques</li>
+                  </ul>
+                   Il ne faut que 3 minutes pour télécharger et commencer à utiliser Blocaïne.
+                   Après le téléchargement, il faudra simplement lancer l'<strong>Exécuteur</strong> puis l'<strong>Éditeur de bloc</strong>, la connection entre les deux est automatique, vous pourez alors commencer à évaluer Blocaïne.
+                  <center><a href="evaluation_fr.pdf"  class="btn-lien" target="_blank">Procédure d'installation et d'évaluation</a></center>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="table-style" border="0" style="background-color: #81A6A5;   padding: 20px; width: 100%;">
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  colspan="2" align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #81A6A5; width: 50%;">          
+                <div style="font-size: 2em;">
+                  Documentation
+                </div>
+              </td>
+            </tr>
+            <tr  style="background-color: #618685;   padding: 20px;">
+              <td  align="center" style="vertical-align: top; text-align: left; padding: 20px; background-color: #618685; width: 50%;">
+                <div style="margin-left:50px;">
+                doc. générale :<br>
+                <div class="ligne">
+                    <span class="phrase"><a href="general_fr.pdf" class="btn-lien" target="_blank">Manuel Utilisateur</a></span>
+                    <span class="phrase"><a href="evaluation_fr.pdf" class="btn-lien" target="_blank">Manuel d'installation</a></span>
+                </div>
+                <br><br>
+                blocs "System" :<br>
+                <div class="ligne">
+                  <span class="phrase"><a href="bloc_system_add_fr.html" class="btn-lien" target="_blank">add</a> addition</span>
+                  <span class="phrase"><a href="bloc_system_and_fr.html" class="btn-lien" target="_blank">and</a> ET logique</span>
+                  <span class="phrase"><a href="bloc_system_append_fr.html" class="btn-lien" target="_blank">append</a> ajout un élément en fin de list</span>
+                  <span class="phrase"><a href="bloc_system_cablin_fr.html" class="btn-lien" target="_blank">cablin</a> ajoute un élément à une structure</span>
+                  <span class="phrase"><a href="bloc_system_cablout_fr.html" class="btn-lien" target="_blank">cablout</a> extrait un élément à une structure</span>
+                  <span class="phrase"><a href="bloc_system_clock_fr.html" class="btn-lien" target="_blank">clock</a> horloge</span>
+                  <span class="phrase"><a href="bloc_system_comp_fr.html" class="btn-lien" target="_blank">comp</a> comparaison</span>
+                  <span class="phrase"><a href="bloc_system_const.pi_fr.html" class="btn-lien" target="_blank">const.pi</a> constante pi</span>
+                  <span class="phrase"><a href="bloc_system_delay_fr.html" class="btn-lien" target="_blank">delay</a> retard à la montée ou à la descente</span>
+                  <span class="phrase"><a href="bloc_system_differencial_fr.html" class="btn-lien" target="_blank">differencial</a> différenciel</span>
+                  <span class="phrase"><a href="bloc_system_div_fr.html" class="btn-lien" target="_blank">div</a> division</span>
+                  <span class="phrase"><a href="bloc_system_dt_fr.html" class="btn-lien" target="_blank">dt</a> temps de cycle de la tâche</span>
+                  <span class="phrase"><a href="bloc_system_edge_fr.html" class="btn-lien" target="_blank">edge</a> détection de front montant et/ou descendant</span>
+                  <span class="phrase"><a href="bloc_system_filter_FO_fr.html" class="btn-lien" target="_blank">filter_FO</a> filtre du 1er ordre</span>
+                  <span class="phrase"><a href="bloc_system_geti_fr.html" class="btn-lien" target="_blank">geti</a> retourne l'élément [n]</span>
+                  <span class="phrase"><a href="bloc_system_GPIO_DI_fr.html" class="btn-lien" target="_blank">GPIO_DI</a> lecture d'une entrée digitale GPIO</span>
+                  <span class="phrase"><a href="bloc_system_GPIO_DO_fr.html" class="btn-lien" target="_blank">GPIO_DO</a> écriture d'une sortie digitale GPIO</span>
+                  <span class="phrase"><a href="bloc_system_GPIO_PWM_fr.html" class="btn-lien" target="_blank">GPIO_PWM</a> écriture d'une sortie MLI GPIO</span>
+                  <span class="phrase"><a href="bloc_system_hold_fr.html" class="btn-lien" target="_blank">hold</a> fonction maintien</span>
+                  <span class="phrase"><a href="bloc_system_information_fr.html" class="btn-lien" target="_blank">information</a> retourne les infos d'une variable</span>
+                  <span class="phrase"><a href="bloc_system_input_fr.html" class="btn-lien" target="_blank">input</a> entrée d'un bloc</span>
+                  <span class="phrase"><a href="bloc_system_input_output_fr.html" class="btn-lien" target="_blank">input_output</a> accéde à une sortie d'un autre process</span>
+                  <span class="phrase"><a href="bloc_system_insert_fr.html" class="btn-lien" target="_blank">insert</a> insert un élément dans une list</span>
+                  <span class="phrase"><a href="bloc_system_integrator_fr.html" class="btn-lien" target="_blank">integrator</a> intégrateur en fonction du temps</span>
+                  <span class="phrase"><a href="bloc_system_len_fr.html" class="btn-lien" target="_blank">len</a> retourne le nombre d'éléments</span>
+                  <span class="phrase"><a href="bloc_system_limit_fr.html" class="btn-lien" target="_blank">limit</a> limitations haute et basse</span>
+                  <span class="phrase"><a href="bloc_system_memory_fr.html" class="btn-lien" target="_blank">memory</a> mémoire (bascule RS)</span>
+                  <span class="phrase"><a href="bloc_system_minmax_fr.html" class="btn-lien" target="_blank">minmax</a> minimum et maximum</span>
+                  <span class="phrase"><a href="bloc_system_modbus_conn_fr.html" class="btn-lien" target="_blank">modbus_conn</a> ModBus/TCP connexion</span>
+                  <span class="phrase"><a href="bloc_system_modbus_read_fr.html" class="btn-lien" target="_blank">modbus_read</a> ModBus/TCP lecture des entrées</span>
+                  <span class="phrase"><a href="bloc_system_modbus_write_fr.html" class="btn-lien" target="_blank">modbus_write</a> ModBus/TCP affectation des sorties</span>
+                  <span class="phrase"><a href="bloc_system_mult_fr.html" class="btn-lien" target="_blank">mult</a> multiplication</span>
+                  <span class="phrase"><a href="bloc_system_not_fr.html" class="btn-lien" target="_blank">not</a> NON logique</span>
+                  <span class="phrase"><a href="bloc_system_OPC_node_fr.html" class="btn-lien" target="_blank">OPC_node</a> création d'un noeud OPC UA</span>
+                  <span class="phrase"><a href="bloc_system_OPC_read_fr.html" class="btn-lien" target="_blank">OPC_read</a> lecture d'une variable OPC UA</span>
+                  <span class="phrase"><a href="bloc_system_OPC_server_fr.html" class="btn-lien" target="_blank">OPC_server</a> configuration d'un serveur OPC UA</span>
+                  <span class="phrase"><a href="bloc_system_OPC_var_fr.html" class="btn-lien" target="_blank">OPC_var</a> création d'une variable OPC UA</span>
+                  <span class="phrase"><a href="bloc_system_OPC_write_fr.html" class="btn-lien" target="_blank">OPC_write</a> affectation d'une variable OPC UA</span>
+                  <span class="phrase"><a href="bloc_system_or_fr.html" class="btn-lien" target="_blank">or</a> OU logique</span>
+                  <span class="phrase"><a href="bloc_system_output_fr.html" class="btn-lien" target="_blank">output</a> sortie d'un bloc</span>
+                  <span class="phrase"><a href="bloc_system_pop_fr.html" class="btn-lien" target="_blank">pop</a> suprime un élément d'une list</span>
+                  <span class="phrase"><a href="bloc_system_previous_fr.html" class="btn-lien" target="_blank">previous</a> variable mémorisée</span>
+                  <span class="phrase"><a href="bloc_system_puti_fr.html" class="btn-lien" target="_blank">puti</a> affecte un élément d'une list</span>
+                  <span class="phrase"><a href="bloc_system_range_fr.html" class="btn-lien" target="_blank">range</a> itération pour boucle</span>
+                  <span class="phrase"><a href="bloc_system_readbit_fr.html" class="btn-lien" target="_blank">readbit</a> lit un bit d'un entier</span>
+                  <span class="phrase"><a href="bloc_system_select_fr.html" class="btn-lien" target="_blank">select</a> selection (if/then/else)</span>
+                  <span class="phrase"><a href="bloc_system_sub_fr.html" class="btn-lien" target="_blank">sub</a> soustraction</span>
+                  <span class="phrase"><a href="bloc_system_time_fr.html" class="btn-lien" target="_blank">time</a> lecture horloge system</span>
+                  <span class="phrase"><a href="bloc_system_type_fr.html" class="btn-lien" target="_blank">type</a> conversion de type</span>
+                  <span class="phrase"><a href="bloc_system_validRead_fr.html" class="btn-lien" target="_blank">validRead</a> lecture du bit de validité</span>
+                  <span class="phrase"><a href="bloc_system_validWrite_fr.html" class="btn-lien" target="_blank">validWrite</a> écriture du bit de validité</span>
+                  <span class="phrase"><a href="bloc_system_Writebit_fr.html" class="btn-lien" target="_blank">writebit</a> affecte un bit d'un entier</span>
+                </div>
+                <br><br>
+                blocs "User" :<br>
+                <div class="ligne">
+                    <span class="phrase"><a href="bloc_user_loop_fr.html" class="btn-lien" target="_blank">loop</a> incrémentation</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr style="background-color: #618685;">
+        <td>
+          <table border="0" style="background-color: #618685; width: 100%;">
+            <tr>
+              <td style="vertical-align: top; text-align: center; padding: 10px;">
+                contact: <a href="mailto:contact@blocaine.org?subject=Demande%20d'informations">contact@blocaine.org</a>
+              </td>
+              <td style="vertical-align: top; text-align: center; padding: 10px;">
+                <a href="mentions_legales.html" target="_blank">Mentions légales</a> 
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr  background="frise1.png">
+        <td style="vertical-align: top; text-align: left; padding: 10px;"> 
+        <br>
+        <br>
+        <br>
+        <br>
+        </td>
+      </tr>    
+    </table>
+  </center>
+</body>
+</html>

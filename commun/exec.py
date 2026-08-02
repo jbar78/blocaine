@@ -584,14 +584,11 @@ def c_exesubloc_gpio_di (pebloc, pieb, pio, pthread): #_________________________
                         cesubloc.outputs[1]['var'] = -1
             else:
                 #print ("<GPIO_DI> else iclose") 
-                if isinstance(cesubloc.outputs[2]['var'], GPIOZ_Button):
-                    #print ("<GPIO_DI> l'obj est un GPIOZ_Button -> lecture de la DI")
-                    cesubloc.outputs[0]['var'] = cesubloc.outputs[2]['var'].value
-                    cesubloc.outputs[1]['var'] = 0
-                else:
+                if not isinstance(cesubloc.outputs[2]['var'], GPIOZ_Button):
                     cesubloc.outputs[2]['var'] = GPIOZ_Button(cesubloc.inputs[1]['var'])
-                    cesubloc.outputs[1]['var'] = 1
-                    print (f"<GPIO_DI> GPIO pin {cesubloc.inputs[1]['var']}, is now configured in Button mode")
+                #print ("<GPIO_DI> l'obj est un GPIOZ_Button -> lecture de la DI")
+                cesubloc.outputs[0]['var'] = cesubloc.outputs[2]['var'].value
+                cesubloc.outputs[1]['var'] = 0
         except:
             print ("<GPIO_DI>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[1]['var'] = -2

@@ -1966,12 +1966,13 @@ def find_bloc_under_event(event):
                                     print (proc_name, f" en y")
                                     return elem
     return None
-def doc_file_name(pelem):
+def doc_file_name(pelem, langue):
     if 'system' in pelem.header['key_word']:
         txt_type = "system_"
     else:
         txt_type = "user_"
-    return "../docs/bloc_"+txt_type+pelem.header['name']+".html"
+
+    return "../docs/bloc_"+txt_type+pelem.header['name']+"_"+langue+".html"
 
 def open_doc(document):
     porc_name ="open_doc: "
@@ -2002,7 +2003,7 @@ def event_key_F1(event):
     print (proc_name," arg=", event)
     elem = find_bloc_under_event(event)
     if elem != None:
-        doc_file = doc_file_name (elem)
+        doc_file = doc_file_name (elem, "en")
         open_doc(doc_file)
 def event_key_F3(event):
     """callback: sur evenement"""
@@ -2147,11 +2148,14 @@ def menu_bar():
     #help_menubar.add_command(label = "Debug: Reset draw", command = bloc.c_bloc_erase_draw)
     #help_menubar.add_command(label = "Debug: Redraw", command = bloc.c_bloc_redraw)
     #help_menubar.add_separator()
-    doc_txt  = 'User Manual (off line)'
-    doc_file = '../docs/general_en.pdf'
-    help_menubar.add_command(label = doc_txt, command = lambda: open_doc(doc_file))
-    blocaine_web_pages = "https://blocaine.org"
-    help_menubar.add_command(label = "Blocaïne web pages (on line)", command = lambda: open_doc(blocaine_web_pages))
+    help_menubar.add_command(label = "Blocaïne web pages", command = lambda: open_doc("https://blocaine.org"))
+    help_menubar.add_separator()
+    doc_txt_en  = 'User Manual (en)'
+    doc_file_en = '../docs/general_en.pdf'
+    help_menubar.add_command(label = doc_txt_en, command = lambda: open_doc(doc_file_en))
+    doc_txt_fr  = 'Manuel Utilisateur (fr)'
+    doc_file_fr = '../docs/general_fr.pdf'
+    help_menubar.add_command(label = doc_txt_fr, command = lambda: open_doc(doc_file_fr))
     help_menubar.add_separator()
     help_menubar.add_command(label = "Debug: print bloc", command = lambda: bloc.c_bloc_print())
     help_menubar.add_command(label = "Debug: print list_compiled", command = lambda: print_exeblocs())
@@ -2245,8 +2249,10 @@ def menu_header(event, elem):
         if pos_io < nbr_io:
             menu_contextuel.add_command(label = "move down", command = lambda: io_interface_move(elem, "down"))
         menu_contextuel.add_separator()
-    doc_file = doc_file_name(elem)
-    menu_contextuel.add_command(label = "Documentation [F1]", command = lambda: open_doc(doc_file))
+    doc_file_en = doc_file_name(elem, "en")
+    menu_contextuel.add_command(label = "Documentation (en) [F1]", command = lambda: open_doc(doc_file_en))
+    doc_file_fr = doc_file_name(elem, "fr")
+    menu_contextuel.add_command(label = "Documentation (fr) [F1]", command = lambda: open_doc(doc_file_fr))
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_header(event.x_root, event.y_root, elem, modification=0))#0
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
@@ -3147,7 +3153,7 @@ def monitoring_bloc():
 
     monitoring_loop = 0
     while flag_monitoring:
-        if True: #try:
+        try:
             #print(proc_name, f" monitoring bloc <{master.title()}>    index[{monitoring_loop}]")
             #clientTCP.send_message(message)
             clientTCP.send_message(bloc_a_monitorer())
@@ -3169,8 +3175,10 @@ def monitoring_bloc():
                                 show_monitored_io (io['type'], io, msb, io['id']) #msbmsb
 
             time.sleep(PARAM_MONITORING_PERIOD)
-        else: #except:
-            print(proc_name, "❌ERROR: EXECPTION") #buffer reçu=", buff)
+        except:
+            print(proc_name, "❌ERROR: EXECPTION lost TCP connection whith the target") #buffer reçu=", buff)
+            flip_monitoring()
+            break
         monitoring_loop += 1
     #print(proc_name, "fin du monitoring")
     for i, sb in enumerate(bloc.sublocs):
