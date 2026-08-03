@@ -53,6 +53,32 @@ def write_bloc(pbloc):
 
 def read_bloc(fname):
     "restore a bloc"
+    proc_name =" read_bloc: "
+    try:
+        with open(fname, "rb") as file:
+            #print (proc_name, "ouverture du fichier")
+            local_bloc=pickle.load(file)
+            #print (proc_name, "lecture du fichier")
+    except FileNotFoundError:
+        print (proc_name, "❌ERROR : file <", fname, ">can't be open")
+        return None
+    #for i, elem in enumerate(local_bloc.sublocs):
+    #    print ("{}     bloc[{}]= {}, id={}, --elem.header={}".format (proc_name, i, elem.header['name'], elem.header['id'], elem.header))
+    #    for j, io in enumerate(elem.ios):
+    #        print ( "{}                              ios[{}]= --{}".format (proc_name, j, io))
+    file_name_with_extension = os.path.basename(fname) ###
+    file = os.path.splitext(file_name_with_extension)
+    name = file[0]
+    #extension= file[1]
+    local_bloc.header['name'] = name ###
+    if local_bloc.header['structure_version'] != "2.0":
+        print ("❌ERROR : structure version of bloc file is not correct")
+        return None
+    #local_bloc['header']['name']={}
+    #local_bloc['header']['name']=name
+    return local_bloc
+def read_blocxxxxx(fname):
+    "restore a bloc"
     global master, bloc
     proc_name =" read_bloc: "
     try:

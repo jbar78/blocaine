@@ -2616,15 +2616,37 @@ def set_running(pmonitoring_state):
         bloc.c_bloc_show_title("editing : ")
 
 def set_compile_thread(porder):
-    global bloc
-    proc_name = "set_compile_thread"
-    print (proc_name, ": début")
-    #menu_RT()
-    bloc.c_bloc_show_title("Compiling: ")
-    #running_event.set()
-    compiling_thread = threading.Thread(target=compile_bloc, args=(bloc, porder))
+    global bloc, master
+    proc_name = "set_compile_thread: "
+    #print (proc_name, "début")
+    titre_fenetre = master.title()
+    #print (proc_name, f"titre_fenetre={titre_fenetre}")
+    list_blocs = titre_fenetre.split("/")
+    #print(proc_name, f" list brut={list_blocs}")
+    list_blocs.pop(0)
+    #print(proc_name, f" list net={list_blocs}")
+    for i, blc in enumerate(list_blocs):
+        if i==0:
+            main_bloc_name = blc
+            last_bloc_name = ""
+        else:
+            ip = blc.find(")")
+            last_bloc_name = blc[ip+1:]
+    #print(proc_name, f" main_bloc=<{main_bloc_name}>,  last_bloc=<{last_bloc_name}>")
+    if last_bloc_name != "":
+        reponse = messagebox.askquestion("Save ?", "To take into account the changes made to the <"+last_bloc_name+"> block, you must save it before starting the build.\n Do you want to save it?")
+        if reponse == "yes":
+            save_file(False)
+            fname = nom_complet_fichier(main_bloc_name, False)
+            #print (proc_name, "ajout chemin et .bloc    file name=", fname)
+            bloc_a_compiler = read_bloc (fname)
+        else:
+            messagebox.showinfo("build Status:", "Build aborted")
+    else:
+        bloc_a_compiler = bloc
+    compiling_thread = threading.Thread(target=compile_bloc, args=(bloc_a_compiler, porder))
     compiling_thread.start()
-    #print (proc_name, ": fin")
+    #print (proc_name, "compil thread started")
 def compile_bloc(pbloc, porder):
     """ Comfpilation du bloc et de ses sous-blocs """
     #global exeblocA, exeblocB
@@ -2646,8 +2668,8 @@ def compile_bloc(pbloc, porder):
         """crée un bloc exécutables pour chaque bloc éditable (même les 'user')"""
         proc_name = "edit_to_exe_blocs: "
         for i, subloc in enumerate(pbloc.sublocs):
-            print (proc_name, f" boucle1_creation_exe[{i}]: elem scruté: name<{subloc.header['name']}>  id={subloc.header['id']}")
-            print (proc_name, f" boucle1_creation_exe[{i}]: création d'un subloc exécutable")
+            #print (proc_name, f" boucle1_creation_exe[{i}]: elem scruté: name<{subloc.header['name']}>  id={subloc.header['id']}")
+            #print (proc_name, f" boucle1_creation_exe[{i}]: création d'un subloc exécutable")
             pexebloc.sublocs.append(c_exesubloc(subloc, pparent_ids)) ######################################################### création dun sous-bloc exécutable
             esubloc = pexebloc.sublocs[-1]
             esubloc.header['counter'] = -1
@@ -2661,7 +2683,7 @@ def compile_bloc(pbloc, porder):
         proc_name = "recup_inputs: "
         inputs = []
         for i, io in enumerate(psubloc.ios): #pour chaque IOS du subloc courant
-            print (proc_name, f" ios 1er boucle: ois[{i}]  (io_name={io['name']},  io_type={io['type']},   id={io['id']})")
+            #print (proc_name, f" ios 1er boucle: ois[{i}]  (io_name={io['name']},  io_type={io['type']},   id={io['id']})")
             if io['type']=='in':
                 input = {}
                 copy_io_name_comment (io, input)
@@ -2670,26 +2692,26 @@ def compile_bloc(pbloc, porder):
                 input['var'] = PARAM_VAL_INIT_INPUT
                 input['valide'] = False
                 if 'defaut_value' in io:
-                    print (proc_name, f"   defaut_value trouvée,   valu={io['defaut_value']}")
+                    #print (proc_name, f"   defaut_value trouvée,   valu={io['defaut_value']}")
                     input['defaut_value'] = input['var'] = io['defaut_value']
                     input['valide'] = False
                 if 'local_name' in io:
-                    print (proc_name, f"   local_name trouvée,   valu={io['local_name']}")
+                    #print (proc_name, f"   local_name trouvée,   valu={io['local_name']}")
                     input['local_name'] = io['local_name']
                 if 'lien' in io:
-                    print (proc_name, "   lien trouvé,    lien={io['lien']}")
+                    #print (proc_name, "   lien trouvé,    lien={io['lien']}")
                     input['lien'] = io['lien']
                     input['valide'] = False
                 inputs.append(input) #########
                 #print (proc_name, " pour 'in'[", i,"]  aprés.append(input)     memio['ieo']=", memio['ieo'])
-        print (proc_name, f"Retourne les inputs[]={inputs}")
+        #print (proc_name, f"Retourne les inputs[]={inputs}")
         return inputs
     def recup_outputs(psubloc):
         """ retourne les outputs """
         proc_name = "recup_outputs: "
         outputs = []
         for i, io in enumerate(psubloc.ios): #pour chaque IOS du subloc courant
-            print (proc_name, f" ios 1er boucle: ois[{i}]  (io_name={io['name']},  io_type={io['type']},   id={io['id']})")
+            #print (proc_name, f" ios 1er boucle: ois[{i}]  (io_name={io['name']},  io_type={io['type']},   id={io['id']})")
             if io['type']=='out':
                 output = {}
 
@@ -2701,10 +2723,10 @@ def compile_bloc(pbloc, porder):
                 output['var'] = PARAM_VAL_INIT_OUTPUT
                 output['valide'] = False
                 if 'defaut_value' in io:
-                    print (proc_name, f"   defaut_value trouvée,   valu={io['defaut_value']}")
+                    #print (proc_name, f"   defaut_value trouvée,   valu={io['defaut_value']}")
                     output['defaut_value'] = output['var'] = io['defaut_value']
                 if 'local_name' in io:
-                    print (proc_name, f"   local_name trouvée,   valu={io['local_name']}")
+                    #print (proc_name, f"   local_name trouvée,   valu={io['local_name']}")
                     output['local_name'] = io['local_name']
                 if 'memory' in io:
                     output['memory'] = io['memory']
@@ -2712,7 +2734,7 @@ def compile_bloc(pbloc, porder):
                     output['var'] = output['initial_value'] = io['initial_value']
                     output['valide'] = True
                 outputs.append(output) #########
-        print (proc_name, f"Retourne les output[]={outputs}")
+        #print (proc_name, f"Retourne les output[]={outputs}")
         return outputs
     def ajout_input_output(pesubloc):
         """ pour les bloc INPUT  une entrée est générées (identique à la sortie existante)
@@ -2746,34 +2768,33 @@ def compile_bloc(pbloc, porder):
     def find_index_of_lien (pexebloc, pparent_ids, plien):
         """ convert un lien (en id) en lien (en index executable)"""
         proc_name = "find_index_of_lien: "
-        print (proc_name, f"parametres: parent_ids={pparent_ids}, lien={plien}")
-        print (proc_name, f"parametres lien: parent={plien['id_parent']}, io={plien['id_io']}")
+        #print (proc_name, f"parametres: parent_ids={pparent_ids}, lien={plien}")
+        #print (proc_name, f"parametres lien: parent={plien['id_parent']}, io={plien['id_io']}")
         for ib, elem in enumerate(pexebloc.sublocs):
             #print (proc_name, f"elem={elem}")
             if elem.parent_ids == pparent_ids:
-                print (proc_name, f"parent_ids:  parameter={pparent_ids} == elem.parent_ids={elem.parent_ids}, ")
+                #print (proc_name, f"parent_ids:  parameter={pparent_ids} == elem.parent_ids={elem.parent_ids}, ")
                 if elem.header['id'] == plien['id_parent']:
-                    print (proc_name, f"id:  parameter={plien['id_parent']} == elem.header['id']={elem.header['id']}, ")
+                    #print (proc_name, f"id:  parameter={plien['id_parent']} == elem.header['id']={elem.header['id']}, ")
                     for i, output in enumerate(elem.outputs):
-                        print (proc_name, f"output: name={output}")
-                        print (proc_name, f"output['id']'={output['id']}")
-                        print (proc_name, f"plien['id_io']={plien['id_io']}")
+                        #print (proc_name, f"output: name={output}")
+                        #print (proc_name, f"output['id']'={output['id']}")
+                        #print (proc_name, f"plien['id_io']={plien['id_io']}")
                         if output['id']==plien['id_io']:
-                            print (proc_name, f"return: bloc={ib}, output={i}")
+                            #print (proc_name, f"return: bloc={ib}, output={i}")
                             return ib, i
         print (proc_name, f"❌ERROR: link<{plien} not found")
         return None
     def insert_user_sublocs(pexebloc):
         """ ajout les blocs constituant chaque USER"""
-        global bloc
         ids = []
         proc_name = "insert_user_sublocs"
         for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" boucle_blocs[{i}]: elem scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+            #print (proc_name, f" boucle_blocs[{i}]: elem scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
             if esubloc.c_exesubloc_user_type ():
-                print (proc_name, f" boucle_bocle[{i}]: USER bloc trouvé: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+                #print (proc_name, f" boucle_bocle[{i}]: USER bloc trouvé: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
                 if not 'compiled' in esubloc.header:
-                    print (proc_name, f" boucle_blocs{i}]: bloc non complié name<{esubloc.header['name']}>  id={esubloc.header['id']},  key_word={esubloc.header['key_word']}")
+                    #print (proc_name, f" boucle_blocs{i}]: bloc non complié name<{esubloc.header['name']}>  id={esubloc.header['id']},  key_word={esubloc.header['key_word']}")
                     ids = pickle.loads(pickle.dumps(esubloc.parent_ids))
                     ids.append(esubloc.header['id'])
                     user_bloc = read_bloc (nom_complet_fichier(name=esubloc.header['name'], psystem=False))############# lecture USER bloc
@@ -2781,17 +2802,18 @@ def compile_bloc(pbloc, porder):
                     esubloc.header['compiled'] = True
                     edit_to_exe_blocs(user_bloc, pexebloc, ids)
                     faire_liens(pexebloc, ids)
-                else: 
-                    print (proc_name, f" boucle_blocs{i}]: bloc déjà complié name<{esubloc.header['name']}>  id={esubloc.header['id']},  key_word={esubloc.header['key_word']},   compiled={esubloc.header['user_compiled']}")
+                else:
+                    #print (proc_name, f" boucle_blocs{i}]: bloc déjà complié name<{esubloc.header['name']}>  id={esubloc.header['id']},  key_word={esubloc.header['key_word']},   compiled={esubloc.header['user_compiled']}")
+                    pass
     def faire_liens(pexebloc, pids):
         """ transforme les liens d'id en index (intra USER ou niveau racine)"""
         proc_name = "faire_liens: "
         for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" boucle_lien[{i}]: elem scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+            #print (proc_name, f" boucle_lien[{i}]: elem scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
             if not esubloc.c_exesubloc_user_type ():
                 for j, input in enumerate(esubloc.inputs):
                     if 'lien' in input:
-                        print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   lien={input['lien']})")
+                        #print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   lien={input['lien']})")
                         #input['lien_bloc_index'], input['lien_output_index'] = find_index_of_lien(pexebloc, pids, input['lien'])
                         bloc_index, output_index = find_index_of_lien(pexebloc, esubloc.parent_ids, input['lien'])
                         if bloc_index != -1 and output_index != -1:
@@ -2800,9 +2822,11 @@ def compile_bloc(pbloc, porder):
                                 input['lien_output_index'] = output_index 
                                 del(input['lien'])
                             else:
-                                print (proc_name, f"boucle_inputs[{j}] PAS de suppression du 'lien' (name<{input['name']}>,  id={input['id']},   lien={input['lien']})  parceque la cible est un USER")
+                                #print (proc_name, f"boucle_inputs[{j}] PAS de suppression du 'lien' (name<{input['name']}>,  id={input['id']},   lien={input['lien']})  parceque la cible est un USER")
+                                pass
                     else:
-                        print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   PAS de lien)")
+                        #print (proc_name, f"boucle_inputs[{j}]  (name<{input['name']}>,  id={input['id']},   PAS de lien)")
+                        pass
             else:
                 print (proc_name, f"<{esubloc.header['name']}>,  id={esubloc.header['id']} est un bloc USER donc on ne refait pas les liens")
     def find_index_of_input_bloc_of_bloc_input (pexebloc, puser_bloc_index, puser_input_id):
@@ -2810,20 +2834,21 @@ def compile_bloc(pbloc, porder):
         user_sublocs_ids = []
         proc_name = "find_index_of_input_bloc_of_bloc_input : "
         user_bloc = pexebloc.sublocs[puser_bloc_index]
-        print (proc_name, f"USER bloc:  (name<{user_bloc.header['name']}>,  id={user_bloc.header['id']}")
-        print(proc_name, f"user_bloc_ids={user_bloc.parent_ids}")
+        #print (proc_name, f"USER bloc:  (name<{user_bloc.header['name']}>,  id={user_bloc.header['id']}")
+        #print(proc_name, f"user_bloc_ids={user_bloc.parent_ids}")
         user_sublocs_ids = pickle.loads(pickle.dumps(user_bloc.parent_ids))
         user_sublocs_ids.append(user_bloc.header['id'])
-        print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
-        print(proc_name, f"user_sublocs_ids={user_sublocs_ids}")
-        print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
+        #print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
+        #print(proc_name, f"user_sublocs_ids={user_sublocs_ids}")
+        #print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
         find = False
         for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+            #print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
             if esubloc.parent_ids == user_sublocs_ids:
-                print (proc_name, f" boucle_bloc i[{i}]: ids==ids: name<{esubloc.header['name']}>  id={esubloc.header['id']},   ids={esubloc.parent_ids}")
+                #print (proc_name, f" boucle_bloc i[{i}]: ids==ids: name<{esubloc.header['name']}>  id={esubloc.header['id']},   ids={esubloc.parent_ids}")
                 if esubloc.header['id'] == puser_input_id:
-                    print (proc_name, f" boucle_bloc i[{i}] ____trouvé___(id==id)_: retourne le bloc (name<{esubloc.header['name']}>  id={esubloc.header['id']})")
+                    #print (proc_name, f" boucle_bloc i[{i}] ____trouvé___(id==id)_: retourne le bloc (name<{esubloc.header['name']}>  id={esubloc.header['id']})")
+                    find = True
                     return i
         if not find:
             Print (proc_name, f"❌ERROR: INPUT bloc of USER bloc input not found")
@@ -2833,41 +2858,42 @@ def compile_bloc(pbloc, porder):
         proc_name = "find_output_bloc_of_user_bloc_output: "
         user_bloc = pexebloc.sublocs[puser_bloc_index]
 
-        print (proc_name, f"USER bloc:  (name<{user_bloc.header['name']}>,  id={user_bloc.header['id']}")
-        print(proc_name, f"user_bloc_ids={user_bloc.parent_ids}")
+        #print (proc_name, f"USER bloc:  (name<{user_bloc.header['name']}>,  id={user_bloc.header['id']}")
+        #print(proc_name, f"user_bloc_ids={user_bloc.parent_ids}")
         user_sublocs_ids = pickle.loads(pickle.dumps(user_bloc.parent_ids))
         user_sublocs_ids.append(user_bloc.header['id'])
-        print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
-        print(proc_name, f"user_sublocs_ids={user_sublocs_ids}")
-        print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
+        #print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
+        #print(proc_name, f"user_sublocs_ids={user_sublocs_ids}")
+        #print(proc_name, f"user_bloc.parent_id={user_bloc.parent_ids}")
         find = False
         for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+            #print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
             if esubloc.parent_ids == user_sublocs_ids:
-                print (proc_name, f" boucle_bloc i[{i}] ids==ids: name<{esubloc.header['name']}>  id={esubloc.header['id']},   ids={esubloc.parent_ids}")
+                #print (proc_name, f" boucle_bloc i[{i}] ids==ids: name<{esubloc.header['name']}>  id={esubloc.header['id']},   ids={esubloc.parent_ids}")
                 if esubloc.header['id'] == puser_output_id:
-                    print (proc_name, f" boucle_bloc i[{i}] ____trouvé___(id==id)_: retourne le bloc (name<{esubloc.header['name']}>  id={esubloc.header['id']})")
+                    #print (proc_name, f" boucle_bloc i[{i}] ____trouvé___(id==id)_: retourne le bloc (name<{esubloc.header['name']}>  id={esubloc.header['id']})")
+                    find = True
                     return i
         if not find:
             print (proc_name, f"❌ERROR: OUTPUT bloc of USER bloc output not found")
     def faire_lien_user_input(pexebloc):
         proc_name = "faire_lien_user_input"
         for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+            #print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
             if esubloc.c_exesubloc_user_type ():
                 user_bloc = esubloc
-                print (proc_name, f" bloc_bloc i[{i}]:  USER bloc trouvé:  name<{user_bloc.header['name']}>  id={user_bloc.header['id']},   ids={user_bloc.parent_ids}")
+                #print (proc_name, f" bloc_bloc i[{i}]:  USER bloc trouvé:  name<{user_bloc.header['name']}>  id={user_bloc.header['id']},   ids={user_bloc.parent_ids}")
                 for j, user_bloc_input in enumerate(user_bloc.inputs):
                     find = False
-                    print (proc_name, f" boucle_input j[{j}]: input scruté: name<{user_bloc_input['name']}>  id={user_bloc_input['id']}")
+                    #print (proc_name, f" boucle_input j[{j}]: input scruté: name<{user_bloc_input['name']}>  id={user_bloc_input['id']}")
                     index_input_bloc = find_index_of_input_bloc_of_bloc_input (pexebloc, i, user_bloc_input['id'])
                     input_bloc = pexebloc.sublocs[index_input_bloc]
-                    print (proc_name, f" boucle_input j[{j}]: INPUT bloc of USER trouvé:  name<{input_bloc.header['name']}>  id={input_bloc.header['id']}")
+                    #print (proc_name, f" boucle_input j[{j}]: INPUT bloc of USER trouvé:  name<{input_bloc.header['name']}>  id={input_bloc.header['id']}")
                     if 'lien' in user_bloc_input:
-                        print (proc_name, f" boucle_input j[{j}] un lien trouvé dans l'input (name<{user_bloc_input['name']}>,  id={user_bloc_input['id']})   lien={user_bloc_input['lien']}")
+                        #print (proc_name, f" boucle_input j[{j}] un lien trouvé dans l'input (name<{user_bloc_input['name']}>,  id={user_bloc_input['id']})   lien={user_bloc_input['lien']}")
                         index_bloc, index_output = find_index_of_lien(pexebloc, user_bloc.parent_ids, user_bloc_input['lien'])
                         if pexebloc.sublocs[index_bloc].c_exesubloc_user_type():    # si enchainement de USER bloc
-                            print (proc_name, f"((((((((((enchainement de USER)))))))))))))))))))))))))))")
+                            #print (proc_name, f"((((((((((enchainement de USER)))))))))))))))))))))))))))")
                             output_id = pexebloc.sublocs[index_bloc].outputs[index_output]['id']
                             index_previous_user_output_bloc = find_index_of_output_bloc_of_user_bloc_output(pexebloc, index_bloc, output_id)
                             input_bloc.inputs[0]['lien_bloc_index']   = index_previous_user_output_bloc
@@ -2875,55 +2901,59 @@ def compile_bloc(pbloc, porder):
                             user_bloc_input['monitoring_type'] = "out"
                             user_bloc_input['monitoring_bloc_index'] = index_input_bloc
                             user_bloc_input['monitoring_io_index'] =  0
+                            find = True
                         else:   # si le USER pointe vers un bloc SYSTEM
                             input_bloc.inputs[0]['lien_bloc_index']   = index_bloc
                             input_bloc.inputs[0]['lien_output_index'] = index_output
                             user_bloc_input['monitoring_type'] = "out"
                             user_bloc_input['monitoring_bloc_index'] = index_input_bloc
                             user_bloc_input['monitoring_io_index'] =  0
+                            find = True
                     else:
                         if 'defaut_value' in user_bloc_input:
-                            print (proc_name, f"   defaut_value trouvée, dans USER input: defaut value={user_bloc_input['defaut_value']}")
+                            #print (proc_name, f"   defaut_value trouvée, dans USER input: defaut value={user_bloc_input['defaut_value']}")
                             input_bloc.inputs[0]['defaut_value'] = user_bloc_input['defaut_value']
                             input_bloc.inputs[0]['valide'] = True 
                             user_bloc_input['monitoring_type'] = "out"
                             user_bloc_input['monitoring_bloc_index'] = index_input_bloc
                             user_bloc_input['monitoring_io_index'] =  0
+                            find = True
                         else:
-                            print (proc_name, f"❌ERROR: USER bloc input do not have link or defaut_value")
+                            print (proc_name, f"❌ERROR: USER bloc name<{esubloc.header['name']}>  id={esubloc.header['id']} input do not have link or defaut_value")
                     if not find:
-                        print (proc_name, f"❌ERROR:  USER bloc not foud")
+                        print (proc_name, f"❌ERROR:  USER bloc name<{esubloc.header['name']}>  id={esubloc.header['id']} not foud")
                                      
         print(proc_name, "fin")
     def faire_lien_user_output(pexebloc):
         proc_name = "faire_lien_user_output"
         for i, esubloc in enumerate(pexebloc.sublocs):
-            print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
+            #print (proc_name, f" boucle_bloc i[{i}]: bloc scruté: name<{esubloc.header['name']}>  id={esubloc.header['id']}")
             if esubloc.c_exesubloc_user_type ():
                 user_bloc = esubloc
-                print (proc_name, f" boucle_bloc i[{i}]: USER bloc trouvé:  (name<{user_bloc.header['name']}>,  id={user_bloc.header['id']},  ids={user_bloc.parent_ids})")
+                #print (proc_name, f" boucle_bloc i[{i}]: USER bloc trouvé:  (name<{user_bloc.header['name']}>,  id={user_bloc.header['id']},  ids={user_bloc.parent_ids})")
                 for j, user_bloc_output in enumerate(esubloc.outputs):
                     find = False
-                    print (proc_name, f" boucle_output j[{j}]: output scrutée (name<{user_bloc_output['name']}>,  id={user_bloc_output['id']})")
+                    #print (proc_name, f" boucle_output j[{j}]: output scrutée (name<{user_bloc_output['name']}>,  id={user_bloc_output['id']})")
                     index_output_bloc = find_index_of_output_bloc_of_user_bloc_output(pexebloc, i, user_bloc_output['id'])
                     output_bloc = pexebloc.sublocs[index_output_bloc]
-                    print (proc_name, f" boucle_output j[{j}]: OUTPUT bloc of USER trouvé:  name<{output_bloc.header['name']}>  id={output_bloc.header['id']}")
+                    #print (proc_name, f" boucle_output j[{j}]: OUTPUT bloc of USER trouvé:  name<{output_bloc.header['name']}>  id={output_bloc.header['id']}")
                     for ii, esubloc2 in enumerate(pexebloc.sublocs):
-                        print (proc_name, f" boucle_bloc ii[{ii}] bloc scruté: name<{esubloc2.header['name']}>  id={esubloc2.header['id']}")
+                        #print (proc_name, f" boucle_bloc ii[{ii}] bloc scruté: name<{esubloc2.header['name']}>  id={esubloc2.header['id']}")
                         if esubloc2.parent_ids == esubloc.parent_ids:
-                            print (proc_name, f" boucle_bloc ii[{ii}] ids==ids:    {esubloc2.parent_ids}=={esubloc.parent_ids}")
+                            #print (proc_name, f" boucle_bloc ii[{ii}] ids==ids:    {esubloc2.parent_ids}=={esubloc.parent_ids}")
  
                             for jj, input in enumerate(esubloc2.inputs):
-                                print (proc_name, f" boucle_input jj[{jj}] input scruté (name<{input['name']}>,  id={input['id']}")
+                                #print (proc_name, f" boucle_input jj[{jj}] input scruté (name<{input['name']}>,  id={input['id']}")
                                 if 'lien' in input:
-                                    print (proc_name, f" boucle_input jj[{jj}] input avec lien (name<{input['name']}>,  id={input['id']})  lien={input['lien']}")                                   
+                                    #print (proc_name, f" boucle_input jj[{jj}] input avec lien (name<{input['name']}>,  id={input['id']})  lien={input['lien']}")                                   
                                     if input['lien']['id_parent'] == esubloc.header['id'] and input['lien']['id_io'] == user_bloc_output['id']:
-                                        print (proc_name, f" boucle_input jj[{jj}] bloc ver la patte output du USER Trouvé; bloc (name<{esubloc2.header['name']}>, id={esubloc2.header['id']},  input (name<{input['name']}>, id={input['id']}")
+                                        #print (proc_name, f" boucle_input jj[{jj}] bloc ver la patte output du USER Trouvé; bloc (name<{esubloc2.header['name']}>, id={esubloc2.header['id']},  input (name<{input['name']}>, id={input['id']}")
                                         input['lien_bloc_index'] = index_output_bloc
                                         input['lien_output_index'] = 0
                                         user_bloc_output['monitoring_type'] = "out"
                                         user_bloc_output['monitoring_bloc_index'] = index_output_bloc
                                         user_bloc_output['monitoring_io_index'] =  0
+                                        find =True
                     if not find:
                         print (proc_name, f"❌ERROR: This USER block is not pointed to by any block")
         print(proc_name, "fin")
