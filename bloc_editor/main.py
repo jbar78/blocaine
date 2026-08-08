@@ -441,8 +441,6 @@ class c_sublocs:
             canvas.tag_bind(elem_header, "<B1-Motion>", self.c_sublocs_event_glisser_gauche_header)
             canvas.tag_bind(elem_header, "<ButtonRelease-1>", self.c_sublocs_event_release_gauche_header)
             canvas.tag_bind(elem_header, "<Double-Button-1>", self.c_sublocs_event_double_clic_gauche_header)
-            #canvas.tag_bind(elem_header, "<F1>", self.c_sublocs_event_key_F1) ###???
-            #canvas.tag_bind(elem_header, "<Delete>", self.c_sublocs_event_delete_header)###"<Delete>" ne fonctionne pas?
         # dessine les i/o et arme les callback
         yi0 = event.y
         yo0 = event.y
@@ -1138,7 +1136,6 @@ def update_bloc(elem):
     mem_local_comments = []
     mem_defaut_values = []
     mem_initial_values = []
-    xxxmem_local_defaut_values = []
     mem_events = []
     # lecture du fichier
     bloc_name = add_point_bloc_to_file_name(elem.header['name'])
@@ -2252,39 +2249,12 @@ def menu_header(event, elem):
     doc_file_en = doc_file_name(elem, "en")
     menu_contextuel.add_command(label = "Documentation (en) [F1]", command = lambda: open_doc(doc_file_en))
     doc_file_fr = doc_file_name(elem, "fr")
-    menu_contextuel.add_command(label = "Documentation (fr) [F1]", command = lambda: open_doc(doc_file_fr))
+    menu_contextuel.add_command(label = "Documentation (fr)", command = lambda: open_doc(doc_file_fr))
     menu_contextuel.add_command(label = "Properties", command = lambda: properties_header(event.x_root, event.y_root, elem, modification=0))#0
     menu_contextuel.post(event.x_root, event.y_root)
 def menu_io(event, io):
     """construit le menu lié à un IO"""
     global bloc, monitored_sublocs, menu_contextuel
-    def io_forcedXXXX (pmonitored_sublocs):
-        """ Retourn létat de l'OI du bloc exécutable: True=forced, False=not forced"""
-        proc_name = "io_forced: "
-        io_forced = False
-
-        #for i, sb in enumerate(bloc.sublocs):
-        #    print(proc_name, f" monitoring bloc=<{monitoring['name']}>, monitored_subloc[{i}].header['name']=<{msb.header['name']}>")
-        #        for j, io in enumerate(sb.ios):
-        #            print(proc_name, f" : ois[{k}]['name']=<{io['name']}> ios[{j}]['id']=<{io['id']}> ios[{j}].['id_texte']=<{io['id_texte']}>")
-
-        sb = find_parent (io)
-        for ii, msb in enumerate(pmonitored_sublocs):
-            if msb.header['id'] == sb.header['id']:
-                if io['type'] == 'in':
-                    for minput in msb.inputs:
-                        if minput['id'] == io['id']:
-                            if 'forced' in minput:
-                                return True
-                elif io['type'] == 'out':
-                    for moutput in msb.outputs:
-                        if moutput['id'] == io['id']:
-                            if 'forced' in moutput:
-                                return True
-                else:
-                    messagebox.showinfo("❌ERROR", f"Showing monitored IO 'type' is not 'in' or 'out',  io={io}")
-        return False
-
     proc_name = "menu_io: "
     #print (proc_name, "objet=<{}>".format(io))
     try:

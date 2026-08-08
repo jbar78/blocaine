@@ -257,23 +257,38 @@ class MyServer(BaseHTTPRequestHandler):
             #self.send_header("Keep-Alive", "timeout=5, max=100")
             self.end_headers()
             # page: thread list
+            time_unit = f"""<span style="font-size: 80%;">yyyy/mm/dd - hh:mm:ss</span>"""
             html = html_debut
             html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
-            html += f"""<tr><th colspan="5">bloc list</th></tr>"""
-            html += f"""<tr><th rowspan="2">bloc<br>name</th><th colspan="2">status</th><th rowspan="2">order</th></tr>"""
-            html += f"""<tr><th>shift A</th><th>shift B</th></tr>"""
+            html += f"""<tr><th colspan="6">bloc list</th></tr>"""
+            html += f"""<tr><th rowspan="2">bloc<br>name</th><th colspan="2">Shift A</th><th colspan="2">Shift B</th><th rowspan="2">order</th></tr>"""
+            #html += f"""<tr><th>Status</th><th>Build time<br><span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>Status</th><th>Build time<br><span style="font-size: 80%;">(yyyy/mm/dd)</span></th></tr>"""
+            html += f"""<tr><th>Status</th><th>Build time<br>{time_unit}</th><th>Status</th><th>Build time<br>{time_unit}</th></tr>"""
             html += f"""<tr></tr>"""
             list_blocs = compiled_status()
             for i, lb in enumerate(list_blocs):
+                txt_building_A = txt_building_B ="..."
+                for thread in list_threads:
+                    for iexe, exe in enumerate(thread['list_exe']):
+                        if lb['name'] == exe['exebloc'].header['name']:
+                            if exe['exebloc'].header['AB'] == "A":
+                                txt_building_A = exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
+                            if exe['exebloc'].header['AB'] == "B":
+                                txt_building_B = exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
+
                 html += "<tr>"
-                html += f"<td>{lb['name']}</td><td>{lb['status_A']}</td><td>{lb['status_B']}</td><td>{lb['orders']}</td>"
+                html += f"<td>{lb['name']}</td><td>{lb['status_A']}</td><td>{txt_building_A}</td><td>{lb['status_B']}</td><td>{txt_building_B}</td><td>{lb['orders']}</td>"
                 html += "</tr>"
             html +="</table>"
             html +="<a href='/blocs'>Refresh</a>"
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
+
+
+            #<th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th>
+            #<td>"+txt_building+"</td>
 
         elif self.path == "/outputs" or self.path == "/outputs_running": #____________________________liste des outputs
             self.send_response(200)
@@ -285,9 +300,9 @@ class MyServer(BaseHTTPRequestHandler):
             html +=f"<p>Target ip:{local_ip})</p>"
             html += menu
             html +="<table>"
-            html += f"""<tr><th colspan="12">bloc output list</th></tr>"""
-            html += f"""<tr><th colspan="4">bloc</th><th colspan="3">task</th><th colspan="5">output</th></tr>"""
-            html += f"""<tr><th>name</th><th>shift</th><th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>status</th><th>name</th><th>id</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th><th>type</th><th>validity</th><th>value</th></tr>"""
+            html += f"""<tr><th colspan="11">bloc output list</th></tr>"""
+            html += f"""<tr><th colspan="3">bloc</th><th colspan="3">task</th><th colspan="5">output</th></tr>"""
+            html += f"""<tr><th>name</th><th>shift</th><th>status</th><th>name</th><th>id</th><th><span title="ouput execution rank">exec order</span></th><th>name</th><th>id</th><th>type</th><th>validity</th><th>value</th></tr>"""
             for thread in list_threads:
                 for iexe, exe in enumerate(thread['list_exe']):
                     if exe['run']:
@@ -305,9 +320,8 @@ class MyServer(BaseHTTPRequestHandler):
                         txt_validity_style = ""
                         txt_type    = "..."
                     if self.path == "/outputs" or txt_status == "Running":
-                        txt_building= exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
                         html += "<tr>"
-                        html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td><td>"+txt_building+"</td>"
+                        html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td>"
                         html += f"<td>{txt_status}</td>"
                        #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
                         html += f"<td>{thread['name']}</td><td>{thread['id']}</td><td>{iexe}</td>"
