@@ -17,13 +17,13 @@ import socket
 from datetime import datetime
 
 from PARAM_CONFIG import *
-from module_bloc_file import *
 from clientTCP import *
 
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoire du fichier courant
 parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier parent (projet/)
 path_commun = os.path.join(parent_dir, "commun")         # Redescendre au répertoire "commun"
 sys.path.append(path_commun)                             # Ajouter le répertoire "commun" au sys.path
+from module_bloc_file import *
 from exec import recup_procedure
 from utile import cable_wires_counter
 from c_exebloc import *
@@ -211,10 +211,10 @@ class c_bloc:
 
         if type_bloc=="in":
             #print (proc_name, "type==in<{}>".format(type_bloc))
-            bloc_name = PARAM_CHEMIN_SYSTEM+PARAM_NAME_BLOC_INPUT+".bloc"
+            bloc_name = PARAM_CHEMIN_DEV_SYSTEM+PARAM_NAME_BLOC_INPUT+".bloc"
         elif type_bloc=="out":
             #print (proc_name, "type==out<{}>".format(type_bloc))
-            bloc_name = PARAM_CHEMIN_SYSTEM+PARAM_NAME_BLOC_OUTPUT+".bloc"
+            bloc_name = PARAM_CHEMIN_DEV_SYSTEM+PARAM_NAME_BLOC_OUTPUT+".bloc"
         else:
             #print (proc_name, "type==out<{}>".format(type_bloc))
             bloc_name = tk.filedialog.askopenfilename(initialdir= "blocs/"+type_bloc, filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
@@ -1141,8 +1141,8 @@ def update_bloc(elem):
     bloc_name = add_point_bloc_to_file_name(elem.header['name'])
     bloc_id = elem.header['id']
     print (proc_name, "bloc_name=<{}>".format(bloc_name))
-    if "system" in elem.header['key_word']: chemin = PARAM_CHEMIN_SYSTEM
-    else: chemin= PARAM_CHEMIN_USER
+    if "system" in elem.header['key_word']: chemin = PARAM_CHEMIN_DEV_SYSTEM
+    else: chemin= PARAM_CHEMIN_DEV_USER
     try:
         updated_elem = c_sublocs(le_chemin(bloc_name, "system" in elem.header['key_word'])+bloc_name)
     except ValueError as e:
@@ -2343,7 +2343,7 @@ def open_file(pf_name, decal):
     proc_name = "open_file: "
     #mire = c_mire(canvas)
     if pf_name==None:
-        fname = tk.filedialog.askopenfilename(initialdir= PARAM_CHEMIN_USER, title="Please select bloc", filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
+        fname = tk.filedialog.askopenfilename(initialdir= PARAM_CHEMIN_DEV_USER, title="Please select bloc", filetypes = [("Fichiers Bloc", "*.bloc")], parent=master)
         print (proc_name, "file name=", fname)
         if not fname: return
     else:

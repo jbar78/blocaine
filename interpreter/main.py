@@ -1,14 +1,19 @@
 #! /usr/bin/python3
 import threading
 import socket
+import pickle
 from serverHTTP import *
 from serverTCP import *
+from compiled import *
 from utile import get_local_ip
-
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoire du fichier courant
 parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier parent (projet/)
 path_commun = os.path.join(parent_dir, "commun")         # Redescendre au répertoire "commun"
 sys.path.append(path_commun)                             # Ajouter le répertoire "commun" au sys.path
+from module_bloc_file import *
+from c_exebloc import *
+from exec import *
+from threads import *
 from threads import *
 from sharedata import list_threads
 
@@ -84,5 +89,19 @@ serverTCP_thread.start()
 # affiche des adresse ipv4 disponible
 time.sleep (0.5)
 print (f"Target IP address: {get_local_ip()}")
-print (f"Target is ready 😊")
 
+
+# démarrage automatique des blocs contenus dans le répertoire /startup
+#print (f"Blocks defined in the startup configuration start automatically")
+startup_blobcs = get_target_file_list(PARAM_CHEMIN_TARGET_STARTUP)
+for bloc_name in startup_blobcs:
+    #print (f"Block name={bloc_name}")
+    file_name = PARAM_CHEMIN_TARGET_STARTUP+bloc_name
+    #print (f"file name={file_name}")
+    exebloc = read_bloc(file_name, use_file_name_as_name=False)
+    print (f"Startup: start bloc <{exebloc.header['name']}>, build={exebloc.header['building'].strftime("%Y-%m-%d  %H:%M:%S")}")
+    compiled_load(exebloc)
+    run_exebloc(exebloc.header['name'])
+print (f"startup complete")
+
+print (f"Target is ready 😊")

@@ -4,6 +4,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoir
 parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier parent (projet/)
 path_commun = os.path.join(parent_dir, "commun")         # Redescendre au répertoire "commun"
 sys.path.append(path_commun)                             # Ajouter le répertoire "commun" au sys.path
+from module_bloc_file import *
 from c_exebloc import *
 from PARAM_NAME_BLOC import *
 from sharedata import list_compiled, list_threads
@@ -516,4 +517,11 @@ def compiled_forced_io_list():
                     io_list.append(forced_io)
     return io_list
 
-
+def startup_save(ppickel_exebloc):
+    proc_name = "startup_save: "
+    print (proc_name, "début")
+    exebloc = pickle.loads(ppickel_exebloc)
+    txt_building = exebloc.header['building'].strftime("%Y-%m-%d  %H:%M:%S")
+    print (proc_name, "build=", txt_building)
+    write_bloc(exebloc, pstartup=True)
+    print (proc_name, "fin")

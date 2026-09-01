@@ -106,7 +106,9 @@ def handle_clientTCP(client_socket, addr):
             #print(f"Received raw struct {request[index+1:]}")
 
             if (cas == b"transfer" or cas == b"execute") and index!= -1:
-                curant_exebloc = pickle.loads(request[index+1:])
+                receive_pickel_exebloc = request[index+1:]
+                startup_save(receive_pickel_exebloc)
+                curant_exebloc = pickle.loads(receive_pickel_exebloc)
 
                 bloc_name = curant_exebloc.header['name']
                 #print(proc_name, f"cas reconnu  (transfer ou exécute),     cas: {cas}")

@@ -8,6 +8,8 @@ script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoir
 parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier parent (projet/)
 path_commun = os.path.join(parent_dir, "commun")         # Redescendre au répertoire "commun"
 sys.path.append(path_commun)                             # Ajouter le répertoire "commun" au sys.path
+from PARAM_PATH import *
+from module_bloc_file import *
 from PARAM_NETWORK import *
 from sharedata import clientsTCP
 from compiled import *
@@ -58,6 +60,7 @@ menu = """<table>
         <span title="List of outputs"><a href='/outputs'>Output</a></span><br>
         <span title="List of overwriting"><a href='/overwriting'>Overriding</a></span><br>
         <span title="List of tasks and CPU load"><a href='/threads'>Task & Load</a></span><br>
+        <span title="Startup block configuration"><a href='/startup'>Startup</a></span><br>
         <span title="List of connexions"><a href='/connexion'>Connexion</a></span><br>
         <span title="To print the list of compiled blocs"><a href='/list_compiled:print_list_compiled:'>print list_compiled</a></span><br>
         <span title="To print the list of threads"><a href='/list_threads:print_thread_list:'>print list_threads</a></span>
@@ -74,7 +77,7 @@ html_debut = """<html>
             <title>Target</title>
             <meta charset='UTF-8'>"""+html_style+"""
             </head>
-            <body>"""
+            <body><center>"""
 #<meta http-equiv="refresh" content="1"> induit un problème de "hotswap" order" reçu périodiquement ?
 
 html_fin ="</body></html>"
@@ -124,7 +127,7 @@ class MyServer(BaseHTTPRequestHandler):
         hostname = socket.gethostname()
         local_ip = socket.gethostbyname(hostname)
         local_ip = get_local_ip()
-        #print ("self.path=", self.path)
+        print ("self.path=", self.path)
         i = self.path.find(":")
         self.key   = self.path[0:i]
         self._key  = self.path[i+1:]
@@ -139,13 +142,13 @@ class MyServer(BaseHTTPRequestHandler):
         #print ("self.key=", self.key)
         #print ("self.order=", self.order)
         #print ("self.bloc_name=", self.bloc_name)
-        #print ("HTTP: réception: self.key=", self.key, "self.order=", self.order, "self.bloc_name=", self.bloc_name)
+        print ("HTTP: réception: self.key=", self.key, "self.order=", self.order, "self.bloc_name=", self.bloc_name)
         # Gestion des différentes pages
         if self.path == "/" or self.key == "/list_compiled" or self.key == "/list_threads": #__________________menu principal
-            if self.key == "/list_compiled":
-                print_exeblocs()
-            if self.key == "/list_threads":
-                print_threads()
+            #if self.key == "/list_compiled":
+            #    print_exeblocs()
+            #if self.key == "/list_threads":
+            #    print_threads()
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
@@ -153,7 +156,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # Page d'accueil
             html = html_debut
-            html +=f"<p>Target IP address:{local_ip})</p>"
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
             html += menu
             html += html_fin
             #print ("HTML=", html)
@@ -175,8 +178,7 @@ class MyServer(BaseHTTPRequestHandler):
             except socket.herror:
                 client_name = "'Unknow'"
             html = html_debut
-            html +=f"<p>Target ip:{local_ip})</p>"
-            html += menu
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
             html +="<table>"
             html += f"""<tr><th colspan="4";>HTTP protocol</th></tr>"""
             html += f"""<tr><th>...</th><th>@ip</th><th>port</th><th>Host name</th></tr>"""
@@ -191,7 +193,7 @@ class MyServer(BaseHTTPRequestHandler):
             for i, client in enumerate(clientsTCP):
                 html += f"""<tr><th>client[{i}]</th><td>{client[0]}</td><td>{client[1]}</td></tr>"""
             html +="</table>"
-            html +="<a href='/connexion'>Refresh</a>"
+            html +="<br><a href='/connexion'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             html += html_fin
             #print ("HTML=", html)
             self.wfile.write(html.encode())
@@ -204,8 +206,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # page: thread list
             html = html_debut
-            html +=f"<p>Target ip:{local_ip})</p>"
-            html += menu
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
             html +="<table>"
             html += f"""<tr><th colspan="9";>Task list</th></tr>"""
             html += f"""<tr><th colspan="3"; style="vertical-align: bottom;">Setting</th><th colspan="6";>Feedback</th></tr>"""
@@ -237,7 +238,7 @@ class MyServer(BaseHTTPRequestHandler):
             #for thread in list_threads:
             #    thread_load += thread['load_%']
             #html +=f"User tasks CPU load = {thread_load:3.2f}%<br>"
-            html +="<a href='/threads'>Refresh</a>"
+            html +="<br><a href='/threads'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             html += html_fin
             #print ("HTML=", html)
             self.wfile.write(html.encode("utf-8"))
@@ -257,14 +258,12 @@ class MyServer(BaseHTTPRequestHandler):
             #self.send_header("Keep-Alive", "timeout=5, max=100")
             self.end_headers()
             # page: thread list
-            time_unit = f"""<span style="font-size: 80%;">yyyy/mm/dd - hh:mm:ss</span>"""
+            time_unit = f"""<span style="font-size: 80%;">yyyy-mm-dd  hh:mm:ss</span>"""
             html = html_debut
-            html +=f"<p>Target ip:{local_ip})</p>"
-            html += menu
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
             html +="<table>"
             html += f"""<tr><th colspan="6">bloc list</th></tr>"""
             html += f"""<tr><th rowspan="2">bloc<br>name</th><th colspan="2">Shift A</th><th colspan="2">Shift B</th><th rowspan="2">order</th></tr>"""
-            #html += f"""<tr><th>Status</th><th>Build time<br><span style="font-size: 80%;">(yyyy/mm/dd)</span></th><th>Status</th><th>Build time<br><span style="font-size: 80%;">(yyyy/mm/dd)</span></th></tr>"""
             html += f"""<tr><th>Status</th><th>Build time<br>{time_unit}</th><th>Status</th><th>Build time<br>{time_unit}</th></tr>"""
             html += f"""<tr></tr>"""
             list_blocs = compiled_status()
@@ -274,21 +273,57 @@ class MyServer(BaseHTTPRequestHandler):
                     for iexe, exe in enumerate(thread['list_exe']):
                         if lb['name'] == exe['exebloc'].header['name']:
                             if exe['exebloc'].header['AB'] == "A":
-                                txt_building_A = exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
+                                txt_building_A = exe['exebloc'].header['building'].strftime("%Y-%m-%d  %H:%M:%S")
                             if exe['exebloc'].header['AB'] == "B":
-                                txt_building_B = exe['exebloc'].header['building'].strftime("%Y/%m/%d  - %H:%M:%S")
+                                txt_building_B = exe['exebloc'].header['building'].strftime("%Y-%m-%d  %H:%M:%S")
 
                 html += "<tr>"
                 html += f"<td>{lb['name']}</td><td>{lb['status_A']}</td><td>{txt_building_A}</td><td>{lb['status_B']}</td><td>{txt_building_B}</td><td>{lb['orders']}</td>"
                 html += "</tr>"
             html +="</table>"
-            html +="<a href='/blocs'>Refresh</a>"
+            html +="<br><a href='/blocs'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
 
+        elif self.path == "/startup" or self.key == "/startup_order": #____________________startup configuration
+            if self.key == "/startup_order":
+                print ("Key=", self.key, "  order=", self.order, "  bloc name=", self.bloc_name)
+                if self.order == "Add":           move_file (PARAM_CHEMIN_TARGET_BUILD,   PARAM_CHEMIN_TARGET_STARTUP, self.bloc_name)
+                if self.order == "Remove":        move_file (PARAM_CHEMIN_TARGET_STARTUP, PARAM_CHEMIN_TARGET_BUILD,   self.bloc_name)
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            #self.send_header("Connection", "keep-alive")
+            #self.send_header("Keep-Alive", "timeout=5, max=100")
+            self.end_headers()
+            html = html_debut
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
+            html +="<table>"
+            html += f"""<tr><th colspan="2">Actual Startup configuration</th></tr>"""
+            html += f"""<tr><th>name</th><th>order</th></tr>"""    
+            ordr = "Remove"
+            list_startup_blocs = get_target_file_list(PARAM_CHEMIN_TARGET_STARTUP)        
+            for startup_bloc_name in list_startup_blocs:
+                    html += "<tr>"
+                    html += f"<td>{startup_bloc_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{startup_bloc_name}'>{ordr}</a>&nbsp;</td>"
+                    html += "</tr>"
+            html +="</table>"
+            html +="<br>"
+            html +="<table>"
+            html += f"""<tr><th colspan="2">Blocs available for Startup</th></tr>"""
+            html += f"""<tr><th>name</th><th>order</th></tr>"""
+            ordr = "Add"
+            list_build_blocs = get_target_file_list(PARAM_CHEMIN_TARGET_BUILD)        
+            for build_bloc_name in list_build_blocs:
+                    html += "<tr>"
+                    html += f"<td>{build_bloc_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{build_bloc_name}'>{ordr}</a>&nbsp;</td>"
+                    html += "</tr>"
+            html +="</table>"
+            html +="<br>"
+            html += "<br><br>"
+            html +="<br><a href='/startup'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
+            html += html_fin
+            self.wfile.write(html.encode("utf-8"))
 
-            #<th>building time  <span style="font-size: 80%;">(yyyy/mm/dd)</span></th>
-            #<td>"+txt_building+"</td>
 
         elif self.path == "/outputs" or self.path == "/outputs_running": #____________________________liste des outputs
             self.send_response(200)
@@ -297,8 +332,7 @@ class MyServer(BaseHTTPRequestHandler):
             #self.send_header("Keep-Alive", "timeout=5, max=100")
             self.end_headers()
             html = html_debut
-            html +=f"<p>Target ip:{local_ip})</p>"
-            html += menu
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
             html +="<table>"
             html += f"""<tr><th colspan="11">bloc output list</th></tr>"""
             html += f"""<tr><th colspan="3">bloc</th><th colspan="3">task</th><th colspan="5">output</th></tr>"""
@@ -323,7 +357,6 @@ class MyServer(BaseHTTPRequestHandler):
                         html += "<tr>"
                         html += f"<td>{exe['exebloc'].header['name']}</td><td>{exe['exebloc'].header['AB']}</td>"
                         html += f"<td>{txt_status}</td>"
-                       #html += f"""<td>{txt_value}</td><td """+txt_validity_style+f""">{txt_validity}</td>"""
                         html += f"<td>{thread['name']}</td><td>{thread['id']}</td><td>{iexe}</td>"
                         html += f"<td>{exe['exebloc'].sublocs[exe['iesubloc']].inputs[0]['name']}</td><td>{exe['exebloc'].sublocs[exe['iesubloc']].header['id']}</td>"
                         html += f"<td>{txt_type}</td><td "+txt_validity_style+">"+txt_validity+f"</td><td>{txt_value}</td>"
@@ -331,10 +364,10 @@ class MyServer(BaseHTTPRequestHandler):
             html +="</table>"
             if self.path == "/outputs_running":
                 html +="<a href='/outputs'>Show all shifts</a><br>"
-                html +="<a href='/outputs_running'>Refresh</a>"
+                html +="<br><a href='/outputs_running'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             else:
                 html +="<a href='/outputs_running'>Show only Running shifts</a><br>"
-                html +="<a href='/outputs'>Refresh</a>"
+                html +="<br><a href='/outputs'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             html += html_fin
             self.wfile.write(html.encode("utf-8"))
 
@@ -349,8 +382,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.end_headers()
             # page: thread list
             html = html_debut
-            html +=f"<p>Target ip:{local_ip})</p>"
-            html += menu
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
             html +="<table>"
             html += f"""<tr><th colspan="8">Overwriting list</th></tr>"""
             html += f"""<tr><th colspan="3">bloc</th><th colspan="5">io</th></tr>"""
@@ -367,7 +399,7 @@ class MyServer(BaseHTTPRequestHandler):
 
 
             html +="</table>"
-            html +="<a href='/overwriting'>Refresh</a>"
+            html +="<br><a href='/overwriting'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             html += html_fin
             #print ("HTML=", html)
             self.wfile.write(html.encode("utf-8"))

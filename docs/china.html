@@ -5,7 +5,7 @@
   <meta name="description" content="Blocaïne is a software platform designed for industrial process automation. It includes two main components:
     • A Block Editor, which allows you to create programs by assembling functional blocks.
     • An Executor, which runs the programs created with the Block Editor, thereby controlling industrial equipment via remote I/O.">
-  <meta name="keywords" content="Blocaine, Blocaïne, automation, block, blocks, blocaine-automation">
+  <meta name="keywords" content="Blocaïne, automation, PLC, blocaine-automation, PLC simulator, programming">
   <title>Blocaïne</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -19,7 +19,7 @@
               <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
               </td>
               <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
-                <a href="https://blocaine.org"><img style="width: 903px; height:144px;" alt="Blocaine logo" title="blocaine.org" src="logo_automate.png"></a><br>
+                <a href="https://blocaine.org"><img style="width: 903px; height:144px;" alt="logo automation KISS" title="blocaine.org" src="logo_automate.png"></a><br>
               </td>
               <td align="center" style="vertical-align: middle; text-align: center; padding: 10px; background-color: #618685; width: 33%;">
                 <a href="francais.html" class="btn-lien"><span style="white-space: nowrap;">fr</span></a><br>
@@ -39,11 +39,13 @@
       </tr>
 
       <tr>
-        <td class="table-style" style="vertical-align: top; text-align: center; padding: 10px; font-size: 1.5em; width: 100%;">
+        <td class="table-style" style="vertical-align: top; text-align: center; padding: 10px; font-size: 1.0em; width: 100%;">
           <table class="table-style" border="0" style="background-color: #81A6A5; padding: 20px;" width: 100%;">
             <tr style="background-color: #618685; padding: 20px;">
               <td colspan="2" align="center" style="vertical-align: top; text-align: center; padding: 20px; background-color: #618685; width: 10%;">
-                <strong>Blocaïne</strong> 是一个用于<br> 工业过程自动化的<br> 软件平台<br>
+                <h1 style="font-size: 1.5em;">无 PLC 自动化<br></h1>
+                为什么使用可编程逻辑控制器而当有远程I/O？<br>
+                <h2>Blocaine 通过功能块图直观地编程自动化系统，并可部署在<br>Raspberry Pi 或标准 PC 上。</h2>
               </td>
             </tr>
           </table>
@@ -53,7 +55,7 @@
       <tr>
         <td>
           <center>
-            <img style="width: 614px; height:560px;" alt="Blocaïne general architecture" title="general architecture" src="Architecture_cn.png"><br><br>
+            <img style="width: 614px; height:560px;" alt="Developpement PC Target Remote I/O" title="General architecture of automation systems" src="Architecture_cn.png"><br><br>
           </center>
         </td>
       </tr>
@@ -151,6 +153,7 @@
                   <tr style="padding: 20px;">
                     <td>调试</td>
                     <td>
+                      - 目标模拟器（可充当PLC使用）
                       - 实时变量可视化<br>
                       - 可对变量进行强制覆盖<br>
                     </td>
