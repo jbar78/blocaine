@@ -60,10 +60,9 @@ menu = """<table>
         <span title="List of outputs"><a href='/outputs'>Output</a></span><br>
         <span title="List of overwriting"><a href='/overwriting'>Overriding</a></span><br>
         <span title="List of tasks and CPU load"><a href='/threads'>Task & Load</a></span><br>
-        <span title="Startup block configuration"><a href='/startup'>Startup</a></span><br>
-        <span title="List of connexions"><a href='/connexion'>Connexion</a></span><br>
-        <span title="To print the list of compiled blocs"><a href='/list_compiled:print_list_compiled:'>print list_compiled</a></span><br>
-        <span title="To print the list of threads"><a href='/list_threads:print_thread_list:'>print list_threads</a></span>
+        <span title="Autorun configuration"><a href='/startup'>Startup</a></span><br>
+        <span title="List of connetions"><a href='/connetion'>Connetion</a></span><br>
+        <span title="Debugging tool"><a href='/debug'>Debug</a></span><br>
         </td></tr>
         </table>
         <br>"""
@@ -144,11 +143,7 @@ class MyServer(BaseHTTPRequestHandler):
         #print ("self.bloc_name=", self.bloc_name)
         print ("HTTP: réception: self.key=", self.key, "self.order=", self.order, "self.bloc_name=", self.bloc_name)
         # Gestion des différentes pages
-        if self.path == "/" or self.key == "/list_compiled" or self.key == "/list_threads": #__________________menu principal
-            #if self.key == "/list_compiled":
-            #    print_exeblocs()
-            #if self.key == "/list_threads":
-            #    print_threads()
+        if self.path == "/":#__________________menu principal
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
@@ -162,7 +157,32 @@ class MyServer(BaseHTTPRequestHandler):
             #print ("HTML=", html)
             self.wfile.write(html.encode("utf-8"))
 
-        elif self.path == "/connexion": #__________________liste des conections
+        elif self.path == "/debug" or self.key == "/list_compiled" or self.key == "/list_threads": #__________________menu debug
+            if self.key == "/list_compiled":
+                print_exeblocs()
+            if self.key == "/list_threads":
+                print_threads()
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            #self.send_header("Connection", "keep-alive")
+            #self.send_header("Keep-Alive", "timeout=5, max=100")
+            self.end_headers()
+            # Page d'accueil
+            html = html_debut
+            html += "<br><br>"
+            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
+            html +="<table>"
+            html += f"""<tr><th>debugging tools</th></tr>"""
+            html += f"""<tr><td><span title="Print the list of compiled blocs (for debug)"><a href='/list_compiled:print_list_compiled:'>print list_compiled</a></span></td</tr>"""
+            html += f"""<tr><td><span title="Print the list of threads"><a href='/list_threads:print_thread_list:'>print list_threads</a></span></td</tr>"""
+            html +="</table>"
+            html +="<p></p>"
+            html +="<br><a href='/debug'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
+            html += html_fin
+            #print ("HTML=", html)
+            self.wfile.write(html.encode("utf-8"))
+
+        elif self.path == "/connetion": #__________________liste des conections
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
@@ -193,7 +213,7 @@ class MyServer(BaseHTTPRequestHandler):
             for i, client in enumerate(clientsTCP):
                 html += f"""<tr><th>client[{i}]</th><td>{client[0]}</td><td>{client[1]}</td></tr>"""
             html +="</table>"
-            html +="<br><a href='/connexion'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
+            html +="<br><a href='/connetion'>Refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/'>Main menu</a>"
             html += html_fin
             #print ("HTML=", html)
             self.wfile.write(html.encode())
