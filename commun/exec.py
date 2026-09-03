@@ -59,8 +59,9 @@ def recup_procedure(psubloc):
     elif psubloc.header['name'] == PARAM_NAME_BLOC_OPC_WRITE:    procedure= c_exesubloc_opc_write
     elif psubloc.header['name'] == PARAM_NAME_BLOC_OR:           procedure= c_exesubloc_or
     elif psubloc.header['name'] == PARAM_NAME_BLOC_OUTPUT:       procedure= c_exesubloc_output
-    elif psubloc.header['name'] == PARAM_NAME_BLOC_PREVIOUS:     procedure= c_exesubloc_previous
     elif psubloc.header['name'] == PARAM_NAME_BLOC_POP:          procedure= c_exesubloc_pop
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_PREVIOUS:     procedure= c_exesubloc_previous
+    elif psubloc.header['name'] == PARAM_NAME_BLOC_PRINT:        procedure= c_exesubloc_print
     elif psubloc.header['name'] == PARAM_NAME_BLOC_PUTI:         procedure= c_exesubloc_puti
     elif psubloc.header['name'] == PARAM_NAME_BLOC_READBIT:      procedure= c_exesubloc_readbit
     elif psubloc.header['name'] == PARAM_NAME_BLOC_RANGE:        procedure= c_exesubloc_range
@@ -1434,7 +1435,30 @@ def c_exesubloc_previous (pebloc, pieb, pio, pthread): #________________________
             cesubloc.c_exesubloc_overwriting_outputs()
         #print ("<PREVIOUS> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
     return cesubloc.outputs[pio]
-    
+
+def c_exesubloc_print (pebloc, pieb, pio, pthread): #__________________________________________________________
+    """ exécution du bloc PRINT le même print qu'en Python (dans la boucler écurcive)"""
+    # les index des IOs
+    #I_STR = 0
+    cesubloc = pebloc.sublocs[pieb]
+    #print ("<PRINT> les paramètres sont: pieb=", pieb, ",   pio=", pio, ",   counter=", pthread['counter'])
+    if cesubloc.header['counter'] == pthread['counter']:
+        pass
+        #print ("<PRINT>", "  cesubloc['counter'] == pthread['counter']: =", pthread['counter'], "   (output[", pio, "] inchangée)")
+    else:
+        cesubloc.header['counter'] = pthread['counter']
+        pebloc.c_exebloc_recup_input(pieb, pthread, 0)
+        cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
+        try:
+            print (cesubloc.inputs[0]['var'])
+        except:
+            print ("<PRINT>", PARAM_TEXT_EXCEPTION)
+            for output in cesubloc.outputs:
+                output['valide'] = False
+        cesubloc.c_exesubloc_overwriting_outputs()
+    #print ("<PRINT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
+    return cesubloc.outputs[pio]
+        
 def c_exesubloc_puti (pebloc, pieb, pio, pthread): #__________________________________________________________
     """ exécution de la fonction qui affecte un élément d'une liste (dans la boucle récurcive)"""
     # les index des IOs
