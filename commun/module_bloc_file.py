@@ -47,7 +47,7 @@ def write_bloc(pbloc, pstartup=False):
     print (proc_name, "début: name<"+pbloc.header['name']+">")
     #print (proc_name, "bloc=", pbloc)
     if pstartup:
-        txt_building = pbloc.header['building'].strftime("%Y-%m-%d__%H:%M:%S")
+        txt_building = pbloc.header['building'].strftime("%Yy-%mm-%dd__%Hh-%Mm-%Ss")
         filen0 = add_point_bloc_to_file_name(pbloc.header['name']+"__"+txt_building, pstartup)
         filen = PARAM_CHEMIN_TARGET_BUILD+filen0
     else:
