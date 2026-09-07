@@ -1,0 +1,17 @@
+Startup (autorun)
+Selected blocks can be started automatically when the Interpreter launches. This is configured in
+the Startup section.
+Principe:
+• Whenever you transfer a user block from the Block Editor to the Interpreter, a copy is
+created on the target machine as a file in the eblocs\build directory. The filename consists of
+the block name followed by the date and time of its compilation by the Block Editor.
+• The eblocs\build directory contains all blocks that can be added to Startup.
+• The eblocs\startup directory contains all blocks that will execute when the Interpreter
+starts.
+ - 5.9.1 - To add a block to Startup:
+Simply move the corresponding file from the eblocs\build directory to the eblocs\startup directory.
+ - 5.9.2 - To remove a block from Startup:
+Simply move the corresponding file from the eblocs\startup directory back to the eblocs\build
+directory.
+You can perform these file-move operations using your file manager, or more simply through the
+web pages provided by the target by selecting “Startup” from the main menu.
