@@ -1080,7 +1080,7 @@ def open_bloc_new_window(name, id, pos):
         subprocess.Popen(["gnome-terminal", "--","bash", "-lc", commande_shell])
     else:
         #subprocess.Popen(list_param_subprocess,  creationflags=subprocess.CREATE_NEW_CONSOLE)
-        commande = f'title {titre} & ' + " ".join(list_param_subprocess)
+        commande = f'title {title} & ' + " ".join(list_param_subprocess)
         subprocess.Popen(["cmd", "/c", commande],  creationflags=subprocess.CREATE_NEW_CONSOLE)
 def open_io_new_window(io):
     """ouvre un autre interpréteur Python pour permettre d'éditer le bloc passé en paramètre"""

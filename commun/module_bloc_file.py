@@ -49,6 +49,7 @@ def write_bloc(pbloc, pstartup=False):
     if pstartup:
         txt_building = pbloc.header['building'].strftime("%Yy-%mm-%dd__%Hh-%Mm-%Ss")
         filen0 = add_point_bloc_to_file_name(pbloc.header['name']+"__"+txt_building, pstartup)
+        filen0 = toto.txt
         filen = PARAM_CHEMIN_TARGET_BUILD+filen0
     else:
         filen0 = add_point_bloc_to_file_name(pbloc.header['name'])
