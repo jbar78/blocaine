@@ -1,7 +1,6 @@
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import socketserver
-
 import os
 import sys
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoire du fichier courant
@@ -202,7 +201,7 @@ class MyServer(BaseHTTPRequestHandler):
             html +="<table>"
             html += f"""<tr><th colspan="4";>HTTP protocol</th></tr>"""
             html += f"""<tr><th>...</th><th>@ip</th><th>port</th><th>Host name</th></tr>"""
-            html += f"""<tr><th>Server</th><td>{local_ip}</td><td>{PARAM_HTTP_PORT}</td><td>{hostname}</td></tr>"""
+            html += f"""<tr><th>Server</th><td>{local_ip}</td><td>{PARAM_HTTP_TARGET_PORT}</td><td>{hostname}</td></tr>"""
             html += f"""<tr><th>Last Client</th><td>{client_ip}</td><td>{client_port}</td><td>{client_name}</td></tr>"""
             html +="</table>"
             html +="<p></p>"
@@ -443,18 +442,18 @@ class MyServer(BaseHTTPRequestHandler):
             """
             self.wfile.write(html.encode("utf-8"))
 
-#def run_serverHTTP(port=PARAM_HTTP_PORT):
-#    with socketserver.TCPServer(("", port), MyServer) as httpd:
-#        print(f"active server on port: {port}")
-#        httpd.allow_reuse_address = True 
-#        httpd.serve_forever()
+class ReusableHTTPServer (HTTPServer):
+    allow_reuse_address = True 
 
-def run_serverHTTP(server_class=HTTPServer, handler_class=MyServer, port=PARAM_HTTP_PORT):
+
+def run_serverHTTP(server_class=ReusableHTTPServer, handler_class=MyServer, port=PARAM_HTTP_TARGET_PORT):
     global httpd
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     #print(f"HTTP server on port {port}...")
-    httpd.allow_reuse_address = True 
     (ipp, ppp) = httpd.server_address
     print (f"HTTP server: lisening on {ipp};{ppp}")
+
+
+
     httpd.serve_forever()

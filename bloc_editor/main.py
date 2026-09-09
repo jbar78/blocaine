@@ -2189,7 +2189,7 @@ def menu_target():
         target_menubar.add_command(label = texteTCP,  foreground = color_foreground, activeforeground = color_activeforeground, command = lambda: TCPconnect())
         target_menubar.add_separator()
         if clientTCP.socket != None:
-            address = clientTCP.host+":"+str(PARAM_HTTP_PORT)
+            address = clientTCP.host+":"+str(PARAM_HTTP_TARGET_PORT)
             target_web_pages = "http://"+address
             target_menubar.add_command(label = "Open Target's web pages "+address, command = lambda: open_doc(target_web_pages))
             target_menubar.add_separator()
