@@ -1,5 +1,6 @@
 import os
 import sys
+from urllib.parse import quote
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoire du fichier courant
 parent_dir = os.path.dirname(script_dir)                 # Remonter au dossier parent (projet/)
 path_commun = os.path.join(parent_dir, "commun")         # Redescendre au répertoire "commun"
@@ -70,7 +71,8 @@ def compiled_status():
             list_orders.append("Delete")
         html_orders =""
         for ordr in list_orders:
-            html_orders += f"&nbsp;<a href='/order:{ordr}:{sta['name']}'>{ordr}</a>&nbsp;"
+            url_ordr = quote(ordr)
+            html_orders += f"&nbsp;<a href='/order:{ordr}:{sta['name']}'>{url_ordr}</a>&nbsp;"
         sta['orders']=html_orders
 
     proc_name = "compiled_status: "

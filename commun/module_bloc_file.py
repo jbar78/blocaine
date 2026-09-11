@@ -50,7 +50,6 @@ def write_bloc(pbloc, pstartup=False):
         #return
         txt_building = pbloc.header['building'].strftime("%Yy-%mm-%dd__%Hh-%Mm-%Ss")
         filen0 = add_point_bloc_to_file_name(pbloc.header['name']+"__"+txt_building, pstartup)
-        filen0 = toto.txt
         filen = PARAM_CHEMIN_TARGET_BUILD+filen0
     else:
         filen0 = add_point_bloc_to_file_name(pbloc.header['name'])
@@ -109,12 +108,17 @@ def get_target_file_list(repertoire=PARAM_CHEMIN_TARGET_BUILD, extension=".ebloc
     Retourne la liste des noms de fichiers avec l'extension '.ebloc' dans le répertoire spécifié.
     """
     try:
+        repertoire_script = os.path.dirname(os.path.abspath(__file__))
+        #print(f"Script directory:{repertoire_script}")
+        os.chdir(repertoire_script)
+        #print(f"current directory:{os.getcwd()}")
+        repertoire_normalise = os.path.normpath(repertoire)
         # Vérifier si le répertoire existe
-        if not os.path.isdir(repertoire):
-            print(f"❌ERROR : Directory '{repertoire}' does'nt exist")
+        if not os.path.isdir(repertoire_normalise):
+            print(f"❌ERROR : Directory '{repertoire_normalise}' does'nt exist")
             return []
         # Lister tous les fichiers du répertoire
-        fichiers = os.listdir(repertoire)
+        fichiers = os.listdir(repertoire_normalise)
         # Filtrer les fichiers avec l'extension '.ebloc'
         fichiers_ebloc = [f for f in fichiers if f.endswith(extension)]
         return fichiers_ebloc

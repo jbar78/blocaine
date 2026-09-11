@@ -1,6 +1,8 @@
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import socketserver
+from urllib.parse import quote, unquote
+from html import escape
 import os
 import sys
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Obtenir le répertoire du fichier courant
@@ -265,12 +267,12 @@ class MyServer(BaseHTTPRequestHandler):
         elif self.path == "/blocs" or self.key == "/order": #____________________liste des blocs
             if self.key == "/order":
                 print ("Key=", self.key, "  order=", self.order, "  bloc name=", self.bloc_name)
-                if self.order == "Run":         run_exebloc(self.bloc_name)
-                if self.order == "Stop":        stop_exebloc(self.bloc_name)
-                if self.order == "HotSwap":     hot_swap_exebloc(self.bloc_name)
-                if self.order == "ColdSwap":    cold_swap_exebloc(self.bloc_name)
-                if self.order == "Delete":      delete_exebloc(self.bloc_name)
-                if self.order == "Initialize":  init_exebloc(self.bloc_name)
+                if self.order == "Run":         run_exebloc(unquote(self.bloc_name))
+                if self.order == "Stop":        stop_exebloc(unquote(self.bloc_name))
+                if self.order == "HotSwap":     hot_swap_exebloc(unquote(self.bloc_name))
+                if self.order == "ColdSwap":    cold_swap_exebloc(unquote(self.bloc_name))
+                if self.order == "Delete":      delete_exebloc(unquote(self.bloc_name))
+                if self.order == "Initialize":  init_exebloc(unquote(self.bloc_name))
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
@@ -307,8 +309,8 @@ class MyServer(BaseHTTPRequestHandler):
         elif self.path == "/startup" or self.key == "/startup_order": #____________________startup configuration
             if self.key == "/startup_order":
                 print ("Key=", self.key, "  order=", self.order, "  bloc name=", self.bloc_name)
-                if self.order == "Add":           move_file (PARAM_CHEMIN_TARGET_BUILD,   PARAM_CHEMIN_TARGET_STARTUP, self.bloc_name)
-                if self.order == "Remove":        move_file (PARAM_CHEMIN_TARGET_STARTUP, PARAM_CHEMIN_TARGET_BUILD,   self.bloc_name)
+                if self.order == "Add":           move_file (PARAM_CHEMIN_TARGET_BUILD,   PARAM_CHEMIN_TARGET_STARTUP, unquote(self.bloc_name))
+                if self.order == "Remove":        move_file (PARAM_CHEMIN_TARGET_STARTUP, PARAM_CHEMIN_TARGET_BUILD,   unquote(self.bloc_name))
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
@@ -322,9 +324,13 @@ class MyServer(BaseHTTPRequestHandler):
             ordr = "Remove"
             list_startup_blocs = get_target_file_list(PARAM_CHEMIN_TARGET_STARTUP)        
             for startup_bloc_name in list_startup_blocs:
-                    html += "<tr>"
-                    html += f"<td>{startup_bloc_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{startup_bloc_name}'>{ordr}</a>&nbsp;</td>"
-                    html += "</tr>"
+                print (f"startup_bloc_name=/startup_order:{ordr}:{startup_bloc_name}")
+                html_name = escape(startup_bloc_name)
+                url_name  = quote(startup_bloc_name, safe="")
+                print (f"URL=/startup_order:{ordr}:{url_name}")
+                html += "<tr>"
+                html += f"<td>{html_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{url_name}'>{ordr}</a>&nbsp;</td>"
+                html += "</tr>"
             html +="</table>"
             html +="<br>"
             html +="<table>"
@@ -333,9 +339,13 @@ class MyServer(BaseHTTPRequestHandler):
             ordr = "Add"
             list_build_blocs = get_target_file_list(PARAM_CHEMIN_TARGET_BUILD)        
             for build_bloc_name in list_build_blocs:
-                    html += "<tr>"
-                    html += f"<td>{build_bloc_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{build_bloc_name}'>{ordr}</a>&nbsp;</td>"
-                    html += "</tr>"
+                print (f"build_bloc_name=/startup_order:{ordr}:{build_bloc_name}")
+                html_name = escape(build_bloc_name)
+                url_name  = quote(build_bloc_name, safe="")
+                print (f"URL=/startup_order:{ordr}:{url_name}")
+                html += "<tr>"
+                html += f"<td>{html_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{url_name}'>{ordr}</a>&nbsp;</td>"
+                html += "</tr>"
             html +="</table>"
             html +="<br>"
             html += "<br><br>"
