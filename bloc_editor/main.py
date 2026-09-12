@@ -2603,20 +2603,38 @@ def set_compile_thread(porder):
             ip = blc.find(")")
             last_bloc_name = blc[ip+1:]
     #print(proc_name, f" main_bloc=<{main_bloc_name}>,  last_bloc=<{last_bloc_name}>")
-    if last_bloc_name != "":
-        reponse = messagebox.askquestion("Save ?", "To take into account the changes made to the <"+last_bloc_name+"> block, you must save it before starting the build.\n Do you want to save it?")
-        if reponse == "yes":
-            save_file(False)
-            fname = nom_complet_fichier(main_bloc_name, False)
-            #print (proc_name, "ajout chemin et .bloc    file name=", fname)
-            bloc_a_compiler = read_bloc (fname)
-        else:
-            messagebox.showinfo("build Status:", "Build aborted")
+
+
+    #if last_bloc_name != "":
+    #    reponse = messagebox.askquestion("Save ?", "To take into account the changes made to the <"+last_bloc_name+"> block, you must save it before starting the build.\n Do you want to save it?")
+    #    if reponse == "yes":
+    #        save_file(False)
+    #        fname = nom_complet_fichier(main_bloc_name, False)
+    #        #print (proc_name, "ajout chemin et .bloc    file name=", fname)
+    #        bloc_a_compiler = read_bloc (fname)
+    #    else:
+    #        messagebox.showinfo("build Status:", "Build aborted")
+    #else:
+    #    bloc_a_compiler = bloc
+
+    if last_bloc_name == "":
+        save_bloc_name = main_bloc_name
     else:
-        bloc_a_compiler = bloc
-    compiling_thread = threading.Thread(target=compile_bloc, args=(bloc_a_compiler, porder))
-    compiling_thread.start()
-    #print (proc_name, "compil thread started")
+        save_bloc_name = last_bloc_name
+    print(proc_name, f" main_bloc=<{main_bloc_name}>,  last_bloc=<{last_bloc_name}>,  save_bloc=<{save_bloc_name}>")
+    reponse = messagebox.askquestion("Save ?", "The block currently being edited must be saved before it can be build.\n save <"+save_bloc_name+"> ?")
+    if reponse == "yes":
+        save_file(False)
+        fname = nom_complet_fichier(main_bloc_name, False)
+        print (proc_name, "ajout chemin et .bloc    file name=", fname)
+        bloc_a_compiler = read_bloc (fname)
+        compiling_thread = threading.Thread(target=compile_bloc, args=(bloc_a_compiler, porder))
+        compiling_thread.start()
+        #print (proc_name, "compil thread started")
+    else:
+        messagebox.showinfo("build Status:", "Build aborted")
+
+
 def compile_bloc(pbloc, porder):
     """ Comfpilation du bloc et de ses sous-blocs """
     #global exeblocA, exeblocB

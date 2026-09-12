@@ -98,7 +98,7 @@ def c_exesubloc_add (pebloc, pieb, pio, pthread): #_____________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] + cesubloc.inputs[1]['var'] # out = a + b
         except: #else: #except:
-            print ("<ADD>", PARAM_TEXT_EXCEPTION)
+            #print ("<ADD>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -123,7 +123,7 @@ def c_exesubloc_and (pebloc, pieb, pio, pthread): #_____________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] and cesubloc.inputs[1]['var']  # out = a and b
         except:
-            print ("<AND>", PARAM_TEXT_EXCEPTION)
+            #print ("<AND>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -149,7 +149,7 @@ def c_exesubloc_append (pebloc, pieb, pio, pthread): #__________________________
             cesubloc.inputs[0]['var'].append(cesubloc.inputs[1]['var'])
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
         except:
-            print ("<append>", PARAM_TEXT_EXCEPTION)
+            #print ("<append>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -174,7 +174,7 @@ def c_exesubloc_cablin (pebloc, pieb, pio, pthread): #__________________________
             cesubloc.outputs[0]['valide'] = (cesubloc.inputs[0]['valide'], cesubloc.inputs[1]['valide'])
             cesubloc.outputs[0]['var']    = (cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
         except:
-            print ("<CABLIN>", PARAM_TEXT_EXCEPTION)
+            #print ("<CABLIN>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -205,7 +205,7 @@ def c_exesubloc_cablout (pebloc, pieb, pio, pthread): #_________________________
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'][0]
             cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide'][1]
         except:
-            print ("<CABLOUT>", PARAM_TEXT_EXCEPTION)
+            #print ("<CABLOUT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -243,7 +243,7 @@ def c_exesubloc_clock (pebloc, pieb, pio, pthread): #___________________________
                         cesubloc.outputs[O_CLOCK]['var'] = True
                         cesubloc.outputs[O_RT]['var'] = cesubloc.inputs[I_T_ON]['var']
         except:
-            print ("<CLOCK>", PARAM_TEXT_EXCEPTION)
+            #print ("<CLOCK>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -273,7 +273,7 @@ def c_exesubloc_comp (pebloc, pieb, pio, pthread): #____________________________
             cesubloc.outputs[2]['var'] = cesubloc.inputs[0]['var'] <  cesubloc.inputs[1]['var']
             cesubloc.c_exesubloc_overwriting_outputs()
         except:
-            print ("<COMP>", PARAM_TEXT_EXCEPTION)
+            #print ("<COMP>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
     #print ("<COMP> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
@@ -294,7 +294,7 @@ def c_exesubloc_const_pi (pebloc, pieb, pio, pthread): #________________________
             cesubloc.outputs[0]['var'] =  math.pi
             cesubloc.outputs[0]['valide'] =  True
         except:
-            print ("<CONST_PI>", PARAM_TEXT_EXCEPTION)
+            #print ("<CONST_PI>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -352,7 +352,7 @@ def c_exesubloc_delay (pebloc, pieb, pio, pthread): #___________________________
             cesubloc.outputs[O_IN_NM1]['var'] = cesubloc.inputs[I_IN]['var']
             cesubloc.outputs[O_IN_NM1]['valide'] = cesubloc.inputs[I_IN]['valide']
         except:
-            print ("<DELAY>", PARAM_TEXT_EXCEPTION)
+            #print ("<DELAY>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -382,7 +382,7 @@ def c_exesubloc_differencial (pebloc, pieb, pio, pthread): #____________________
             cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var']
             cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
         except:
-            print ("<DIFF>", PARAM_TEXT_EXCEPTION)
+            #print ("<DIFF>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -407,7 +407,7 @@ def c_exesubloc_div (pebloc, pieb, pio, pthread): #_____________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] / cesubloc.inputs[1]['var']
         except:
-            print ("<DIV>", PARAM_TEXT_EXCEPTION)
+            #print ("<DIV>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -432,7 +432,7 @@ def c_exesubloc_dt (pebloc, pieb, pio, pthread): #______________________________
             cesubloc.outputs[0]['var'] = pthread['period']
             cesubloc.outputs[1]['var'] = pthread['cycle_time']
         except:
-            print ("<DT>", PARAM_TEXT_EXCEPTION)
+            #print ("<DT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -463,7 +463,7 @@ def c_exesubloc_edge (pebloc, pieb, pio, pthread): #____________________________
             cesubloc.outputs[1]['valide'] = cesubloc.inputs[0]['valide']
             cesubloc.c_exesubloc_overwriting_outputs()
         except:
-            print ("<EDGE>", PARAM_TEXT_EXCEPTION)
+            #print ("<EDGE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -490,7 +490,7 @@ def c_exesubloc_exec (pebloc, pieb, pio, pthread): #____________________________
             # l'entré I_EXEC n'est pas utilisé!
             cesubloc.c_exesubloc_overwriting_outputs()
         except:
-            print ("<EXEC>", PARAM_TEXT_EXCEPTION)
+            #print ("<EXEC>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -521,7 +521,7 @@ def c_exesubloc_filter_FO (pebloc, pieb, pio, pthread): #_______________________
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide'] and cesubloc.inputs[1]['valide']
         except:
-            print ("<FILTER_FO>", PARAM_TEXT_EXCEPTION)
+            #print ("<FILTER_FO>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -546,7 +546,7 @@ def c_exesubloc_geti (pebloc, pieb, pio, pthread): #____________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'][cesubloc.inputs[1]['var']]
         except:
-            print ("<geti>", PARAM_TEXT_EXCEPTION)
+            #print ("<geti>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -591,7 +591,7 @@ def c_exesubloc_gpio_di (pebloc, pieb, pio, pthread): #_________________________
                 cesubloc.outputs[0]['var'] = cesubloc.outputs[2]['var'].value
                 cesubloc.outputs[1]['var'] = 0
         except:
-            print ("<GPIO_DI>", PARAM_TEXT_EXCEPTION)
+            #print ("<GPIO_DI>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[1]['var'] = -2
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -640,7 +640,7 @@ def c_exesubloc_gpio_do (pebloc, pieb, pio, pthread): #_________________________
                     cesubloc.outputs[0]['var'] = 2
                     print (f"<GPIO_DO> GPIO pin {cesubloc.inputs[1]['var']}, is now configured in LED mode")
         except:
-            print ("<GPIO_DO>", PARAM_TEXT_EXCEPTION)
+            #print ("<GPIO_DO>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['var'] = -2
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -689,7 +689,7 @@ def c_exesubloc_gpio_pwm (pebloc, pieb, pio, pthread): #________________________
                     cesubloc.outputs[0]['var'] = 3
                     print (f"<GPIO_PWM> GPIO pin {cesubloc.inputs[1]['var']}, is now configured in PWMLED mode")
         except:
-            print ("<GPIO_PWM>", PARAM_TEXT_EXCEPTION)
+            #print ("<GPIO_PWM>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['var'] = -2
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -704,7 +704,7 @@ def c_exesubloc_hold (pebloc, pieb, pio, pthread): #____________________________
     #I_IN=1
     #O_OUT=0
     def execption():
-        print ("<HOLD>", PARAM_TEXT_EXCEPTION)
+        #print ("<HOLD>", PARAM_TEXT_EXCEPTION)
         gate = False
         for output in cesubloc.outputs:
             output['valide'] = False
@@ -763,7 +763,7 @@ def c_exesubloc_information (pebloc, pieb, pio, pthread): #_____________________
             cesubloc.outputs[3]['valide'] = 'local_name' in prevout
             cesubloc.outputs[4]['valide'] = 'local_comment' in prevout
         except:
-            print ("<DIFF>", PARAM_TEXT_EXCEPTION)
+            #print ("<DIFF>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -788,7 +788,7 @@ def c_exesubloc_input (pebloc, pieb, pio, pthread): #___________________________
             cesubloc.outputs[0]['var']    = cesubloc.inputs[0]['var']
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
         except:
-            print ("<INPUT>", PARAM_TEXT_EXCEPTION)
+            #print ("<INPUT>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #print ("<INPUT> retourne l'output [", pio, "]: var=", cesubloc.outputs[pio]['var'], "val=", cesubloc.outputs[pio]['valide'])
@@ -833,7 +833,7 @@ def c_exesubloc_input_output (pebloc, pieb, pio, pthread): #____________________
                 #print ("<INPUT_OUTPUT>", f"pas trouvé")
                 cesubloc.outputs[0]['valide'] = False
         except:
-            print ("<INPUT_OUTPUT>", PARAM_TEXT_EXCEPTION)
+            #print ("<INPUT_OUTPUT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -859,7 +859,7 @@ def c_exesubloc_insert (pebloc, pieb, pio, pthread): #__________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'].insert(cesubloc.inputs[1]['var'], cesubloc.inputs[2]['var'])
         except:
-            print ("<insert>", PARAM_TEXT_EXCEPTION)
+            #print ("<insert>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -920,7 +920,7 @@ def c_exesubloc_integrator (pebloc, pieb, pio, pthread): #______________________
                 cesubloc.outputs[O_OUT]['var'] = integrator
                 cesubloc.outputs[O_L]['var'] = False
         except:
-            print ("<INTEGRATOR>", PARAM_TEXT_EXCEPTION)
+            #print ("<INTEGRATOR>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -945,7 +945,7 @@ def c_exesubloc_len (pebloc, pieb, pio, pthread): #_____________________________
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
             cesubloc.outputs[0]['var'] = len(cesubloc.inputs[0]['var'])
         except:
-            print ("<len>", PARAM_TEXT_EXCEPTION)
+            #print ("<len>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -989,7 +989,7 @@ def c_exesubloc_limit (pebloc, pieb, pio, pthread): #___________________________
                 cesubloc.outputs[1]['var'] = cesubloc.inputs[1]['var']
                 cesubloc.outputs[2]['var'] = False
         except:
-            print ("<LIMIT>", PARAM_TEXT_EXCEPTION)
+            #print ("<LIMIT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1004,7 +1004,7 @@ def c_exesubloc_memory (pebloc, pieb, pio, pthread): #__________________________
     #I_RESET_PRIORITAIRE = 2
     #O_OUT = 0
     def exception():
-        print ("<MEMORY>", PARAM_TEXT_EXCEPTION)
+        #print ("<MEMORY>", PARAM_TEXT_EXCEPTION)
         reset_order = False
         set_order = False
         for output in cesubloc.outputs:
@@ -1069,7 +1069,7 @@ def c_exesubloc_minmax (pebloc, pieb, pio, pthread): #__________________________
             cesubloc.outputs[0]['var'] = max(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
             cesubloc.outputs[1]['var'] = min(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'])
         except:
-            print ("<MINMAX>", PARAM_TEXT_EXCEPTION)
+            #print ("<MINMAX>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1134,7 +1134,7 @@ def c_exesubloc_modbus_conn(pebloc, pieb, pio, pthread): #______________________
                     cesubloc.outputs[1]['var'] = cesubloc.outputs[0]['var'].connected
                     pass
         except:
-            print ("<MODBUS_CONN>", PARAM_TEXT_EXCEPTION)
+            #print ("<MODBUS_CONN>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1209,7 +1209,7 @@ def c_exesubloc_modbus_read (pebloc, pieb, pio, pthread): #_____________________
                 cesubloc.outputs[1]['var'] = -1 #status: not connected
                 cesubloc.outputs[1]['valide'] = True
         except:
-            print ("<MODBUS_READ>", PARAM_TEXT_EXCEPTION)
+            #print ("<MODBUS_READ>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1272,7 +1272,7 @@ def c_exesubloc_modbus_write (pebloc, pieb, pio, pthread): #____________________
                 cesubloc.outputs[0]['valide'] = False
                 cesubloc.outputs[1]['var'] = -1 #status: not connected
         except:
-            print ("<MODBUS_WRITE>", PARAM_TEXT_EXCEPTION)
+            #print ("<MODBUS_WRITE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1299,7 +1299,7 @@ def c_exesubloc_mult (pebloc, pieb, pio, pthread): #____________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] * cesubloc.inputs[1]['var']
         except:
-            print ("<MULT>", PARAM_TEXT_EXCEPTION)
+            #print ("<MULT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1323,7 +1323,7 @@ def c_exesubloc_not (pebloc, pieb, pio, pthread): #_____________________________
         try:
             cesubloc.outputs[0]['var'] = not cesubloc.inputs[0]['var']
         except:
-            print ("<NOT>", PARAM_TEXT_EXCEPTION)
+            #print ("<NOT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1348,7 +1348,7 @@ def c_exesubloc_or (pebloc, pieb, pio, pthread): #______________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] or cesubloc.inputs[1]['var']
         except:
-            print ("<OR>", PARAM_TEXT_EXCEPTION)
+            #print ("<OR>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1375,7 +1375,7 @@ def c_exesubloc_output (pebloc, pieb, pio, pthread): #__________________________
             cesubloc.outputs[0]['var']    = cesubloc.inputs[0]['var']
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[0]['valide']
         except: #else: #except:
-            print ("<OUTPUT>", PARAM_TEXT_EXCEPTION)
+            #print ("<OUTPUT>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
     #for i, output in enumerate(cesubloc.outputs): print (f"<OUTPUT> les sorties [{i}]: name={output['name']},  validité={output['valide']},  value={output['var']}")
@@ -1402,7 +1402,7 @@ def c_exesubloc_pop (pebloc, pieb, pio, pthread): #_____________________________
             cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'].pop(cesubloc.inputs[1]['var'])
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
         except:
-            print ("<pop>", PARAM_TEXT_EXCEPTION)
+            #print ("<pop>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1429,7 +1429,7 @@ def c_exesubloc_previous (pebloc, pieb, pio, pthread): #________________________
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] # n
                 cesubloc.outputs[1]['var'] = cesubloc.inputs[0]['var'] # n-1
             except:
-                print ("<PREVIOUS>", PARAM_TEXT_EXCEPTION)
+                #print ("<PREVIOUS>", PARAM_TEXT_EXCEPTION)
                 for output in cesubloc.outputs:
                     output['valide'] = False
             cesubloc.c_exesubloc_overwriting_outputs()
@@ -1452,7 +1452,7 @@ def c_exesubloc_print (pebloc, pieb, pio, pthread): #___________________________
         try:
             print (cesubloc.inputs[0]['var'])
         except:
-            print ("<PRINT>", PARAM_TEXT_EXCEPTION)
+            #print ("<PRINT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1479,7 +1479,7 @@ def c_exesubloc_puti (pebloc, pieb, pio, pthread): #____________________________
             cesubloc.inputs[0]['var'][cesubloc.inputs[1]['var']] = cesubloc.inputs[2]['var']
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
         except:
-            print ("<puti>", PARAM_TEXT_EXCEPTION)
+            #print ("<puti>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1505,7 +1505,7 @@ def c_exesubloc_range (pebloc, pieb, pio, pthread): #___________________________
         try:
             cesubloc.outputs[0]['var'] = range(cesubloc.inputs[0]['var'], cesubloc.inputs[1]['var'], cesubloc.inputs[2]['var'])
         except:
-            print ("<range>", PARAM_TEXT_EXCEPTION)
+            #print ("<range>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1520,7 +1520,7 @@ def c_exesubloc_select (pebloc, pieb, pio, pthread): #__________________________
     #I_IF1=2
     #O_OUT
     def exception():
-        print ("<SELECT>", PARAM_TEXT_EXCEPTION)
+        #print ("<SELECT>", PARAM_TEXT_EXCEPTION)
         for output in cesubloc.outputs:
             output['valide'] = False
 
@@ -1565,7 +1565,7 @@ def c_exesubloc_sub (pebloc, pieb, pio, pthread): #_____________________________
         try:
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] - cesubloc.inputs[1]['var']
         except:
-            print ("<SUB>", PARAM_TEXT_EXCEPTION)
+            #print ("<SUB>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1587,7 +1587,7 @@ def c_exesubloc_time (pebloc, pieb, pio, pthread): #____________________________
             cesubloc.outputs[0]['var'] = time.time()
             cesubloc.outputs[0]['valide'] = True
         except:
-            print ("<TIME>", PARAM_TEXT_EXCEPTION)
+            #print ("<TIME>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1664,7 +1664,7 @@ def c_exesubloc_type (pebloc, pieb, pio, pthread): #____________________________
             #print(f"<TYPE>2 O0:{cesubloc.outputs[0]['var']}")
 
         except:
-            print ("<TYPE>3:", PARAM_TEXT_EXCEPTION)
+            #print ("<TYPE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1689,7 +1689,7 @@ def c_exesubloc_validRead (pebloc, pieb, pio, pthread): #_______________________
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['valide']
             cesubloc.outputs[0]['valide'] = True
         except:
-            print ("<VALIDREAD>", PARAM_TEXT_EXCEPTION)
+            #print ("<VALIDREAD>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1716,7 +1716,7 @@ def c_exesubloc_validWrite (pebloc, pieb, pio, pthread): #______________________
             cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var']
             cesubloc.outputs[0]['valide'] = cesubloc.inputs[1]['var']
         except:
-            print ("<VALIDWRITE>", PARAM_TEXT_EXCEPTION)
+            #print ("<VALIDWRITE>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -1783,7 +1783,7 @@ def c_exesubloc_opc_server (pebloc, pieb, pio, pthread): #______________________
                 pass # ne rien faire c'est déjà fait!
 
         except:
-            print ("<OPC_server>", PARAM_TEXT_EXCEPTION)
+            #print ("<OPC_server>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[3]['var'] = -1
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -1836,7 +1836,7 @@ def c_exesubloc_opc_node (pebloc, pieb, pio, pthread): #________________________
 
 
         except:
-            print ("<OPC_node>", PARAM_TEXT_EXCEPTION)
+            #print ("<OPC_node>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[1]['var'] = -1
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -1890,7 +1890,7 @@ def c_exesubloc_opc_var (pebloc, pieb, pio, pthread): #_________________________
                 cesubloc.outputs[1]['var'] = -2
                 cesubloc.outputs[0]['var'] = None
         except:
-            print ("<OPC_var>", PARAM_TEXT_EXCEPTION)
+            #print ("<OPC_var>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[1]['var'] = -1
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -1925,7 +1925,7 @@ def c_exesubloc_opc_write (pebloc, pieb, pio, pthread): #_______________________
                 print(f"<OPC_write> cas variable pas configuré")
                 #cesubloc.outputs[0]['var'] = -2
         except:
-            print ("<OPC_write>", PARAM_TEXT_EXCEPTION)
+            #print ("<OPC_write>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[0]['var'] = -1
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -1960,7 +1960,7 @@ def c_exesubloc_opc_read (pebloc, pieb, pio, pthread): #________________________
                 #print(f"<OPC_read> cas variable pas configurée")
                 cesubloc.outputs[1]['var'] = -2
         except:
-            print ("<OPC_read>", PARAM_TEXT_EXCEPTION)
+            #print ("<OPC_read>", PARAM_TEXT_EXCEPTION)
             cesubloc.outputs[1]['var'] = -1
             for output in cesubloc.outputs:
                 output['valide'] = False
@@ -1986,7 +1986,7 @@ def c_exesubloc_readbit (pebloc, pieb, pio, pthread): #_________________________
         try:
             cesubloc.outputs[0]['var'] = (cesubloc.inputs[0]['var'] >> cesubloc.inputs[1]['var']) & 1 == 1 # si bit(n) est vrai
         except: #else: #except:
-            print ("<READBIT>", PARAM_TEXT_EXCEPTION)
+            #print ("<READBIT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
@@ -2015,7 +2015,7 @@ def c_exesubloc_writebit (pebloc, pieb, pio, pthread): #________________________
             else:
                 cesubloc.outputs[0]['var'] = cesubloc.inputs[0]['var'] & ~(1 << cesubloc.inputs[1]['var']) #             
         except: #else: #except:
-            print ("<WRITEBIT>", PARAM_TEXT_EXCEPTION)
+            #print ("<WRITEBIT>", PARAM_TEXT_EXCEPTION)
             for output in cesubloc.outputs:
                 output['valide'] = False
         cesubloc.c_exesubloc_overwriting_outputs()
