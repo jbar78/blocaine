@@ -2,6 +2,8 @@ import os
 import shutil
 import glob
 import pickle
+import re
+from datetime import datetime
 from PARAM_NAME_BLOC import *
 from PARAM_PATH import *
 
@@ -103,6 +105,44 @@ def nom_complet_fichier(name, psystem):
     print (proc_name, "nom de fichier complet retourné=", retour)
     return retour
 
+
+def trier_fichiers(fichiers):
+    motif = re.compile(
+        r"^.+__"
+        r"(?P<annee>\d{4})y-"
+        r"(?P<mois>\d{2})m-"
+        r"(?P<jour>\d{2})d__"
+        r"(?P<heure>\d{2})h-"
+        r"(?P<minute>\d{2})m-"
+        r"(?P<seconde>\d{2})s"
+        r"\.ebloc$"
+    )
+
+    def extraire_date(nom_fichier):
+        resultat = motif.match(nom_fichier)
+
+        if resultat is None:
+            raise ValueError(
+                f"Format de fichier invalide : {nom_fichier}"
+            )
+
+        valeurs = resultat.groupdict()
+
+        return datetime(
+            year=int(valeurs["annee"]),
+            month=int(valeurs["mois"]),
+            day=int(valeurs["jour"]),
+            hour=int(valeurs["heure"]),
+            minute=int(valeurs["minute"]),
+            second=int(valeurs["seconde"])
+        )
+
+    return sorted(
+        fichiers,
+        key=extraire_date,
+        reverse=True
+    )
+
 def get_target_file_list(repertoire=PARAM_CHEMIN_TARGET_BUILD, extension=".ebloc"):
     """
     Retourne la liste des noms de fichiers avec l'extension '.ebloc' dans le répertoire spécifié.
@@ -121,7 +161,7 @@ def get_target_file_list(repertoire=PARAM_CHEMIN_TARGET_BUILD, extension=".ebloc
         fichiers = os.listdir(repertoire_normalise)
         # Filtrer les fichiers avec l'extension '.ebloc'
         fichiers_ebloc = [f for f in fichiers if f.endswith(extension)]
-        return fichiers_ebloc
+        return trier_fichiers(fichiers_ebloc)
     except Exception as e:
         print(f"❌ERROR : file exception : {e}")
         return []
