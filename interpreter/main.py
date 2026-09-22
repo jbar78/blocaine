@@ -112,7 +112,7 @@ if __name__ == "__main__":
         file_name = PARAM_CHEMIN_TARGET_STARTUP+bloc_name
         #print (f"file name={file_name}")
         exebloc = read_bloc(file_name, use_file_name_as_name=False)
-        print (f"Startup: start bloc <{exebloc.header['name']}>, build={exebloc.header['building'].strftime("%Y-%m-%d  %H:%M:%S")}")
+        print (f"Startup: start bloc <{exebloc.header['name']}>, build={exebloc.header['building'].strftime('%Y-%m-%d  %H:%M:%S')}")
         compiled_load(exebloc)
         run_exebloc(exebloc.header['name'])
     print (f"startup complete")
