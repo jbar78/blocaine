@@ -1948,19 +1948,19 @@ def find_bloc_under_event(event):
         if tags:
             #print (proc_name, "tags list,  tags=", tags)
             if 'header' in tags:
-                print (proc_name, "header in tags,  tags=", tags)
+                #print (proc_name, "header in tags,  tags=", tags)
                 for elem in bloc.sublocs:
-                    print (proc_name, f"pour chaque subloc: elem.header['name']={elem.header['name']}")
+                    #print (proc_name, f"pour chaque subloc: elem.header['name']={elem.header['name']}")
                     if elem.header['id_cadre'] == item:
-                        print (proc_name, f"elem == item,    elem.header['name']={elem.header['name']}")
+                        #print (proc_name, f"elem == item,    elem.header['name']={elem.header['name']}")
                         bbox = canvas.bbox(item)
                         if bbox:
                             x1, y1, x2, y2 = bbox
-                            print (proc_name, f"bbox:  x1={x1}, y1={y1}, x2={x2}, y2={y2}")
+                            #print (proc_name, f"bbox:  x1={x1}, y1={y1}, x2={x2}, y2={y2}")
                             if x1 < event.x and event.x < x2:
-                                print (proc_name, f" en x")
+                                #print (proc_name, f" en x")
                                 if y1 < event.y and event.y < y2:
-                                    print (proc_name, f" en y")
+                                    #print (proc_name, f" en y")
                                     return elem
     return None
 def doc_file_name(pelem, langue):
