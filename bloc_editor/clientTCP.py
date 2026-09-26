@@ -30,7 +30,7 @@ class clientTCP:
             #print (proc_name, f"socket=<{self.socket}>")
             self.socket.settimeout(3.0)  # délai maximal : x secondes
             self.socket.connect((self.host, self.port))
-            self.socket.settimeout(None)  # délai maximal : x secondes
+            #self.socket.settimeout(None)  # rétabli le délai initial
             print(proc_name, f"Connection established with Target {self.host}:{self.port}")
         except:
             print(proc_name, f"❌Connection with Target {self.host}:{self.port} refused")
