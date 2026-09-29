@@ -2177,12 +2177,13 @@ def menu_target():
             #print (proc_name, "  index=", 1, "  avant delete")
             target_menubar.delete(1)
             #print (proc_name, "  index=", 1, "  aprés delete")
+        target_address = f": ({PARAM_TCP_TARGET_IP}:{PARAM_TCP_TARGET_PORT})"
         if clientTCP.socket == None:
-            texteTCP = "Connect to Target"
+            texteTCP = "Connect to Target"+target_address
             color_foreground = PARAM_COLOR_MENU_TEXTE_NORMAL
             color_activeforeground = PARAM_COLOR_MENU_TEXTE_NORMAL
         else:
-            texteTCP = "Disconnect from Target"
+            texteTCP = "Disconnect from Target"+target_address
             color_foreground = PARAM_COLOR_MENU_TEXTE_DANGER
             color_activeforeground = PARAM_COLOR_MENU_TEXTE_DANGER
         #print (proc_name, f"connection/disconnect: {clientTCP.socket}")
