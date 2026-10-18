@@ -185,35 +185,60 @@ def move_file(source_dir: str, dest_dir: str, filename: str) -> bool:
         print
         source_path = os.path.join(source_dir, filename)
         if not os.path.exists(source_path):
-            print(f"❌ ERROR: File '{filename}' does not exist '{source_dir}'.")
+            print(proc_name, f"❌ ERROR: File '{filename}' does not exist '{source_dir}'.")
             return False
-
         # 2. Vérifier que le répertoire destination existe, sinon le créer
         os.makedirs(dest_dir, exist_ok=True)
-
         # 3. Construire le chemin de destination
         dest_path = os.path.join(dest_dir, filename)
-
         # 4. Vérifier que le fichier n'existe pas déjà dans la destination
         if os.path.exists(dest_path):
-            print(f"⚠️ Avertissement : File '{filename}' already exist in'{dest_dir}'. It will be overwritten.")
+            print(proc_name, f"⚠️ Avertissement : File '{filename}' already exist in'{dest_dir}'. It will be overwritten.")
             # Option : Renommer le fichier existant (ex: "fichier (1).txt")
             base, ext = os.path.splitext(filename)
             counter = 1
             while os.path.exists(dest_path):
                 dest_path = os.path.join(dest_dir, f"{base} ({counter}){ext}")
                 counter += 1
-
         # 5. Déplacer le fichier
         shutil.move(source_path, dest_path)
-        print(f"✅ File '{filename}' successfully moved from '{source_dir}' to '{dest_dir}'.")
+        print(proc_name, f"✅ File '{filename}' successfully moved from '{source_dir}' to '{dest_dir}'.")
         return True
-
     except PermissionError:
-        print(f"❌ ERROR: Permission denied. Check directory access rights.")
+        print(proc_name, f"❌ ERROR: Permission denied. Check directory access rights.")
     except shutil.Error as e:
-        print(f"❌ ERROR: while moving : {e}")
+        print(proc_name, f"❌ ERROR: while moving : {e}")
     except Exception as e:
-        print(f"❌ ERROR: exception: {e}")
+        print(proc_name, f"❌ ERROR: exception: {e}")
+    return False
 
+def delete_file(directory: str, filename: str) -> bool:
+    """
+    Supprime un fichier d'un répertoire.
+    Args:
+        directory (str): Chemin du répertoire(ex: "C:/dossier_source").
+    Returns:
+        bool: True si la suppression a réussi, False en cas d'erreur.
+    Exemples:
+        >>> selete_file("C:/Documents", "document.pdf", )
+        True
+    """
+    proc_name = "delete_file: "
+    try:
+        # 1. Vérifier que le fichier existe dans le répertoire
+        print
+        delete_path = os.path.join(directory, filename)
+        if not os.path.exists(delete_path):
+            print(proc_name, f"❌ ERROR: File '{filename}' does not exist '{directory}'.")
+            return False
+        # 2. Supprimer le fichier
+        os.remove(delete_path)
+        print(proc_name, f"✅ File '{filename}' successfully deleted from '{directory}' ")
+        return True
+    except PermissionError:
+        print(proc_name, f"❌ ERROR: Permission denied. Check directory access rights.")
+    except os.Error as e:
+        print(proc_name, f"❌ ERROR: while deleting : {e}")
+    except Exception as e:
+        print(proc_name, f"❌ ERROR: exception: {e}")
     return False

@@ -281,7 +281,7 @@ class MyServer(BaseHTTPRequestHandler):
             # page: thread list
             time_unit = f"""<span style="font-size: 80%;">yyyy-mm-dd  hh:mm:ss</span>"""
             html = html_debut
-            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
+            html +=f"<p>Target web page:{local_ip}/blocs</p>"
             html +="<table>"
             html += f"""<tr><th colspan="6">bloc list</th></tr>"""
             html += f"""<tr><th rowspan="2">bloc<br>name</th><th colspan="2">Shift A</th><th colspan="2">Shift B</th><th rowspan="2">order</th></tr>"""
@@ -311,13 +311,14 @@ class MyServer(BaseHTTPRequestHandler):
                 print ("Key=", self.key, "  order=", self.order, "  bloc name=", self.bloc_name)
                 if self.order == "Add":           move_file (PARAM_CHEMIN_TARGET_BUILD,   PARAM_CHEMIN_TARGET_STARTUP, unquote(self.bloc_name))
                 if self.order == "Remove":        move_file (PARAM_CHEMIN_TARGET_STARTUP, PARAM_CHEMIN_TARGET_BUILD,   unquote(self.bloc_name))
+                if self.order == "Delete":      delete_file (PARAM_CHEMIN_TARGET_BUILD,   unquote(self.bloc_name))
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             #self.send_header("Connection", "keep-alive")
             #self.send_header("Keep-Alive", "timeout=5, max=100")
             self.end_headers()
             html = html_debut
-            html +=f"<p>Target web page:{local_ip}{self.path}</p>"
+            html +=f"<p>Target web page:{local_ip}/startup</p>"
             html +="<table>"
             html += f"""<tr><th colspan="2">Actual Startup configuration</th></tr>"""
             html += f"""<tr><th>name</th><th>order</th></tr>"""    
@@ -329,22 +330,23 @@ class MyServer(BaseHTTPRequestHandler):
                 url_name  = quote(startup_bloc_name, safe="")
                 print (f"URL=/startup_order:{ordr}:{url_name}")
                 html += "<tr>"
-                html += f"<td>{html_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{url_name}'>{ordr}</a>&nbsp;</td>"
+                html += f"<td>{html_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{url_name}'><span title='Remove from Startup configuration'>{ordr}</span></a>&nbsp;</td>"
                 html += "</tr>"
             html +="</table>"
             html +="<br>"
             html +="<table>"
             html += f"""<tr><th colspan="2">Blocs available for Startup</th></tr>"""
             html += f"""<tr><th>name</th><th>order</th></tr>"""
-            ordr = "Add"
+            order_add = "Add"
+            order_del = "Delete"
             list_build_blocs = get_target_file_list(PARAM_CHEMIN_TARGET_BUILD)        
             for build_bloc_name in list_build_blocs:
-                print (f"build_bloc_name=/startup_order:{ordr}:{build_bloc_name}")
+                print (f"build_bloc_name=/startup_order:{order_add}/{order_del}:{build_bloc_name}")
                 html_name = escape(build_bloc_name)
                 url_name  = quote(build_bloc_name, safe="")
-                print (f"URL=/startup_order:{ordr}:{url_name}")
+                print (f"URL=/startup_order:{order_add}/{order_del}:{url_name}")
                 html += "<tr>"
-                html += f"<td>{html_name}</td><td>&nbsp;<a href='/startup_order:{ordr}:{url_name}'>{ordr}</a>&nbsp;</td>"
+                html += f"<td>{html_name}</td><td>&nbsp;<a href='/startup_order:{order_add}:{url_name}'><span title='Add to Startup configuration'>{order_add}</span></a>&nbsp;&nbsp;&nbsp;<a href='/startup_order:{order_del}:{url_name}'><span title='Delete from disk'>{order_del}</span></a></td>"
                 html += "</tr>"
             html +="</table>"
             html +="<br>"
